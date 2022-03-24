@@ -19,14 +19,14 @@
 
 #define STDOUTPUT NULL
 
-#define NONE      ""
-#define reset "\e[0m"
+#define RESET     L"\e[0m"
+#define NONE      L""
 
 // Tipos
-#define BOLD      "\e[1m"
-#define DIM       "\e[2m"
-#define ITALIC    "\e[3m"
-#define INVERSE   "\e[7m"
+#define BOLD      L"\e[1m"
+#define DIM       L"\e[2m"
+#define ITALIC    L"\e[3m"
+#define INVERSE   L"\e[7m"
 
 // Color de fuente
 
@@ -44,6 +44,8 @@ void moveUP(int i);
 typedef struct WINDOW WINDOW;
 typedef struct MENU MENU;
 
+typedef void (*Funciones)(void);
+
 void innit();
 
 void newWin(WINDOW* Window, int x, int y, int COLS, int ROWS, WINDOW* Parent);
@@ -59,7 +61,7 @@ int gety(WINDOW* Window);
 
 
 // Menu.h
-MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,wchar_t** opciones, int);
+MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,wchar_t** opciones, int cant,Funciones* funciones);
     
 void focusMenu(MENU* menu); 
 void updateMenu(MENU* menu); 

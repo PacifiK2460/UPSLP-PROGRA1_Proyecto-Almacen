@@ -15,7 +15,6 @@ void innit(){
     setConsoleMode(ENABLE_VIRTUAL_TERMINAL_PROCESSING); 
   #endif
 
-  printf("\x1B[?47h"); //Guardamos la pantalla
   setlocale(LC_ALL, "en_US.UTF-8");
 }
 
@@ -27,7 +26,7 @@ void newWin(WINDOW* Window, int y, int x, int COLS, int ROWS, WINDOW* Parent){
 }
 
 void winprint(int X, int Y, wchar_t* text, wchar_t* mode){
-  printf("\x1B[%i;%iH" "%s" "%ls" reset ,X,Y,mode,text);
+  printf("\x1B[%i;%iH%ls%ls%ls",X,Y,mode,text,RESET);
 }
 
 void getcolsrows(WINDOW* Window, int* COLS, int* ROWS){
@@ -133,10 +132,7 @@ void printinthemiddle(WINDOW* Window, int Y, wchar_t* texto,wchar_t* mode){
 }
 
 void box(WINDOW* Window, wchar_t* mode){
-  int X = 0,\
-  Y = 0,\
-  COLS = 0,\
-  ROWS = 0;
+  int X = 0, Y = 0,COLS = 0,ROWS = 0;
   
   if(Window != STDOUTPUT){
     X += Window->X;
@@ -144,11 +140,10 @@ void box(WINDOW* Window, wchar_t* mode){
   };
 
   getcolsrows(Window,&COLS,&ROWS);
+  for(int i = 0; i < COLS; i++) winprint(X,i + Y,L"─", mode);
+  for(int i = 0; i < COLS; i++) winprint(ROWS + X,i + Y,L"─", mode);
 
-  for(int i = 1; i < COLS; i++) winprint(0 + X,i + Y,L"─", mode);
-  for(int i = 1; i < COLS; i++) winprint(ROWS + X,i + Y,L"─", mode);
-
-  for(int i = 0; i < COLS; i++) winprint(i + X,0 + Y,L"│",mode);
+  for(int i = 0; i < COLS; i++) winprint(i + X,Y,L"│",mode);
   for(int i = 0; i < COLS; i++) winprint(i + X,COLS + Y,L"│",mode);
 
   // Imprimimos las esquinas

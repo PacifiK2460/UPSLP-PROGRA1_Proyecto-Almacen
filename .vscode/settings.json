@@ -9,6 +9,7 @@
         "ioctl.h": "c",
         "smartio.h": "c",
         "win.h": "c",
-        "wchar.h": "c"
+        "wchar.h": "c",
+        "cstdio": "c"
     }
 }

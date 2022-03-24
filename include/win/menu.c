@@ -12,13 +12,13 @@ struct MENU{
     int opcionMasLarga;
 
     int selected;
+
+    Funciones* funciones;
 };
 
-MENU* newMenu(WINDOW* Parent, int y, int x, int COLS, int ROWS, wchar_t* opciones[], int cantOps){
+MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,wchar_t** opciones, int cantOps,Funciones* funciones){
     MENU* menu = (MENU*)malloc(sizeof(MENU));
-    
     menu->opciones = opciones;
-
     menu->numeroDeOpciones = cantOps;
     menu->opcionMasLarga = 0;
     for(int i = 0; i < menu->numeroDeOpciones; i++){
@@ -28,15 +28,13 @@ MENU* newMenu(WINDOW* Parent, int y, int x, int COLS, int ROWS, wchar_t* opcione
     menu->opcionMasLarga+=1;
     menu->X = getx(Parent);
     menu->X += x;
-    
     menu->Y = gety(Parent);
     menu->Y += y;
-
     menu->COLS = COLS;
     menu->ROWS = ROWS;
-
     menu->selected = 0;
 
+    menu->funciones = funciones;
     return menu;
 }
 
@@ -55,14 +53,15 @@ void focusMenu(MENU* menu){
     #ifdef __linux__
         struct termios mode;
         tcgetattr(0, &mode);
-        mode.c_lflag &= ~(ECHO | ICANON | ICRNL);
+        mode.c_lflag &= ~(ICANON | ECHO);
         tcsetattr(0, TCSANOW, &mode);
     #endif
 
     while(1){
-        if(getchar() == '\033'){ //ESC
+        c = getchar();
+        if(c == '\033'){ //ESC
             getchar(); //Omitimos el 2do [
-            switch (getchar())
+            switch ( (c = getchar()) )
             {
                 case 'A':
                     if(menu->selected != 0) menu->selected -= 1;
@@ -76,13 +75,16 @@ void focusMenu(MENU* menu){
             updateMenu(menu);
             fflush(stdout);
         }
+        if(c == 10){
+            break;
+        }
     }
+    menu->funciones[menu->selected]();
 }
 
 void updateMenu(MENU* menu){
-    printf("\x1B[%i;%iH" ,menu->X,menu->Y);
     for(int i = 0; i < menu->numeroDeOpciones; i++){
-        printf("\x1B[%i;%iH" " %c " "%s" "%-*ls" reset "\n",menu->Y + i,menu->X,( (menu->selected == i) ? '>' : ' ' ),( (menu->selected == i) ? INVERSE : NONE ), menu->COLS,menu->opciones[i]);
+        printf("\x1B[%i;%iH%s %ls%-*ls%ls\n",menu->X + i,menu->Y,( (menu->selected == i) ? ">" : " " ), ( (menu->selected == i) ? INVERSE : NONE ), menu->opcionMasLarga, menu->opciones[i], RESET);
     }
 }
 
