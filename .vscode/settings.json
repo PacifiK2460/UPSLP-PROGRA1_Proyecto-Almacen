@@ -10,6 +10,9 @@
         "smartio.h": "c",
         "win.h": "c",
         "wchar.h": "c",
-        "cstdio": "c"
+        "cstdio": "c",
+        "sys.h": "c",
+        "chrono": "c",
+        "variant": "c"
     }
 }

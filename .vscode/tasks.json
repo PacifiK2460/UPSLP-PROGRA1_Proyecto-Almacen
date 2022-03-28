@@ -5,7 +5,7 @@
         "type": "shell",
         "label": "g++ build active file",
         "command": "/usr/bin/gcc",
-        "args": ["${file}","${fileDirname}/include/*/*","-o", "${fileDirname}/${fileBasenameNoExtension}"],
+        "args": ["${workspaceFolder}/main.c","${workspaceFolder}/include/*/*","-lm","-o", "${workspaceFolder}/main"],
         "options": {
           "cwd": "/usr/bin"
         },
@@ -19,7 +19,7 @@
         "type": "shell",
         "label": "g++ debug active file",
         "command": "/usr/bin/gcc",
-        "args": ["-g","${file}","${fileDirname}/include/*/*","-o", "${fileDirname}/${fileBasenameNoExtension}"],
+        "args": ["-g","${workspaceFolder}/main.c","${workspaceFolder}/include/*/*","-lm","-o", "${workspaceFolder}/main"],
         "options": {
           "cwd": "/usr/bin"
         },

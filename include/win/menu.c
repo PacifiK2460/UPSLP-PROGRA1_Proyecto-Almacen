@@ -1,12 +1,22 @@
 #include "../win.h"
 
+
+// Estructura que nos permite habilitar y deshabilitar el eco
+#ifdef _WIN32
+    DWORD mode;
+#endif
+
+#ifdef __linux__
+    struct termios mode;
+#endif
+
 struct MENU{
     WINDOW* Parent;
     int X;
     int Y;
     int COLS;
     int ROWS;
-    wchar_t** opciones;
+    char** opciones;
 
     int numeroDeOpciones;
     int opcionMasLarga;
@@ -16,14 +26,43 @@ struct MENU{
     Funciones* funciones;
 };
 
-MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,wchar_t** opciones, int cantOps,Funciones* funciones){
+void noEcho(){
+    #ifdef _WIN32
+        HANDLE console = GetStdHandle(STD_INPUT_HANDLE);
+        GetConsoleMode(console, &mode);
+        SetConsoleMode(console, mode & ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT));
+    #endif
+
+    #ifdef __linux__
+        tcgetattr(0, &mode);
+        mode.c_lflag &= ~(ICANON | ECHO);
+        tcsetattr(0, TCSANOW, &mode);
+    #endif
+}
+
+void echo(){
+    #ifdef _WIN32
+        HANDLE console = GetStdHandle(STD_INPUT_HANDLE);
+        GetConsoleMode(console, &mode);
+        SetConsoleMode(console, mode | (ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT));
+    #endif
+
+    #ifdef __linux__
+        tcgetattr(0, &mode);
+        mode.c_lflag |= (ICANON | ECHO);
+        tcsetattr(0, TCSANOW, &mode);
+    #endif
+}
+
+
+MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,char** opciones, int cantOps,Funciones* funciones){
     MENU* menu = (MENU*)malloc(sizeof(MENU));
     menu->opciones = opciones;
     menu->numeroDeOpciones = cantOps;
     menu->opcionMasLarga = 0;
     for(int i = 0; i < menu->numeroDeOpciones; i++){
-        if( wcslen(opciones[i]) > menu->opcionMasLarga)
-            menu->opcionMasLarga = wcslen(opciones[i]);
+        if( strlen(opciones[i]) > menu->opcionMasLarga)
+            menu->opcionMasLarga = strlen(opciones[i]);
     }
     menu->opcionMasLarga+=1;
     menu->X = getx(Parent);
@@ -42,20 +81,7 @@ void focusMenu(MENU* menu){
     updateMenu(menu);
     register int c;
     //Leemos el teclado non-canonical mode
-    #ifdef _WIN32
-        DWORD mode;
-        HANDLE console = GetStdHandle(STD_INPUT_HANDLE);
-
-        GetConsoleMode(console, &mode);
-        SetConsoleMode(console, mode & ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT));
-    #endif
-
-    #ifdef __linux__
-        struct termios mode;
-        tcgetattr(0, &mode);
-        mode.c_lflag &= ~(ICANON | ECHO);
-        tcsetattr(0, TCSANOW, &mode);
-    #endif
+    noEcho();
 
     while(1){
         c = getchar();
@@ -84,7 +110,17 @@ void focusMenu(MENU* menu){
 
 void updateMenu(MENU* menu){
     for(int i = 0; i < menu->numeroDeOpciones; i++){
-        printf("\x1B[%i;%iH%s %ls%-*ls%ls\n",menu->X + i,menu->Y,( (menu->selected == i) ? ">" : " " ), ( (menu->selected == i) ? INVERSE : NONE ), menu->opcionMasLarga, menu->opciones[i], RESET);
+        printf("\x1B[%i;%iH%s%s%-*s%s\n",menu->X + i,menu->Y,( (menu->selected == i) ? ">" : " " ), ( (menu->selected == i) ? INVERSE : NONE ), menu->opcionMasLarga, menu->opciones[i], RESET);
     }
+}
+
+void printmenu(){
+    printf(CLEAR);
+    box(STDOUTPUT, DIM);
+    printf(HIDE_CURSOR);
+    printinthemiddle(STDOUTPUT,1,"SELECCIONA LA OPCIOÓN",BOLD);
+
+    printinthemiddle(STDOUTPUT,1,"SELECCIONA LA OPCIOÓN",BOLD);
+    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT) - 2,"Usa ↓↑ para seleccionar la opción y <ENTER> para realizar la opción",DIM);
 }
 

@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <locale.h>
-#include <wchar.h>
 #include <string.h>
 
 #ifdef _WIN32
@@ -19,14 +18,14 @@
 
 #define STDOUTPUT NULL
 
-#define RESET     L"\e[0m"
-#define NONE      L""
+#define RESET     "\e[0m"
+#define NONE      ""
 
 // Tipos
-#define BOLD      L"\e[1m"
-#define DIM       L"\e[2m"
-#define ITALIC    L"\e[3m"
-#define INVERSE   L"\e[7m"
+#define BOLD      "\e[1m"
+#define DIM       "\e[2m"
+#define ITALIC    "\e[3m"
+#define INVERSE   "\e[7m"
 
 // Color de fuente
 
@@ -38,7 +37,8 @@
 #define CLEAR "\e[2J"
 
 // Posición del Cursor
-void moveUP(int i);
+void noEcho();
+void echo();
 
 // Window.h
 typedef struct WINDOW WINDOW;
@@ -48,10 +48,11 @@ typedef void (*Funciones)(void);
 
 void innit();
 
-void newWin(WINDOW* Window, int x, int y, int COLS, int ROWS, WINDOW* Parent);
-void winprint(int X, int Y, wchar_t* text, wchar_t* mode);
-void printinthemiddle(WINDOW* Window, int Y, wchar_t* texto, wchar_t* mode);
-void box(WINDOW* Window, wchar_t* mode);
+WINDOW* newWin(int y, int x, int COLS, int ROWS, WINDOW* Parent);
+void winprint(WINDOW* window,int X, int Y, char* text, char* mode);
+void printinthemiddle(WINDOW* Window, int Y, char* texto, char* mode);
+void printinthemiddlesize(WINDOW* Window, int Y, char* texto,char* mode, int tam);
+void box(WINDOW* Window, char* mode);
 void getcolsrows(WINDOW* Window, int* COLS, int* ROWS);
 void getxy(WINDOW* Window, int* X, int* Y);
 int getcols(WINDOW* Window);
@@ -61,8 +62,8 @@ int gety(WINDOW* Window);
 
 
 // Menu.h
-MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,wchar_t** opciones, int cant,Funciones* funciones);
-    
+MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,char** opciones, int cant,Funciones* funciones);
+void printmenu();
 void focusMenu(MENU* menu); 
 void updateMenu(MENU* menu); 
 
