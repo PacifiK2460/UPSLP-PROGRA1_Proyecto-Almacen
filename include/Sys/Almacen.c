@@ -162,32 +162,6 @@ int modExistencia(struct Productos* Src, int index,int cant,char op){
     return OK;
 }
 
-int modificarExistentes(){
-    struct Productos* src = newProductos();
-    struct Producto* Producto;
-    loadAlmacen(src);
-}
-
-int sumarExistentes(){
-    struct Productos* src = newProductos();
-    struct Producto* Producto;
-    loadAlmacen(src);
-}
-
-int addProduct(struct Productos* Dest,char* nombre, int existentes, double precio, char estante){
-    struct Producto* new = newProducto();
-    if(new == NULL) return ERROR;
-    strcpy(new->nombre, nombre);
-    new->existentes = existentes;
-    new->precioUnitario = precio;
-    new->estante = estante;
-    return appendProduct(new,Dest);
-}
-
-int digitos(int n){
-    return floor(log10(n) + 1);
-}
-
 void input(struct Productos* src, char* bg_titulo, char* titulo, char* dest, int delimitar ( int (*f)(char*) )){
     printf(CLEAR);
     box(STDOUTPUT,DIM);
@@ -215,6 +189,66 @@ void input(struct Productos* src, char* bg_titulo, char* titulo, char* dest, int
     noEcho();
     printf(HIDE_CURSOR);
     printf(CLEAR);
+}
+
+int modificarExistentes(){
+    struct Productos* src = newProductos();
+    struct Producto* Producto;
+    loadAlmacen(src);
+
+    char id[10];
+    input(src,"MODIFICAR PRODUCTO","INDEX DEL PRODUCTO A MODIFICAR",id,evaluarExistencia);
+    int idx;
+    sscanf(id,"%i",&idx);
+    if(idx < 0 || idx > getSize(src)){
+        printinthemiddle(STDOUTPUT,getcols(STDOUTPUT)/2,"NO PUEDES MODIFICAR UN PRODUCTO INEXISTENTE",BOLD);
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presione cualquier tecla para continuar >",DIM);
+        getchar();
+        return 0;
+    }
+
+    char sum[10];
+    input(src,"MODIFICAR PRODUCTO","CANTIDAD A PONER",sum, evaluarExistencia);
+    int s;
+    sscanf(sum,"%i",&s);
+    modExistencia(src,idx,s,'S');
+}
+
+int sumarExistentes(){
+    struct Productos* src = newProductos();
+    struct Producto* Producto;
+    loadAlmacen(src);
+
+    char id[10];
+    input(src,"MODIFICAR PRODUCTO","INDEX DEL PRODUCTO A MODIFICAR",id,evaluarExistencia);
+    int idx;
+    sscanf(id,"%i",&idx);
+    if(idx < 0 || idx > getSize(src)){
+        printinthemiddle(STDOUTPUT,getcols(STDOUTPUT)/2,"NO PUEDES MODIFICAR UN PRODUCTO INEXISTENTE",BOLD);
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presione cualquier tecla para continuar >",DIM);
+        getchar();
+        return;
+    }
+
+    char sum[10];
+    input(src,"MODIFICAR PRODUCTO","CANTIDAD A SUMAR",sum, evaluarExistencia);
+    int s;
+    sscanf(sum,"%i",&s);
+    modExistencia(src,idx,s,'A');
+}
+
+int addProduct(struct Productos* Dest,char* nombre, int existentes, double precio, char estante){
+    struct Producto* new = newProducto();
+    if(new == NULL) return ERROR;
+    strcpy(new->nombre, nombre);
+    new->existentes = existentes;
+    new->precioUnitario = precio;
+    new->estante = estante;
+    return appendProduct(new,Dest);
+}
+
+int digitos(int n){
+    return floor(log10(n) + 1);
 }
 
 void nuevoProducto(){
@@ -256,7 +290,7 @@ void consultarAlmacen(){
     struct Producto* Producto;
     loadAlmacen(Almacen);
 
-    //Para alinear la info, obtenemos la cantidad mas grande;
+    //Para alinear la info, obtenemos la cantidad mas ge;
     int mayor_existencia = 1, mayor_precio = 1;
     for(int i = 0; i < getSize(Almacen); i++){
         if( getItem(Almacen,i)->existentes > mayor_existencia )
@@ -331,8 +365,6 @@ void actualizarAlmacen(){
     printmenu();
     focusMenu(menu);
 }
-void registrarEntrega(){}
-void modificarPedido(){}
 
 void salir(){
     printf("FUNCION SALIR!");

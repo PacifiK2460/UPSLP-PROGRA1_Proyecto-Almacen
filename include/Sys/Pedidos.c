@@ -1,8 +1,37 @@
 #include "../sys.h"
 
+void input(char* bg_titulo, char* titulo, char* dest, int delimitar ( int (*f)(char*) )){
+    printf(CLEAR);
+    box(STDOUTPUT,DIM);
+    printinthemiddle(STDOUTPUT,1,bg_titulo,DIM);
+
+    WINDOW* input;
+    input = newWin((getrows(STDOUTPUT) - 3)/2,2,getcols(STDOUTPUT)-3,2,STDOUTPUT);
+    box(input,BOLD);
+    
+    winprint(input,1,0,titulo,BOLD);
+    printf(SHOW_CURSOR);
+    echo();
+
+    winprint(input,1,1," ",NONE);
+
+    //Leemos el nombre y evaluamos
+    while(delimitar(dest) == 0){
+        printf(CLEAR);
+        box(STDOUTPUT,DIM);
+        printinthemiddle(STDOUTPUT,1,bg_titulo,DIM);
+        box(input,BOLD);
+        winprint(input,1,0,titulo,BOLD);
+        winprint(input,1,1," ",NONE);
+    }
+    noEcho();
+    printf(HIDE_CURSOR);
+    printf(CLEAR);
+}
+
 struct Detalle{
     char nombre[7];
-    int cantidad;  
+    int cantidad;
 
     struct Detalle* next;
 };
@@ -77,12 +106,11 @@ int addDetalle(struct Carrito* Dest, char* nombre, int cantidad){
 struct Pedido{
     int numero;
     char estado;
-    char* nombre_de_cliente;
-    char* telefono_de_cliente;
-    char* correo;
+    char nombre_de_cliente[51];
+    char telefono_de_cliente[11];
+    char correo[51];
     
     struct Carrito* Carrito;
-
     struct Pedido* next;
 };
 
@@ -174,7 +202,7 @@ int loadPedidos(struct Pedidos* Dest){
     return OK;
 }
 
-int addPedido(struct Pedidos* Dest, char estado, char* nombre_del_cliente, char* telefono_del_cliente, char* correo, struct Carrito* Carrito){
+int addPedido(struct Pedidos* Dest, char estado, char* nombre_del_cliente, char* telefono_del_cliente, char* correo, struct Carrito* Carrito, int id){
     struct Pedido* new = newPedido();
     if(new == NULL) return ERROR;
     new->estado = estado;
@@ -182,9 +210,104 @@ int addPedido(struct Pedidos* Dest, char estado, char* nombre_del_cliente, char*
     strcpy(new->telefono_de_cliente, telefono_del_cliente);
     strcpy(new->correo,correo);
     new->Carrito = Carrito;
+    new->numero = id;
 
     return appendPedido(new,Dest);
 }
 
-void registrarPedido(){}
+void verPedido(){
+
+}
+
+void registrarPedido(){
+    struct Productos* Almacen = newProductos();
+    struct Producto* Producto;
+    loadAlmacen(Almacen);
+
+    int numero = randrang(99999,00000);
+    char estado = 'A';
+    char nombre_de_cliente[51];
+    char telefono_de_cliente[11];
+    char correo[51];
+
+    struct Pedidos* Pedidos = newPedidos();
+    input("Registrar Pedido","Nombre del Cliente", nombre_de_cliente,getNombre);
+    input("Registrar Pedido","Telefono del cliente", telefono_de_cliente,getTel);
+    input("Registrar Pedido","Correo del Cliente",correo,evaluarCorreo);
+
+    struct Carrito* Carrito = newCarrito();
+    struct Detalle* Detalle = newDetalle();
+
+    char pedidos[2];
+    int ped = -1;
+    char cantidad[11];
+    int cant;
+    while(1){
+        box(STDOUTPUT,DIM);
+        printinthemiddle(STDOUTPUT,1,"MODELOS DISPONIBLES",BOLD);
+        for(int i = 0; i < getSize(Almacen); i++){
+            Producto = getItem(Pedidos,i);
+            char *tit;
+            sprintf(tit,"%-2i %s", i, getName(Producto));
+            printinthemiddle(STDOUTPUT, 2 + i,tit, NONE);
+        }
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >",DIM);
+        getchar();
+
+        input("Registrar Pedido","ID del Producto",pedidos,getTel);
+        sscanf(pedidos,"%i",ped);
+        if(ped > getSize(Producto) || ped < 0){
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"ID INVALIDO", BOLD);
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >",DIM);
+            continue;
+        }
+
+        input("Registrar Pedido", "Cantidad",cantidad,getTel);
+        sscanf(cantidad,"%i",cant);
+        if(cant <= 0){
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2, "INGRESA UNA CANTIDAD MAYOR A 0",BOLD);
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >",DIM);
+            continue;
+        }
+
+        Producto = getItem(Almacen,ped);
+        addDetalle(Carrito,getName(Producto),cant);
+
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"ITEM AGREGADO CORRECTAMENTE", BOLD);
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >",DIM);
+        getchar();
+        break;
+    }
+
+    addPedido(Pedidos,estado,nombre_de_cliente,telefono_de_cliente,correo,Carrito,numero);
+
+    printf(CLEAR);
+    winprint(STDOUTPUT,1,2,"Pedido: ", NONE);
+    winprint(STDOUTPUT,8,2,"ACTIVO",BOLD);
+
+    winprint(STDOUTPUT,13,2,"ID: ", NONE);
+    winprint(STDOUTPUT,17,2,numero,BOLD);
+
+    winprint(STDOUTPUT,1, 3,"NOMBRE DEL CLIENTE: ", NONE);
+    winprint(STDOUTPUT,20,3,nombre_de_cliente,BOLD);
+
+    winprint(STDOUTPUT,1,4,"TÉLEFONO: ",NONE);
+    winprint(STDOUTPUT,10,4,telefono_de_cliente,BOLD);
+
+    winprint(STDOUTPUT,1,5,"CORREO: ", NONE);
+    winprint(STDOUTPUT,8,5,correo,BOLD);
+
+    int i = 0;
+    for(i; i < getCarritoSize(Carrito); i++){
+        
+    }
+
+    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para visualizarlo >",DIM);
+
+    remove("Pedidos");
+    savePedidos(Pedidos);
+
+}
 void consultarPedido(){}
+void registrarEntrega(){}
+void modificarPedido(){}

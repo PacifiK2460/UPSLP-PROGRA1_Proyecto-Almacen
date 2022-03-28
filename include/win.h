@@ -60,7 +60,6 @@ int getrows(WINDOW* Window);
 int getx(WINDOW* Window);
 int gety(WINDOW* Window);
 
-
 // Menu.h
 MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,char** opciones, int cant,Funciones* funciones);
 void printmenu();
