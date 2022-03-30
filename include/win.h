@@ -27,9 +27,7 @@
 #define ITALIC    "\e[3m"
 #define INVERSE   "\e[7m"
 
-// Color de fuente
-
-// Color de fondo
+// Colores
 
 // MISC
 #define HIDE_CURSOR "\e[?25l"

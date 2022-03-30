@@ -16,6 +16,13 @@ struct Productos{
     int size;
 };
 
+struct Producto* getProductoByName(struct Productos* Src, char* name){
+    for(int i = 0; i < getSize(Src); i++){
+        if( strcmp( getName(getItem(Src,i)),name ) == 0) return getItem(Src,i);
+    }
+    return NULL;
+}
+
 char* getName(struct Producto* Src){
     return Src->nombre;
 }
@@ -162,35 +169,6 @@ int modExistencia(struct Productos* Src, int index,int cant,char op){
     return OK;
 }
 
-void input(struct Productos* src, char* bg_titulo, char* titulo, char* dest, int delimitar ( int (*f)(char*) )){
-    printf(CLEAR);
-    box(STDOUTPUT,DIM);
-    printinthemiddle(STDOUTPUT,1,bg_titulo,DIM);
-
-    WINDOW* input;
-    input = newWin((getrows(STDOUTPUT) - 3)/2,2,getcols(STDOUTPUT)-3,2,STDOUTPUT);
-    box(input,BOLD);
-    
-    winprint(input,1,0,titulo,BOLD);
-    printf(SHOW_CURSOR);
-    echo();
-
-    winprint(input,1,1," ",NONE);
-
-    //Leemos el nombre y evaluamos
-    while(delimitar(dest) == 0){
-        printf(CLEAR);
-        box(STDOUTPUT,DIM);
-        printinthemiddle(STDOUTPUT,1,bg_titulo,DIM);
-        box(input,BOLD);
-        winprint(input,1,0,titulo,BOLD);
-        winprint(input,1,1," ",NONE);
-    }
-    noEcho();
-    printf(HIDE_CURSOR);
-    printf(CLEAR);
-}
-
 int modificarExistentes(){
     struct Productos* src = newProductos();
     struct Producto* Producto;
@@ -227,7 +205,7 @@ int sumarExistentes(){
         printinthemiddle(STDOUTPUT,getcols(STDOUTPUT)/2,"NO PUEDES MODIFICAR UN PRODUCTO INEXISTENTE",BOLD);
         printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presione cualquier tecla para continuar >",DIM);
         getchar();
-        return;
+        return 0;
     }
 
     char sum[10];
@@ -245,10 +223,6 @@ int addProduct(struct Productos* Dest,char* nombre, int existentes, double preci
     new->precioUnitario = precio;
     new->estante = estante;
     return appendProduct(new,Dest);
-}
-
-int digitos(int n){
-    return floor(log10(n) + 1);
 }
 
 void nuevoProducto(){
@@ -282,6 +256,10 @@ void nuevoProducto(){
 
     printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presione cualquier tecla para continuar >",DIM);
     getchar();
+}
+
+int digitos(int n){
+    return floor(log10(n) + 1);
 }
 
 // Acciones
@@ -367,6 +345,5 @@ void actualizarAlmacen(){
 }
 
 void salir(){
-    printf("FUNCION SALIR!");
     exit(0);
 };

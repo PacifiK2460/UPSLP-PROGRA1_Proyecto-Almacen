@@ -1,10 +1,6 @@
 //#include "include/sys.h"
 #include <stdio.h>
 
-int plus_one = [](const int x){
-    return x + 1;
-}
-
 int main(){
     // struct Productos* Almacen = newProductos();
     // loadAlmacen(Almacen);
@@ -16,5 +12,10 @@ int main(){
     //     printf("%s | %i | %c\n", getName(getItem(Almacen,i)), getExistentes(getItem(Almacen,i)), getEstante(getItem(Almacen,i)));
     // }
 
-    printf("%i",plus_one(2));
+
+    printf(
+        "\e[1;93mActivo\n"
+        "\e[1;92mEntregado\n"
+        "\e[1;91mCancelado\n"
+        );
 }

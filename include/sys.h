@@ -32,15 +32,19 @@ typedef struct Pedidos Pedidos;
 struct Productos* newProductos();
 struct Producto* newProducto();
 struct Producto* getItem(struct Productos* Src, int index);
-int addProduct(struct Productos* Src,char* nombre, int existentes, double precio, char estante,int id);
+int addProduct(struct Productos* Dest,char* nombre, int existentes, double precio, char estante);
 int getSize(struct Productos* Src);
 int saveAlmacen(struct Productos* Dest);
 int loadAlmacen(struct Productos* Dest);
+struct Producto* getProductoByName(struct Productos* Src, char* name);
 
 char* getName(struct Producto* Src);
 int getExistentes(struct Producto* Src);
 double getPrice(struct Producto* Src);
 char getEstante(struct Producto* Src);
+
 //Pedidos
 
+//MISC
+int digitos(int n);
 #endif
