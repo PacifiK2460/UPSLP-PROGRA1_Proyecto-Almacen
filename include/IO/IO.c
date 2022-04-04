@@ -61,7 +61,8 @@ int getDouble(char* Dest, int size){
     return 0;
 }
 
-int evaluarNombre(char* Src, int size){
+int evaluarNombre(char* Src){
+    int size = 51;
     if(getText(Src,size - 1) == 0) return 0;
     for(int i = 0; i < 3; i++) if(esLetra(Src[i]) == 0) return 0;
     for(int i = 3; i < 5; i++) if(esNumero(Src[i]) == 0) return 0;
@@ -69,24 +70,32 @@ int evaluarNombre(char* Src, int size){
     return 1;
 }
 
-int evaluarExistencia(char* Src, int size){
+int evaluarExistencia(char* Src){
+    int size = 11;
     if(getInt(Src,size - 1)==0)return 0;
     Src[size - 1] = '\0';
     return 1;
 }
 
-int evaluarPrecio(char* Src, int size){
+int evaluarPrecio(char* Src){
+    int size = 11;
     if(getDouble(Src,size - 1)==0)return 0;
     Src[size] = '\0';
     return 1;
 }
 
-int evaluarUbicacion(char* Src, int size){
+int evaluarUbicacion(char* Src){
     if(getText(Src,1)==0)return 0;
     Src[2] = '\0';
     return 1;
 }
 
-int evaluarCorreo(char* Dest, int size){
-    return getText(Dest, size);
+int evaluarNumero(char* Dest){
+    if( getInt(Dest,11) == 0) return 0;
+    Dest[11] = '\0';
+    return 1;
+}
+
+int evaluarCorreo(char* Dest){
+    return getText(Dest, 51);
 }

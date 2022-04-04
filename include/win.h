@@ -42,7 +42,7 @@ void echo();
 typedef struct WINDOW WINDOW;
 typedef struct MENU MENU;
 
-typedef void (*Funciones)(void);
+typedef int (*Funciones)(void);
 
 void innit();
 

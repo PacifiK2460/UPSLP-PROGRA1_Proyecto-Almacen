@@ -1,40 +1,43 @@
 #include "../sys.h"
 
-void input(char* bg_titulo, char* titulo, char* dest, int delimitar ( int (*f)(char*) )){
+void input(char* bg_titulo, char* titulo, char* dest, int (*funcion)(char*)){
     printf(CLEAR);
     box(STDOUTPUT,DIM);
     printinthemiddle(STDOUTPUT,1,bg_titulo,DIM);
 
-    WINDOW* input;
-    input = newWin((getrows(STDOUTPUT) - 3)/2,2,getcols(STDOUTPUT)-3,2,STDOUTPUT);
-    box(input,BOLD);
+    WINDOW* wininput;
+    wininput = newWin((getrows(STDOUTPUT) - 3)/2,2,getcols(STDOUTPUT)-3,2,STDOUTPUT);
+    box(wininput,BOLD);
     
-    winprint(input,1,0,titulo,BOLD);
+    winprint(wininput,1,0,titulo,BOLD);
     printf(SHOW_CURSOR);
     echo();
 
-    winprint(input,1,1," ",NONE);
+    winprint(wininput,1,1," ",NONE);
 
+    delimitador result = funcion;
     //Leemos el nombre y evaluamos
-    while(delimitar(dest) == 0){
+    while(result(dest) == 0){
         printf(CLEAR);
         box(STDOUTPUT,DIM);
         printinthemiddle(STDOUTPUT,1,bg_titulo,DIM);
-        box(input,BOLD);
-        winprint(input,1,0,titulo,BOLD);
-        winprint(input,1,1," ",NONE);
+        box(wininput,BOLD);
+        winprint(wininput,1,0,titulo,BOLD);
+        winprint(wininput,1,1," ",NONE);
     }
     noEcho();
     printf(HIDE_CURSOR);
     printf(CLEAR);
 }
 
-void registrarPedido(){
+int registrarPedido(){
     struct Productos* Almacen = newProductos();
     struct Producto* Producto;
     loadAlmacen(Almacen);
 
     int numero = randrang(99999,00000);
+    char numid[6];
+    sprintf(numid,"%i",numero);
     char estado = 'A';
     char nombre_de_cliente[51];
     char telefono_de_cliente[11];
@@ -42,9 +45,9 @@ void registrarPedido(){
 
     struct Pedidos* Pedidos = newPedidos();
 
-    input("Registrar Pedido","Nombre del Cliente", nombre_de_cliente,Nombre(nombre_de_cliente));
-    input("Registrar Pedido","Telefono del cliente", telefono_de_cliente,Numero(telefono_de_cliente));
-    input("Registrar Pedido","Correo del Cliente",correo,Correo(correo));
+    input("Registrar Pedido","Nombre del Cliente", nombre_de_cliente,evaluarNombre);
+    input("Registrar Pedido","Telefono del cliente", telefono_de_cliente,evaluarNumero);
+    input("Registrar Pedido","Correo del Cliente",correo,evaluarCorreo);
 
     struct Carrito* Carrito = newCarrito();
     struct Detalle* Detalle = newDetalle();
@@ -56,24 +59,24 @@ void registrarPedido(){
     while(1){
         box(STDOUTPUT,DIM);
         printinthemiddle(STDOUTPUT,1,"MODELOS DISPONIBLES",BOLD);
-        for(int i = 0; i < getSize(Almacen); i++){
-            Producto = getItem(Pedidos,i);
+        for(int i = 0; i < getProductosSize(Almacen); i++){
+            Producto = getProductoByIndex(Almacen,i);
             char *tit;
-            sprintf(tit,"%-2i %s", i, getName(Producto));
+            sprintf(tit,"%-2i %s", i, getProductoName(Producto));
             printinthemiddle(STDOUTPUT, 2 + i,tit, NONE);
         }
         printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >",DIM);
         getchar();
 
-        input("Registrar Pedido","ID del Producto",pedidos,Numero(pedidos));
+        input("Registrar Pedido","ID del Producto",pedidos,evaluarNumero);
         sscanf(pedidos,"%i",ped);
-        if(ped > getSize(Producto) || ped < 0){
+        if(ped > getPedidosSize(Pedidos) || ped < 0){
             printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"ID INVALIDO", BOLD);
             printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >",DIM);
             continue;
         }
 
-        input("Registrar Pedido", "Cantidad",cantidad,Numero(pedidos));
+        input("Registrar Pedido", "Cantidad",cantidad,evaluarNumero);
         sscanf(cantidad,"%i",cant);
         if(cant <= 0){
             printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2, "INGRESA UNA CANTIDAD MAYOR A 0",BOLD);
@@ -81,8 +84,8 @@ void registrarPedido(){
             continue;
         }
 
-        Producto = getItem(Almacen,ped);
-        addDetalle(Carrito,getName(Producto),cant);
+        Producto = getProductoByIndex(Almacen,ped);
+        addDetalle(Carrito,getProductoName(Producto),cant);
 
         printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"ITEM AGREGADO CORRECTAMENTE", BOLD);
         printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >",DIM);
@@ -97,7 +100,7 @@ void registrarPedido(){
     winprint(STDOUTPUT,8,2,"ACTIVO",BOLD);
 
     winprint(STDOUTPUT,13,2,"ID: ", NONE);
-    winprint(STDOUTPUT,17,2,numero,BOLD);
+    winprint(STDOUTPUT,17,2,numid,BOLD);
 
     winprint(STDOUTPUT,1, 3,"NOMBRE DEL CLIENTE: ", NONE);
     winprint(STDOUTPUT,20,3,nombre_de_cliente,BOLD);
@@ -120,7 +123,7 @@ void registrarPedido(){
 
 }
 
-void mostrarPedidosPor(char tipo){
+int mostrarPedidosPor(char tipo){
     struct Pedidos* Pedidos = newPedidos();
     struct Pedido* Pedido;
     
@@ -133,7 +136,7 @@ void mostrarPedidosPor(char tipo){
     loadAlmacen(Productos);
     int i = 0;
     int c;
-    char color[5];
+    char color[10];
     char estado[10];
     char temp[20];
     double total;
@@ -157,14 +160,13 @@ void mostrarPedidosPor(char tipo){
 
     noEcho();
 
-
     while(1){
         printf(CLEAR);
-        Pedido = getPedido(Pedidos,i);
-        Carrito = getCarrito(Pedido);
+        Pedido = getPedidoByIndex(Pedidos,i);
+        Carrito = getPedidoCarrito(Pedido);
 
         if(Pedido == NULL) break;
-        if(Pedido->estado != tipo){
+        if(getPedidoEstado(Pedido) != tipo){
             i++;
             continue;
         }
@@ -175,7 +177,7 @@ void mostrarPedidosPor(char tipo){
         printinthemiddle(STDOUTPUT,1," PEDIDOS ", INVERSE);
 
         char informacion_del_cliente[300];
-        sprintf(informacion_del_cliente,NONE BOLD "Pedido N°: " NONE "%i" BOLD "ESTADO: " "%s%s" BOLD "Nombre del Cliente: " NONE "%s" BOLD "Télefono: " NONE "%s" BOLD "Correo electrónico: " NONE  "%s", Pedido->numero,color,estado,getNamePedido(Pedido),getTelPedido(Pedido), getCorreoPedido(Pedido));
+        sprintf(informacion_del_cliente,NONE BOLD "Pedido N°: " NONE "%i" BOLD "ESTADO: " "%s%s" BOLD "Nombre del Cliente: " NONE "%s" BOLD "Télefono: " NONE "%s" BOLD "Correo electrónico: " NONE  "%s", getPedidoNumero(Pedido),color,estado,getPedidoNombre(Pedido),getPedidoTelefono(Pedido), getPedidoCorreo(Pedido));
         
         printinthemiddle(STDOUTPUT,3,informacion_del_cliente,NONE);
 
@@ -183,11 +185,11 @@ void mostrarPedidosPor(char tipo){
             //Obtenemos la cantida de caracteres a alinear
         int mayor_cantidad = 0, mayor_precio = 0, mayor_total = 0;
         for(int j = 0; j < getCarritoSize(Carrito); j++){
-            Detalle = getDetalle(Carrito,j);
-            if( Detalle->cantidad > mayor_cantidad ) mayor_cantidad = Detalle->cantidad;
-            Producto = getProductoByName(Producto,Detalle->nombre);
-            if( getPrice(Producto) > mayor_precio ) mayor_precio = getPrice(Producto);
-            if( ( getPrice(Producto) * mayor_cantidad ) > mayor_total ) mayor_total = ( getPrice(Producto) * mayor_cantidad ); 
+            Detalle = getDetalleByIndex(Carrito,j);
+            if( getDetalleCantidad(Detalle) > mayor_cantidad ) mayor_cantidad = getDetalleCantidad(Detalle);
+            Producto = getProductoByName(Productos,getDetalleNombre(Detalle));
+            if( getProductoPrecio(Producto) > mayor_precio ) mayor_precio = getProductoPrecio(Producto);
+            if( ( getProductoPrecio(Producto) * mayor_cantidad ) > mayor_total ) mayor_total = ( getProductoPrecio(Producto) * mayor_cantidad ); 
         }
         mayor_cantidad = 8 > digitos(mayor_cantidad) ? 8 : digitos(mayor_cantidad);
         mayor_precio = 15 > digitos(mayor_precio) ? 15 : digitos(mayor_precio);
@@ -205,33 +207,33 @@ void mostrarPedidosPor(char tipo){
         winprint(STDOUTPUT,ancho,4, "SubTotal",BOLD);
             //Imprimimos Contenido
         for(int j = 0; j < getCarritoSize(Carrito);){
-            Detalle = getDetalle(Carrito,j);
+            Detalle = getDetalleByIndex(Carrito,j);
             ancho = 6 + 1 + mayor_cantidad + 1 + mayor_precio + 1 + mayor_total;
 
             ancho = (getcols(STDOUTPUT)-ancho)/2;
             
-            winprint(STDOUTPUT,ancho,5+j,Detalle->nombre,NONE);
+            winprint(STDOUTPUT,ancho,5+j,getDetalleNombre(Detalle),NONE);
 
             ancho += 7;
 
-            sprintf(temp, "%i", Detalle->cantidad);
+            sprintf(temp, "%i", getDetalleCantidad(Detalle));
             winprint(STDOUTPUT,ancho,5+j,temp,NONE);
 
             ancho += mayor_cantidad + 1;
 
-            sprintf(temp,"%.2f",getPrice(getItem(Productos,i)));
+            sprintf(temp,"%.2f",getProductoPrecio(getProductoByIndex(Productos,i)));
             winprint(STDOUTPUT,ancho,5+j,temp,BOLD);
             
             ancho += mayor_precio + 1;
             
-            total += getPrice(getItem(Productos,i)) * Detalle->cantidad;
+            total += getProductoPrecio(getProductoByIndex(Productos,i)) * getDetalleCantidad(Detalle);
 
-            sprintf(temp,"%.2f",getPrice(getItem(Productos,i)) * Detalle->cantidad);
+            sprintf(temp,"%.2f",getProductoPrecio(getProductoByIndex(Productos,i)) * getDetalleCantidad(Detalle));
             winprint(STDOUTPUT,ancho,5+j, temp,BOLD);
         }
 
         sprintf(temp,BOLD "TOTAL: " NONE "%.2f",total);
-        printinthemiddle(STDOUTPUT,getCarrito(Carrito),temp,NONE);
+        printinthemiddle(STDOUTPUT,getCarritoSize(Carrito),temp,NONE);
 
         //Imprimimos pie de pagina
         if(i != 0){
@@ -257,19 +259,19 @@ void mostrarPedidosPor(char tipo){
     echo();
 }
 
-void pedidosActivos(){
+int pedidosActivos(){
     mostrarPedidosPor('A');
 }
 
-void pedidosEntregados(){
+int pedidosEntregados(){
     mostrarPedidosPor('E');
 }
 
-void pedidosCancelados(){
+int pedidosCancelados(){
     mostrarPedidosPor('C');
 }
 
-void buscarID(char* ID){
+int buscarID(char* ID){
     int Id;
     sscanf(ID,"%i",&Id);
 
@@ -283,15 +285,15 @@ void buscarID(char* ID){
     struct Productos* Productos;
     struct Producto* Producto;
 
-    char color[5];
+    char color[10];
     char estado[10];
     char temp[20];
     double total;
 
     for(int i = 0; i <  getPedidosSize(Pedidos); i++){
-        if(getPedido(Pedidos,i)->numero == Id){
-            Carrito = getCarrito(getPedido(Pedidos,i));
-            switch (getPedido(Pedidos,i)->estado)
+        if(getPedidoNumero(getPedidoByIndex(Pedidos,i)) == Id){
+            Carrito = getPedidoCarrito(getPedidoByIndex(Pedidos,i));
+            switch (getPedidoEstado(getPedidoByIndex(Pedidos,i)))
             {
             case 'A':
                 strcpy(color,"\e[1;91m");
@@ -314,7 +316,7 @@ void buscarID(char* ID){
             printinthemiddle(STDOUTPUT,1," PEDIDOS ", INVERSE);
 
             char informacion_del_cliente[300];
-            sprintf(informacion_del_cliente,NONE BOLD "Pedido N°: " NONE "%i" BOLD "ESTADO: " "%s%s" BOLD "Nombre del Cliente: " NONE "%s" BOLD "Télefono: " NONE "%s" BOLD "Correo electrónico: " NONE  "%s", getPedido(Pedidos,i)->numero,color,estado,getPedido(Pedidos,i)->nombre_de_cliente,getPedido(Pedidos,i)->telefono_de_cliente, getPedido(Pedidos,i)->correo);
+            sprintf(informacion_del_cliente,NONE BOLD "Pedido N°: " NONE "%i" BOLD "ESTADO: " "%s%s" BOLD "Nombre del Cliente: " NONE "%s" BOLD "Télefono: " NONE "%s" BOLD "Correo electrónico: " NONE  "%s", getPedidoNumero(getPedidoByIndex(Pedidos,i)),color,estado,getPedidoNombre(getPedidoByIndex(Pedidos,i)),getPedidoTelefono(getPedidoByIndex(Pedidos,i)), getPedidoCorreo(getPedidoByIndex(Pedidos,i)));
 
             printinthemiddle(STDOUTPUT,3,informacion_del_cliente,NONE);
 
@@ -322,11 +324,11 @@ void buscarID(char* ID){
                 //Obtenemos la cantida de caracteres a alinear
             int mayor_cantidad = 0, mayor_precio = 0, mayor_total = 0;
             for(int j = 0; j < getCarritoSize(Carrito); j++){
-                Detalle = getDetalle(Carrito,j);
-                if( Detalle->cantidad > mayor_cantidad ) mayor_cantidad = Detalle->cantidad;
-                Producto = getProductoByName(Producto,Detalle->nombre);
-                if( getPrice(Producto) > mayor_precio ) mayor_precio = getPrice(Producto);
-                if( ( getPrice(Producto) * mayor_cantidad ) > mayor_total ) mayor_total = ( getPrice(Producto) * mayor_cantidad ); 
+                Detalle = getDetalleByIndex(Carrito,j);
+                if( getDetalleCantidad(Detalle) > mayor_cantidad ) mayor_cantidad = getDetalleCantidad(Detalle);
+                Producto = getProductoByName(Productos,getDetalleNombre(Detalle));
+                if( getProductoPrecio(Producto) > mayor_precio ) mayor_precio = getProductoPrecio(Producto);
+                if( ( getProductoPrecio(Producto) * mayor_cantidad ) > mayor_total ) mayor_total = ( getProductoPrecio(Producto) * mayor_cantidad ); 
             }
             mayor_cantidad = 8 > digitos(mayor_cantidad) ? 8 : digitos(mayor_cantidad);
             mayor_precio = 15 > digitos(mayor_precio) ? 15 : digitos(mayor_precio);
@@ -344,33 +346,33 @@ void buscarID(char* ID){
             winprint(STDOUTPUT,ancho,4, "SubTotal",BOLD);
                 //Imprimimos Contenido
             for(int j = 0; j < getCarritoSize(Carrito);){
-                Detalle = getDetalle(Carrito,j);
+                Detalle = getDetalleByIndex(Carrito,j);
                 ancho = 6 + 1 + mayor_cantidad + 1 + mayor_precio + 1 + mayor_total;
 
                 ancho = (getcols(STDOUTPUT)-ancho)/2;
                 
-                winprint(STDOUTPUT,ancho,5+j,Detalle->nombre,NONE);
+                winprint(STDOUTPUT,ancho,5+j,getDetalleNombre(Detalle),NONE);
 
                 ancho += 7;
 
-                sprintf(temp, "%i", Detalle->cantidad);
+                sprintf(temp, "%i", getDetalleCantidad(Detalle));
                 winprint(STDOUTPUT,ancho,5+j,temp,NONE);
 
                 ancho += mayor_cantidad + 1;
 
-                sprintf(temp,"%.2f",getPrice(getItem(Productos,i)));
+                sprintf(temp,"%.2f",getProductoPrecio(getProductoByIndex(Productos,i)));
                 winprint(STDOUTPUT,ancho,5+j,temp,BOLD);
                 
                 ancho += mayor_precio + 1;
                 
-                total += getPrice(getItem(Productos,i)) * Detalle->cantidad;
+                total += getProductoPrecio(getProductoByIndex(Productos,i)) * getDetalleCantidad(Detalle);
 
-                sprintf(temp,"%.2f",getPrice(getItem(Productos,i)) * Detalle->cantidad);
+                sprintf(temp,"%.2f", getProductoPrecio(getProductoByIndex(Productos,i)) * getDetalleCantidad(Detalle));
                 winprint(STDOUTPUT,ancho,5+j, temp,BOLD);
             }
 
             sprintf(temp,BOLD "TOTAL: " NONE "%.2f",total);
-            printinthemiddle(STDOUTPUT,getCarrito(Carrito),temp,NONE);
+            printinthemiddle(STDOUTPUT,getCarritoSize(Carrito),temp,NONE);
             printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-1,"< Presiona cualquier tecla para salir >", DIM);
             getchar();
             break;
@@ -379,12 +381,12 @@ void buscarID(char* ID){
 
 }
 
-void numeroDePedido(){
+int numeroDePedido(){
     char ID[6];
-    input("BUSCAR POR ID", "INTRODUCE EL ID",ID,buscarID);
+    input("BUSCAR POR ID", "INTRODUCE EL ID",ID,&buscarID);
 }
 
-void consultarPedido(){
+int consultarPedido(){
     MENU* menu;
     char* opciones[] = {
         "Pedidos Activos",
@@ -406,9 +408,9 @@ void consultarPedido(){
     printmenu();
     focusMenu(menu);
 }
-void registrarEntrega(){}
-void modificarPedido(){}
+int registrarEntrega(){}
+int modificarPedido(){}
 
-void regresar(){
-    return;
+int regresar(){
+    return 1;
 }
