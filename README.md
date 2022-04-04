@@ -43,6 +43,7 @@ El proyecto deberá estar programado con librerías .h, estructuras y el manejo 
 7. Salir del sistema *(Terminar programa)*
 
 ## Funcionalidad
+La funcionalidad esta marcada si esta no presenta ningun error de logica (los errore graficos por ahora no son tomados en cuenta).
 - [X] Consulta de Almacén
 - [X] Actualizar Almacén
   - [X] Sumar Existentes

@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"string.h": "c",
+			"iterator": "cpp",
+			"stdio.h": "c",
+			"ioctl.h": "c",
+			"smartio.h": "c",
+			"win.h": "c",
+			"wchar.h": "c",
+			"cstdio": "c",
+			"sys.h": "c",
+			"chrono": "c",
+			"variant": "c"
+		}
+	}
+}

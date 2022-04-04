@@ -14,5 +14,6 @@
         "sys.h": "c",
         "chrono": "c",
         "variant": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Enable"
 }
