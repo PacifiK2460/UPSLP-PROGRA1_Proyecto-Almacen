@@ -36,12 +36,12 @@ int registrarPedido(){
     loadAlmacen(Almacen);
 
     int numero = randrang(99999,00000);
-    char numid[6];
+    char numid[6] = {0};
     sprintf(numid,"%i",numero);
     char estado = 'A';
-    char nombre_de_cliente[51];
-    char telefono_de_cliente[11];
-    char correo[51];
+    char nombre_de_cliente[51] = {0};
+    char telefono_de_cliente[11] = {0};
+    char correo[51] = {0};
 
     struct Pedidos* Pedidos = newPedidos();
 
@@ -52,9 +52,9 @@ int registrarPedido(){
     struct Carrito* Carrito = newCarrito();
     struct Detalle* Detalle = newDetalle();
 
-    char pedidos[2];
+    char pedidos[2] = {0};
     int ped = -1;
-    char cantidad[11];
+    char cantidad[11] = {0};
     int cant;
     while(1){
         box(STDOUTPUT,DIM);
@@ -136,9 +136,9 @@ int mostrarPedidosPor(char tipo){
     loadAlmacen(Productos);
     int i = 0;
     int c;
-    char color[10];
-    char estado[10];
-    char temp[20];
+    char color[10] = {0};
+    char estado[10] = {0};
+    char temp[20] = {0};
     double total;
 
     switch (tipo)
@@ -176,7 +176,7 @@ int mostrarPedidosPor(char tipo){
         box(STDOUTPUT,DIM);
         printinthemiddle(STDOUTPUT,1," PEDIDOS ", INVERSE);
 
-        char informacion_del_cliente[300];
+        char informacion_del_cliente[300] = {0};
         sprintf(informacion_del_cliente,NONE BOLD "Pedido N°: " NONE "%i" BOLD "ESTADO: " "%s%s" BOLD "Nombre del Cliente: " NONE "%s" BOLD "Télefono: " NONE "%s" BOLD "Correo electrónico: " NONE  "%s", getPedidoNumero(Pedido),color,estado,getPedidoNombre(Pedido),getPedidoTelefono(Pedido), getPedidoCorreo(Pedido));
         
         printinthemiddle(STDOUTPUT,3,informacion_del_cliente,NONE);
@@ -285,10 +285,10 @@ int buscarID(char* ID){
     struct Productos* Productos;
     struct Producto* Producto;
 
-    char color[10];
-    char estado[10];
-    char temp[20];
-    double total;
+    char color[10] = {0};
+    char estado[10] = {0};
+    char temp[20] = {0};
+    double total = {0};
 
     for(int i = 0; i <  getPedidosSize(Pedidos); i++){
         if(getPedidoNumero(getPedidoByIndex(Pedidos,i)) == Id){
@@ -315,7 +315,7 @@ int buscarID(char* ID){
             box(STDOUTPUT,DIM);
             printinthemiddle(STDOUTPUT,1," PEDIDOS ", INVERSE);
 
-            char informacion_del_cliente[300];
+            char informacion_del_cliente[300] = {0};
             sprintf(informacion_del_cliente,NONE BOLD "Pedido N°: " NONE "%i" BOLD "ESTADO: " "%s%s" BOLD "Nombre del Cliente: " NONE "%s" BOLD "Télefono: " NONE "%s" BOLD "Correo electrónico: " NONE  "%s", getPedidoNumero(getPedidoByIndex(Pedidos,i)),color,estado,getPedidoNombre(getPedidoByIndex(Pedidos,i)),getPedidoTelefono(getPedidoByIndex(Pedidos,i)), getPedidoCorreo(getPedidoByIndex(Pedidos,i)));
 
             printinthemiddle(STDOUTPUT,3,informacion_del_cliente,NONE);
@@ -382,7 +382,7 @@ int buscarID(char* ID){
 }
 
 int numeroDePedido(){
-    char ID[6];
+    char ID[6] = {0};
     input("BUSCAR POR ID", "INTRODUCE EL ID",ID,&buscarID);
 }
 

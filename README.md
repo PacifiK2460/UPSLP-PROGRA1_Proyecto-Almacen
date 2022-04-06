@@ -48,8 +48,8 @@ La funcionalidad esta marcada si esta no presenta ningun error de logica (los er
 - [X] Actualizar Almacén
   - [X] Sumar Existentes
   - [X] Modificar Existentes
-  - [ ] Agregar Producto
-- [ ] Registrar Pedido
+  - [ ] Agregar Producto [#1](https://github.com/PacifiK2460/PROYECTO/issues/1)
+- [ ] Registrar Pedido [#2](https://github.com/PacifiK2460/PROYECTO/issues/2)
 - [ ] Consultar Pedido
 - [ ] Registrar Entrega
 - [ ] Modificar Estado de Pedido 

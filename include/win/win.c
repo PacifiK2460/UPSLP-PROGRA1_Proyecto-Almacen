@@ -143,16 +143,16 @@ void box(WINDOW* Window, char* mode){
   int COLS = getcols(Window);
   int ROWS = getrows(Window);
 
-  for(int i = 0; i < COLS; i++) winprint(Window,0 + i,0,"─", mode);
-  for(int i = 0; i < COLS; i++) winprint(Window,0 + i,0 + ROWS,"─", mode);
+  for(int i = 0; i < COLS; i++) winprint(Window,0 + i,0,HLINE, mode);
+  for(int i = 0; i < COLS; i++) winprint(Window,0 + i,0 + ROWS,HLINE, mode);
 
-  for(int i = 0; i < ROWS; i++) winprint(Window,0,0 + i,"│",mode);
-  for(int i = 0; i < ROWS; i++) winprint(Window,0 + COLS,0 + i,"│",mode);
+  for(int i = 0; i < ROWS; i++) winprint(Window,0,0 + i,VLINE,mode);
+  for(int i = 0; i < ROWS; i++) winprint(Window,0 + COLS,0 + i,VLINE,mode);
 
   // Imprimimos las esquinas
-  winprint(Window,0,0, "┌",mode);        //IZQ SUP
-  winprint(Window,0 + COLS, 0, "┐",mode);    //IZQ INF
-  winprint(Window,0, 0 + ROWS, "└",mode);    //DER SUP
-  winprint(Window,0 + COLS, 0 + ROWS, "┘",mode); //DER INF
+  winprint(Window,0,0, TLLINE,mode);        //IZQ SUP
+  winprint(Window,0 + COLS, 0, TRLINE,mode);    //IZQ INF
+  winprint(Window,0, 0 + ROWS, BLLINE,mode);    //DER SUP
+  winprint(Window,0 + COLS, 0 + ROWS, BRLINE,mode); //DER INF
 
 }
