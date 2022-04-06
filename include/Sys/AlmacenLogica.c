@@ -9,7 +9,7 @@ int modificarExistentes(){
     struct Producto* Producto;
     loadAlmacen(src);
 
-    char id[10];
+    char id[10] = {0};
     input("MODIFICAR PRODUCTO","INDEX DEL PRODUCTO A MODIFICAR",id,&evaluarExistencia);
     int idx;
     sscanf(id,"%i",&idx);
@@ -20,7 +20,7 @@ int modificarExistentes(){
         return 0;
     }
 
-    char sum[10];
+    char sum[10] = {0};
     input("MODIFICAR PRODUCTO","CANTIDAD A PONER",sum, &evaluarExistencia);
     int s;
     sscanf(sum,"%i",&s);
@@ -35,7 +35,7 @@ int sumarExistentes(){
     struct Producto* Producto;
     loadAlmacen(src);
 
-    char id[10];
+    char id[10] = {0};
     input("MODIFICAR PRODUCTO","INDEX DEL PRODUCTO A MODIFICAR",id,&evaluarExistencia);
     int idx;
     sscanf(id,"%i",&idx);
@@ -46,7 +46,7 @@ int sumarExistentes(){
         return 0;
     }
 
-    char sum[10];
+    char sum[10] = {0};
     input("MODIFICAR PRODUCTO","CANTIDAD A SUMAR",sum, &evaluarExistencia);
     int s;
     sscanf(sum,"%i",&s);
@@ -57,13 +57,12 @@ int sumarExistentes(){
 
 int nuevoProducto(){
     struct Productos* src = newProductos();
-    struct Producto* Producto;
     loadAlmacen(src);
 
-    char nombre[7];
-    char existencia[10];
-    char precio[10];
-    char ubicacion[2];
+    char nombre[7] = {0};
+    char existencia[10] = {0};
+    char precio[10] = {0};
+    char ubicacion[2] = {0};
     input("AÑADIR PRODUCTO","MODELO",nombre,&evaluarNombre);
     input("AÑADIR PRODUCTO","EXISTENCIA",existencia,&evaluarExistencia);
     input("AÑADIR PRODUCTO","PRECIO",precio,&evaluarPrecio);
@@ -75,16 +74,18 @@ int nuevoProducto(){
 
     sscanf(existencia, "%i",&existentes);
     sscanf(precio,"%lf", &precios);
-    sscanf(ubicacion,"%c",&ubi);
+    ubi = ubicacion[0];
 
     addProduct(src,nombre,existentes,precios,ubi);
     remove("Almacen");
     saveAlmacen(src);
+    free(src);
 
     box(STDOUTPUT,DIM);
     printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"AÑADIDO EXITOSO",BOLD);
     printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presione cualquier tecla para continuar >",DIM);
     getchar();
+    return 1;
 }
 
 int actualizarAlmacen(){

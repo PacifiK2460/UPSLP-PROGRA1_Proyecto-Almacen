@@ -80,13 +80,13 @@ int evaluarExistencia(char* Src){
 int evaluarPrecio(char* Src){
     int size = 11;
     if(getDouble(Src,size - 1)==0)return 0;
-    Src[size] = '\0';
+    Src[size - 1] = '\0';
     return 1;
 }
 
 int evaluarUbicacion(char* Src){
-    if(getText(Src,1)==0)return 0;
-    Src[2] = '\0';
+    if(getText(Src,2)==0)return 0;
+    Src[1] = '\0';
     return 1;
 }
 

@@ -16,6 +16,13 @@
   #include <termios.h>
 #endif
 
+#define VLINE  "│"
+#define HLINE  "─"
+#define TLLINE "╭"
+#define TRLINE "╮"
+#define BLLINE "╰"
+#define BRLINE "╯"
+
 #define STDOUTPUT NULL
 
 #define RESET     "\e[0m"
