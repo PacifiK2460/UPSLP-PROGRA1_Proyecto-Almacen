@@ -49,7 +49,7 @@ La funcionalidad esta marcada si esta no presenta ningun error de logica (los er
   - [X] Sumar Existentes
   - [X] Modificar Existentes
   - [X] Agregar Producto
-- [ ] Registrar Pedido [#2](https://github.com/PacifiK2460/PROYECTO/issues/2)
+- [X] Registrar Pedido
 - [ ] Consultar Pedido
 - [ ] Registrar Entrega
 - [ ] Modificar Estado de Pedido 

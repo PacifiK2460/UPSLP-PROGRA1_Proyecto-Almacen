@@ -44,6 +44,7 @@ int registrarPedido(){
     char correo[51] = {0};
 
     struct Pedidos* Pedidos = newPedidos();
+    loadPedidos(Pedidos);
 
     input("Registrar Pedido","Nombre del Cliente", nombre_de_cliente,evaluarNombre);
     input("Registrar Pedido","Telefono del cliente", telefono_de_cliente,evaluarNumero);
@@ -61,7 +62,7 @@ int registrarPedido(){
         printinthemiddle(STDOUTPUT,1,"MODELOS DISPONIBLES",BOLD);
         for(int i = 0; i < getProductosSize(Almacen); i++){
             Producto = getProductoByIndex(Almacen,i);
-            char *tit;
+            char tit[51];
             sprintf(tit,"%-2i %s", i, getProductoName(Producto));
             printinthemiddle(STDOUTPUT, 2 + i,tit, NONE);
         }
@@ -69,7 +70,7 @@ int registrarPedido(){
         getchar();
 
         input("Registrar Pedido","ID del Producto",pedidos,evaluarNumero);
-        sscanf(pedidos,"%i",ped);
+        sscanf(pedidos,"%i",&ped);
         if(ped > getPedidosSize(Pedidos) || ped < 0){
             printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"ID INVALIDO", BOLD);
             printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >",DIM);
@@ -77,9 +78,9 @@ int registrarPedido(){
         }
 
         input("Registrar Pedido", "Cantidad",cantidad,evaluarNumero);
-        sscanf(cantidad,"%i",cant);
-        if(cant <= 0){
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2, "INGRESA UNA CANTIDAD MAYOR A 0",BOLD);
+        sscanf(cantidad,"%i",&cant);
+        if(cant <= 0 || cant >= getProductoExistentes(getProductoByIndex(Almacen,ped))){
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2, "INGRESA UNA CANTIDAD POSIBLE A COMPRAR",BOLD);
             printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >",DIM);
             continue;
         }
@@ -94,33 +95,32 @@ int registrarPedido(){
     }
 
     addPedido(Pedidos,estado,nombre_de_cliente,telefono_de_cliente,correo,Carrito,numero);
+    remove("Pedidos");
+    savePedidos(Pedidos);
 
     printf(CLEAR);
-    winprint(STDOUTPUT,1,2,"Pedido: ", NONE);
-    winprint(STDOUTPUT,8,2,"ACTIVO",BOLD);
+    winprint(STDOUTPUT,1,2,NONE "Pedido: " BOLD "ACTIVO", NONE);
 
-    winprint(STDOUTPUT,13,2,"ID: ", NONE);
-    winprint(STDOUTPUT,17,2,numid,BOLD);
+    char t1[50];
+    sprintf(t1,NONE"ID: " BOLD "%i" NONE,numero);
+    winprint(STDOUTPUT,17,2,t1, NONE);
 
-    winprint(STDOUTPUT,1, 3,"NOMBRE DEL CLIENTE: ", NONE);
-    winprint(STDOUTPUT,20,3,nombre_de_cliente,BOLD);
+    sprintf(t1,NONE "NOMBRE DEL CLIENTE: " BOLD "%s",nombre_de_cliente);
+    winprint(STDOUTPUT,1, 3,t1, NONE);
 
-    winprint(STDOUTPUT,1,4,"TÉLEFONO: ",NONE);
-    winprint(STDOUTPUT,10,4,telefono_de_cliente,BOLD);
+    sprintf(t1,NONE "TÉLEFONO: " BOLD "%s",telefono_de_cliente);
+    winprint(STDOUTPUT,1,4,t1,NONE);
 
-    winprint(STDOUTPUT,1,5,"CORREO: ", NONE);
-    winprint(STDOUTPUT,8,5,correo,BOLD);
+    sprintf(t1,NONE "CORREO: " BOLD "%s",correo);
+    winprint(STDOUTPUT,1,5,t1,NONE);
 
-    int i = 0;
-    for(i; i < getCarritoSize(Carrito); i++){
-
+    for(int i = 0; i < getCarritoSize(Carrito); i++){
+        winprint(STDOUTPUT, 1,6+i,getDetalleNombre(getDetalleByIndex(Carrito,i)),NONE);
     }
 
     printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para visualizarlo >",DIM);
 
-    remove("Pedidos");
-    savePedidos(Pedidos);
-
+    getchar();
 }
 
 int mostrarPedidosPor(char tipo){

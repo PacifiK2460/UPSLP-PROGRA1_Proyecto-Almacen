@@ -96,7 +96,7 @@ int savePedidos(struct Pedidos* Src){
 int loadPedidos(struct Pedidos* Dest){
     if(Dest == NULL) return ERROR;
 
-    FILE* file = fopen("Almacen", "rb");
+    FILE* file = fopen("Pedidos", "rb");
     if(file == NULL) return ERROR;
 
     struct Pedido* buffer;
