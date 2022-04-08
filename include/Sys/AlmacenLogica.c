@@ -14,8 +14,8 @@ int modificarExistentes(){
     int idx;
     sscanf(id,"%i",&idx);
     if(idx < 0 || idx > getProductosSize(src)){
-        printinthemiddle(STDOUTPUT,getcols(STDOUTPUT)/2,"NO PUEDES MODIFICAR UN PRODUCTO INEXISTENTE",BOLD);
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presione cualquier tecla para continuar >",DIM);
+        printinthemiddle(STDOUTPUT,getcols(STDOUTPUT)/2,"NO PUEDES MODIFICAR UN PRODUCTO INEXISTENTE");
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presione cualquier tecla para continuar >");
         getchar();
         return 0;
     }
@@ -40,8 +40,8 @@ int sumarExistentes(){
     int idx;
     sscanf(id,"%i",&idx);
     if(idx < 0 || idx > getProductosSize(src)){
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"NO PUEDES MODIFICAR UN PRODUCTO INEXISTENTE",BOLD);
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presione cualquier tecla para continuar >",DIM);
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"NO PUEDES MODIFICAR UN PRODUCTO INEXISTENTE");
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presione cualquier tecla para continuar >");
         getchar();
         return 0;
     }
@@ -81,9 +81,9 @@ int nuevoProducto(){
     saveAlmacen(src);
     free(src);
 
-    box(STDOUTPUT,DIM);
-    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"AÑADIDO EXITOSO",BOLD);
-    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presione cualquier tecla para continuar >",DIM);
+    box(STDOUTPUT);
+    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"AÑADIDO EXITOSO");
+    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presione cualquier tecla para continuar >");
     getchar();
     return 1;
 }
@@ -96,6 +96,12 @@ int actualizarAlmacen(){
         "Agregar Producto",
         "Regresar"
     };
+    char* descripcines[] = {
+        "Suma la cantidad ingresada al producto seleccionado",
+        "Establece la cantidad ingresada al producto selecccionado",
+        "Crea un nuevo espacio en el almacen",
+        "Regresa al menu principal"
+    };
 
     Funciones Funciones[] = {
         sumarExistentes,
@@ -103,9 +109,8 @@ int actualizarAlmacen(){
         nuevoProducto,
         regresar
     };
-    menu = newMenu(STDOUTPUT,(getrows(STDOUTPUT) - 7)/2, (getcols(STDOUTPUT) - 30) / 2 ,30,4, opciones,4, Funciones);
+    menu = newMenu(STDOUTPUT,(getrows(STDOUTPUT) - 7)/2, (getcols(STDOUTPUT) - 30) / 2 ,30,4, opciones,descripcines,4);
 
-    printmenu();
     focusMenu(menu);
 }
 
@@ -131,39 +136,38 @@ int consultarAlmacen(){
     printf(CLEAR);
 
     //Imprimimos la tabla
-    box(STDOUTPUT,DIM);
-    printinthemiddle(STDOUTPUT,1," ALMACEN ", INVERSE);
+    winprint(STDOUTPUT,5,2,BRGB(16,158,94) FRGB(255,255,255) " ALMACEN ");
+    winprint(STDOUTPUT,5,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar ");
     int ancho = 6 + 1 + digitos_existentes + 1 + digitos_precio + 1 + 10;
     ancho = (getcols(STDOUTPUT) - ancho)/2;
-    winprint(STDOUTPUT,ancho, 4, "MODELO", BOLD);
+    winprint(STDOUTPUT,ancho, 4, "MODELO");
     ancho += 7;
-    winprint(STDOUTPUT,ancho, 4, "TOTAL", BOLD);
+    winprint(STDOUTPUT,ancho, 4, "TOTAL");
     ancho += digitos_existentes + 1;
-    winprint(STDOUTPUT,ancho, 4, "PRECIO UNITARIO", BOLD);
+    winprint(STDOUTPUT,ancho, 4, "PRECIO UNITARIO");
     ancho += digitos_precio + 1;
-    winprint(STDOUTPUT,ancho, 4, "UBICACIÓN EN ALMACEN", BOLD);
+    winprint(STDOUTPUT,ancho, 4, "UBICACIÓN EN ALMACEN");
 
     for(int i = 0; i < getProductosSize(Almacen); i++ ){
         Producto = getProductoByIndex(Almacen,i);
         ancho = 6 + 1 + digitos_existentes + 1 + digitos_precio + 1 + 10;
         ancho = (getcols(STDOUTPUT) - ancho)/2;
-        winprint(STDOUTPUT,ancho, 5 + i, getProductoName(Producto), NONE);
+        winprint(STDOUTPUT,ancho, 5 + i, getProductoName(Producto));
         ancho += 7;
 
         char* total = malloc(50 + 1);
         sprintf(total,"%i",getProductoExistentes(Producto));
         
-        winprint(STDOUTPUT,ancho, 5 + i, total, NONE);
+        winprint(STDOUTPUT,ancho, 5 + i, total);
         ancho += digitos_existentes + 1;
 
         sprintf(total,"$%.2f",getProductoPrecio(Producto));
-        winprint(STDOUTPUT,ancho, 5 + i, total, NONE);
+        winprint(STDOUTPUT,ancho, 5 + i, total);
         ancho += digitos_precio + 1;
 
         sprintf(total,"Estante %c",getProductoEstante(Producto));
-        winprint(STDOUTPUT,ancho, 5 + i, total, NONE);
+        winprint(STDOUTPUT,ancho, 5 + i, total);
     }
-    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT) - 2,"< Presiona cualquier tecla para continuar >",DIM);
     getchar();
 }
 

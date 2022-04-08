@@ -2,28 +2,28 @@
 
 void input(char* bg_titulo, char* titulo, char* dest, int (*funcion)(char*)){
     printf(CLEAR);
-    box(STDOUTPUT,DIM);
-    printinthemiddle(STDOUTPUT,1,bg_titulo,DIM);
+    box(STDOUTPUT);
+    printinthemiddle(STDOUTPUT,1,bg_titulo);
 
     WINDOW* wininput;
     wininput = newWin((getrows(STDOUTPUT) - 3)/2,2,getcols(STDOUTPUT)-3,2,STDOUTPUT);
-    box(wininput,BOLD);
+    box(wininput);
     
-    winprint(wininput,1,0,titulo,BOLD);
+    winprint(wininput,1,0,titulo);
     printf(SHOW_CURSOR);
     echo();
 
-    winprint(wininput,1,1," ",NONE);
+    winprint(wininput,1,1," ");
 
     delimitador result = funcion;
     //Leemos el nombre y evaluamos
     while(result(dest) == 0){
         printf(CLEAR);
-        box(STDOUTPUT,DIM);
-        printinthemiddle(STDOUTPUT,1,bg_titulo,DIM);
-        box(wininput,BOLD);
-        winprint(wininput,1,0,titulo,BOLD);
-        winprint(wininput,1,1," ",NONE);
+        box(STDOUTPUT);
+        printinthemiddle(STDOUTPUT,1,bg_titulo);
+        box(wininput);
+        winprint(wininput,1,0,titulo);
+        winprint(wininput,1,1," ");
     }
     noEcho();
     printf(HIDE_CURSOR);
@@ -58,38 +58,38 @@ int registrarPedido(){
     char cantidad[11] = {0};
     int cant;
     while(1){
-        box(STDOUTPUT,DIM);
-        printinthemiddle(STDOUTPUT,1,"MODELOS DISPONIBLES",BOLD);
+        box(STDOUTPUT);
+        printinthemiddle(STDOUTPUT,1,"MODELOS DISPONIBLES");
         for(int i = 0; i < getProductosSize(Almacen); i++){
             Producto = getProductoByIndex(Almacen,i);
             char tit[51];
             sprintf(tit,"%-2i %s", i, getProductoName(Producto));
-            printinthemiddle(STDOUTPUT, 2 + i,tit, NONE);
+            printinthemiddle(STDOUTPUT, 2 + i,tit);
         }
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >",DIM);
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >");
         getchar();
 
         input("Registrar Pedido","ID del Producto",pedidos,evaluarNumero);
         sscanf(pedidos,"%i",&ped);
         if(ped > getPedidosSize(Pedidos) || ped < 0){
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"ID INVALIDO", BOLD);
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >",DIM);
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"ID INVALIDO");
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >");
             continue;
         }
 
         input("Registrar Pedido", "Cantidad",cantidad,evaluarNumero);
         sscanf(cantidad,"%i",&cant);
         if(cant <= 0 || cant >= getProductoExistentes(getProductoByIndex(Almacen,ped))){
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2, "INGRESA UNA CANTIDAD POSIBLE A COMPRAR",BOLD);
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >",DIM);
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2, "INGRESA UNA CANTIDAD POSIBLE A COMPRAR");
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >");
             continue;
         }
 
         Producto = getProductoByIndex(Almacen,ped);
         addDetalle(Carrito,getProductoName(Producto),cant);
 
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"ITEM AGREGADO CORRECTAMENTE", BOLD);
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >",DIM);
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"ITEM AGREGADO CORRECTAMENTE");
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >");
         getchar();
         break;
     }
@@ -99,26 +99,26 @@ int registrarPedido(){
     savePedidos(Pedidos);
 
     printf(CLEAR);
-    winprint(STDOUTPUT,1,2,NONE "Pedido: " BOLD "ACTIVO", NONE);
+    winprint(STDOUTPUT,1,2,NONE "Pedido: " BOLD "ACTIVO");
 
     char t1[50];
     sprintf(t1,NONE"ID: " BOLD "%i" NONE,numero);
-    winprint(STDOUTPUT,17,2,t1, NONE);
+    winprint(STDOUTPUT,17,2,t1);
 
     sprintf(t1,NONE "NOMBRE DEL CLIENTE: " BOLD "%s",nombre_de_cliente);
-    winprint(STDOUTPUT,1, 3,t1, NONE);
+    winprint(STDOUTPUT,1, 3,t1);
 
     sprintf(t1,NONE "TÉLEFONO: " BOLD "%s",telefono_de_cliente);
-    winprint(STDOUTPUT,1,4,t1,NONE);
+    winprint(STDOUTPUT,1,4,t1);
 
     sprintf(t1,NONE "CORREO: " BOLD "%s",correo);
-    winprint(STDOUTPUT,1,5,t1,NONE);
+    winprint(STDOUTPUT,1,5,t1);
 
     for(int i = 0; i < getCarritoSize(Carrito); i++){
-        winprint(STDOUTPUT, 1,6+i,getDetalleNombre(getDetalleByIndex(Carrito,i)),NONE);
+        winprint(STDOUTPUT, 1,6+i,getDetalleNombre(getDetalleByIndex(Carrito,i)));
     }
 
-    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para visualizarlo >",DIM);
+    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para visualizarlo >");
 
     getchar();
 }
@@ -173,13 +173,13 @@ int mostrarPedidosPor(char tipo){
 
         total = 0;
         //Imprimirmos la Info General
-        box(STDOUTPUT,DIM);
-        printinthemiddle(STDOUTPUT,1," PEDIDOS ", INVERSE);
+        box(STDOUTPUT);
+        printinthemiddle(STDOUTPUT,1," PEDIDOS ");
 
         char informacion_del_cliente[300] = {0};
         sprintf(informacion_del_cliente,NONE BOLD "Pedido N°: " NONE "%i" BOLD "ESTADO: " "%s%s" BOLD "Nombre del Cliente: " NONE "%s" BOLD "Télefono: " NONE "%s" BOLD "Correo electrónico: " NONE  "%s", getPedidoNumero(Pedido),color,estado,getPedidoNombre(Pedido),getPedidoTelefono(Pedido), getPedidoCorreo(Pedido));
         
-        printinthemiddle(STDOUTPUT,3,informacion_del_cliente,NONE);
+        printinthemiddle(STDOUTPUT,3,informacion_del_cliente);
 
         //Imprimirmos el carrito
             //Obtenemos la cantida de caracteres a alinear
@@ -198,13 +198,13 @@ int mostrarPedidosPor(char tipo){
             //Imprimimos Encabezados
         int ancho = 6 + 1 + mayor_cantidad + 1 + mayor_precio + 1 + mayor_total;
         ancho = (getcols(STDOUTPUT)-ancho)/2;
-        winprint(STDOUTPUT,ancho, 4, "MODELO", BOLD);
+        winprint(STDOUTPUT,ancho, 4, "MODELO");
         ancho += 7;
-        winprint(STDOUTPUT,ancho,4,"CANTIDAD",BOLD);
+        winprint(STDOUTPUT,ancho,4,"CANTIDAD");
         ancho += mayor_cantidad + 1;
-        winprint(STDOUTPUT,ancho,4,"PRECIO UNITARIO",BOLD);
+        winprint(STDOUTPUT,ancho,4,"PRECIO UNITARIO");
         ancho += mayor_precio + 1;
-        winprint(STDOUTPUT,ancho,4, "SubTotal",BOLD);
+        winprint(STDOUTPUT,ancho,4, "SubTotal");
             //Imprimimos Contenido
         for(int j = 0; j < getCarritoSize(Carrito);){
             Detalle = getDetalleByIndex(Carrito,j);
@@ -212,37 +212,37 @@ int mostrarPedidosPor(char tipo){
 
             ancho = (getcols(STDOUTPUT)-ancho)/2;
             
-            winprint(STDOUTPUT,ancho,5+j,getDetalleNombre(Detalle),NONE);
+            winprint(STDOUTPUT,ancho,5+j,getDetalleNombre(Detalle));
 
             ancho += 7;
 
             sprintf(temp, "%i", getDetalleCantidad(Detalle));
-            winprint(STDOUTPUT,ancho,5+j,temp,NONE);
+            winprint(STDOUTPUT,ancho,5+j,temp);
 
             ancho += mayor_cantidad + 1;
 
             sprintf(temp,"%.2f",getProductoPrecio(getProductoByIndex(Productos,i)));
-            winprint(STDOUTPUT,ancho,5+j,temp,BOLD);
+            winprint(STDOUTPUT,ancho,5+j,temp);
             
             ancho += mayor_precio + 1;
             
             total += getProductoPrecio(getProductoByIndex(Productos,i)) * getDetalleCantidad(Detalle);
 
             sprintf(temp,"%.2f",getProductoPrecio(getProductoByIndex(Productos,i)) * getDetalleCantidad(Detalle));
-            winprint(STDOUTPUT,ancho,5+j, temp,BOLD);
+            winprint(STDOUTPUT,ancho,5+j, temp);
         }
 
         sprintf(temp,BOLD "TOTAL: " NONE "%.2f",total);
-        printinthemiddle(STDOUTPUT,getCarritoSize(Carrito),temp,NONE);
+        printinthemiddle(STDOUTPUT,getCarritoSize(Carrito),temp);
 
         //Imprimimos pie de pagina
         if(i != 0){
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-3,"< Presiona «A» para ver el pedido anterior >", DIM);
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-3,"< Presiona «A» para ver el pedido anterior >");
         }
         if(i < getPedidosSize(Pedidos)){
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona «S» para ver el pedido siguiente >", DIM);
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona «S» para ver el pedido siguiente >");
         }
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-1,"< Presiona cualquier tecla para salir >", DIM);
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-1,"< Presiona cualquier tecla para salir >");
 
         c = getchar();
         if(i != 0){
@@ -312,13 +312,13 @@ int buscarID(char* ID){
 
             printf(CLEAR);
 
-            box(STDOUTPUT,DIM);
-            printinthemiddle(STDOUTPUT,1," PEDIDOS ", INVERSE);
+            box(STDOUTPUT);
+            printinthemiddle(STDOUTPUT,1," PEDIDOS ");
 
             char informacion_del_cliente[300] = {0};
             sprintf(informacion_del_cliente,NONE BOLD "Pedido N°: " NONE "%i" BOLD "ESTADO: " "%s%s" BOLD "Nombre del Cliente: " NONE "%s" BOLD "Télefono: " NONE "%s" BOLD "Correo electrónico: " NONE  "%s", getPedidoNumero(getPedidoByIndex(Pedidos,i)),color,estado,getPedidoNombre(getPedidoByIndex(Pedidos,i)),getPedidoTelefono(getPedidoByIndex(Pedidos,i)), getPedidoCorreo(getPedidoByIndex(Pedidos,i)));
 
-            printinthemiddle(STDOUTPUT,3,informacion_del_cliente,NONE);
+            printinthemiddle(STDOUTPUT,3,informacion_del_cliente);
 
             //Imprimirmos el carrito
                 //Obtenemos la cantida de caracteres a alinear
@@ -337,13 +337,13 @@ int buscarID(char* ID){
                 //Imprimimos Encabezados
             int ancho = 6 + 1 + mayor_cantidad + 1 + mayor_precio + 1 + mayor_total;
             ancho = (getcols(STDOUTPUT)-ancho)/2;
-            winprint(STDOUTPUT,ancho, 4, "MODELO", BOLD);
+            winprint(STDOUTPUT,ancho, 4, "MODELO");
             ancho += 7;
-            winprint(STDOUTPUT,ancho,4,"CANTIDAD",BOLD);
+            winprint(STDOUTPUT,ancho,4,"CANTIDAD");
             ancho += mayor_cantidad + 1;
-            winprint(STDOUTPUT,ancho,4,"PRECIO UNITARIO",BOLD);
+            winprint(STDOUTPUT,ancho,4,"PRECIO UNITARIO");
             ancho += mayor_precio + 1;
-            winprint(STDOUTPUT,ancho,4, "SubTotal",BOLD);
+            winprint(STDOUTPUT,ancho,4, "SubTotal");
                 //Imprimimos Contenido
             for(int j = 0; j < getCarritoSize(Carrito);){
                 Detalle = getDetalleByIndex(Carrito,j);
@@ -351,29 +351,29 @@ int buscarID(char* ID){
 
                 ancho = (getcols(STDOUTPUT)-ancho)/2;
                 
-                winprint(STDOUTPUT,ancho,5+j,getDetalleNombre(Detalle),NONE);
+                winprint(STDOUTPUT,ancho,5+j,getDetalleNombre(Detalle));
 
                 ancho += 7;
 
                 sprintf(temp, "%i", getDetalleCantidad(Detalle));
-                winprint(STDOUTPUT,ancho,5+j,temp,NONE);
+                winprint(STDOUTPUT,ancho,5+j,temp);
 
                 ancho += mayor_cantidad + 1;
 
                 sprintf(temp,"%.2f",getProductoPrecio(getProductoByIndex(Productos,i)));
-                winprint(STDOUTPUT,ancho,5+j,temp,BOLD);
+                winprint(STDOUTPUT,ancho,5+j,temp);
                 
                 ancho += mayor_precio + 1;
                 
                 total += getProductoPrecio(getProductoByIndex(Productos,i)) * getDetalleCantidad(Detalle);
 
                 sprintf(temp,"%.2f", getProductoPrecio(getProductoByIndex(Productos,i)) * getDetalleCantidad(Detalle));
-                winprint(STDOUTPUT,ancho,5+j, temp,BOLD);
+                winprint(STDOUTPUT,ancho,5+j, temp);
             }
 
             sprintf(temp,BOLD "TOTAL: " NONE "%.2f",total);
-            printinthemiddle(STDOUTPUT,getCarritoSize(Carrito),temp,NONE);
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-1,"< Presiona cualquier tecla para salir >", DIM);
+            printinthemiddle(STDOUTPUT,getCarritoSize(Carrito),temp);
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-1,"< Presiona cualquier tecla para salir >");
             getchar();
             break;
         }
@@ -395,6 +395,13 @@ int consultarPedido(){
         "Numero de Pedido",
         "Cancelar"
     };
+    char* descripciones[] = {
+        "Enlista los pedidos Activos",
+        "Enlista los pedidos Entregados",
+        "Enlista los pedidos Cancelados",
+        "Busca el pedido por el ID ingresado",
+        "Regresa al menu anterior"
+    };
 
     Funciones Funciones[] = {
         pedidosActivos,
@@ -403,9 +410,8 @@ int consultarPedido(){
         numeroDePedido,
         regresar
     };
-    menu = newMenu(STDOUTPUT,(getrows(STDOUTPUT) - 7)/2, (getcols(STDOUTPUT) - 30) / 2 ,30,5, opciones,5, Funciones);
+    menu = newMenu(STDOUTPUT,(getrows(STDOUTPUT) - 7)/2, (getcols(STDOUTPUT) - 30) / 2 ,30,5, opciones,descripciones,5);
 
-    printmenu();
     focusMenu(menu);
 }
 int registrarEntrega(){}

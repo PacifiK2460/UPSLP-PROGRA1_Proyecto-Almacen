@@ -3,12 +3,15 @@
 
 #include <stdio.h>
 
-
+//IO
 int evaluarNombre(char* Src);
 int evaluarExistencia(char* Src);
 int evaluarPrecio(char* Src);
 int evaluarUbicacion(char* Src);
 int evaluarCorreo(char* Des);
 int evaluarNumero(char* Dest);
+
+//STR
+int len(char* text);
 
 #endif

@@ -1,6 +1,5 @@
 #include "../win.h"
 
-
 // Estructura que nos permite habilitar y deshabilitar el eco
 #ifdef _WIN32
     DWORD mode;
@@ -17,13 +16,12 @@ struct MENU{
     int COLS;
     int ROWS;
     char** opciones;
+    char** descripcion;
 
     int numeroDeOpciones;
     int opcionMasLarga;
 
     int selected;
-
-    Funciones* funciones;
 };
 
 void noEcho(){
@@ -55,7 +53,7 @@ void echo(){
 }
 
 
-MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,char** opciones, int cantOps,Funciones* funciones){
+MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,char** opciones,char** descripciones, int cantOps){
     MENU* menu = (MENU*)malloc(sizeof(MENU));
     menu->opciones = opciones;
     menu->numeroDeOpciones = cantOps;
@@ -72,12 +70,12 @@ MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,char** opciones, 
     menu->COLS = COLS;
     menu->ROWS = ROWS;
     menu->selected = 0;
+    menu->descripcion = descripciones;
 
-    menu->funciones = funciones;
     return menu;
 }
 
-void focusMenu(MENU* menu){
+int focusMenu(MENU* menu){
     updateMenu(menu);
     register int c;
     //Leemos el teclado non-canonical mode
@@ -97,30 +95,31 @@ void focusMenu(MENU* menu){
                     if(menu->selected != menu->numeroDeOpciones - 1) menu->selected += 1;
                     break;
             }
-            fflush(stdout);
+            //En caso de update, actualizamos visualmente el manu
             updateMenu(menu);
-            fflush(stdout);
         }
+        //Enter
         if(c == 10){
             break;
         }
     }
-    menu->funciones[menu->selected]();
+    //Regresamos index seleccionado
+    return menu->selected;
 }
 
 void updateMenu(MENU* menu){
-    for(int i = 0; i < menu->numeroDeOpciones; i++){
-        printf("\x1B[%i;%iH%s%s%-*s%s\n",menu->X + i,menu->Y,( (menu->selected == i) ? ">" : " " ), ( (menu->selected == i) ? INVERSE : NONE ), menu->opcionMasLarga, menu->opciones[i], RESET);
+    for(int i = 0, x = 0; i < menu->numeroDeOpciones; i++){
+        printf( "\x1b[%i;%iH"
+                "%s" "%s " "%s" RESET,
+                menu->X + i + x++,menu->Y, //Posicion
+                menu->selected == i ? BOLD FRGB(185, 251, 192) : NONE, //Color
+                menu->selected == i ? MENUVLINE : " ", //Caracter de seleccion
+                menu->opciones[i]);
+        printf( "\x1b[%i;%iH"
+                "%s" "%s " "%s" RESET,
+                menu->X + i + x++,menu->Y,
+                menu->selected == i ? DIM FRGB(185, 251, 192) : NONE,
+                menu->selected == i ? MENUVLINE : " ",
+                menu->descripcion[i]); //Cantidad de caracteres, texto
     }
 }
-
-void printmenu(){
-    printf(CLEAR);
-    box(STDOUTPUT, DIM);
-    printf(HIDE_CURSOR);
-    printinthemiddle(STDOUTPUT,1,"SELECCIONA LA OPCIOÓN",BOLD);
-
-    printinthemiddle(STDOUTPUT,1,"SELECCIONA LA OPCIOÓN",BOLD);
-    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT) - 2,"Usa ↓↑ para seleccionar la opción y <ENTER> para realizar la opción",DIM);
-}
-
