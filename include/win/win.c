@@ -14,7 +14,7 @@ void innit(){
   #ifdef _WIN32
     setConsoleMode(ENABLE_VIRTUAL_TERMINAL_PROCESSING); 
   #endif
-
+  printf("\e[?1049h");
   setlocale(LC_ALL, "");
 }
 
@@ -122,7 +122,7 @@ int gety(WINDOW* Window){
 }
 void printinthemiddle(WINDOW* Window, int Y, char* texto){
   int X = getcols(Window);
-  int tam = strlen(texto);
+  int tam = len(texto);
   X = X - tam;
   X = X / 2;
   Y+=1;

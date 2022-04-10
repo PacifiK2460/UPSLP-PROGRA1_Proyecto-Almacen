@@ -59,8 +59,8 @@ MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,char** opciones,c
     menu->numeroDeOpciones = cantOps;
     menu->opcionMasLarga = 0;
     for(int i = 0; i < menu->numeroDeOpciones; i++){
-        if( strlen(opciones[i]) > menu->opcionMasLarga)
-            menu->opcionMasLarga = strlen(opciones[i]);
+        if( len(opciones[i]) > menu->opcionMasLarga)
+            menu->opcionMasLarga = len(opciones[i]);
     }
     menu->opcionMasLarga+=1;
     menu->X = getx(Parent);

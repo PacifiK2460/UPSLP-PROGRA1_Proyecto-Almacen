@@ -102,16 +102,26 @@ int actualizarAlmacen(){
         "Crea un nuevo espacio en el almacen",
         "Regresa al menu principal"
     };
-
     Funciones Funciones[] = {
         sumarExistentes,
         modificarExistentes,
         nuevoProducto,
         regresar
     };
-    menu = newMenu(STDOUTPUT,(getrows(STDOUTPUT) - 7)/2, (getcols(STDOUTPUT) - 30) / 2 ,30,4, opciones,descripcines,4);
 
-    focusMenu(menu);
+    menu = newMenu(STDOUTPUT,4, 4,30,4, opciones,descripcines,4);
+    int respuesta;
+
+    while(1){
+        printf(CLEAR);
+        winprint(STDOUTPUT,4,2,BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
+                                RESET "  " RESET
+                                BRGB(16,158,94) FRGB(255,255,255) " ACTUALIZACIÓN DE ALMACEN " );
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "↓↑"     RESET DIM  " Arriba / Abajo ");
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " Seleccionar "); 
+        if((respuesta = focusMenu(menu)) == 3) break;
+        Funciones[respuesta]();
+    }
 }
 
 // Acciones
@@ -120,57 +130,63 @@ int consultarAlmacen(){
     struct Producto* Producto;
     loadAlmacen(Almacen);
 
-    //Para alinear la info, obtenemos la cantidad mas ge;
-    int mayor_existencia = 1, mayor_precio = 1;
+    //Preparamos la información para meterla a la tabla
+    char*** data = prepareTableData(getProductosSize(Almacen),4);
     for(int i = 0; i < getProductosSize(Almacen); i++){
-        Producto = getProductoByIndex(Almacen, i);
-        if( getProductoExistentes(Producto) > mayor_existencia )
-            mayor_existencia = getProductoExistentes(Producto) ;
-        if( getProductoPrecio(Producto) > mayor_precio )
-            mayor_precio = getProductoPrecio(Producto);
-    }
-
-    int digitos_existentes = 5 > digitos(mayor_existencia) ? 5 : digitos(mayor_existencia);
-    int digitos_precio = 15 > digitos(mayor_precio) ? 15 : digitos(mayor_precio);
-
-    printf(CLEAR);
-
-    //Imprimimos la tabla
-    winprint(STDOUTPUT,5,2,BRGB(16,158,94) FRGB(255,255,255) " ALMACEN ");
-    winprint(STDOUTPUT,5,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar ");
-    int ancho = 6 + 1 + digitos_existentes + 1 + digitos_precio + 1 + 10;
-    ancho = (getcols(STDOUTPUT) - ancho)/2;
-    winprint(STDOUTPUT,ancho, 4, "MODELO");
-    ancho += 7;
-    winprint(STDOUTPUT,ancho, 4, "TOTAL");
-    ancho += digitos_existentes + 1;
-    winprint(STDOUTPUT,ancho, 4, "PRECIO UNITARIO");
-    ancho += digitos_precio + 1;
-    winprint(STDOUTPUT,ancho, 4, "UBICACIÓN EN ALMACEN");
-
-    for(int i = 0; i < getProductosSize(Almacen); i++ ){
+        int j = 0;
         Producto = getProductoByIndex(Almacen,i);
-        ancho = 6 + 1 + digitos_existentes + 1 + digitos_precio + 1 + 10;
-        ancho = (getcols(STDOUTPUT) - ancho)/2;
-        winprint(STDOUTPUT,ancho, 5 + i, getProductoName(Producto));
-        ancho += 7;
-
-        char* total = malloc(50 + 1);
-        sprintf(total,"%i",getProductoExistentes(Producto));
+        char est = getProductoEstante(Producto);
         
-        winprint(STDOUTPUT,ancho, 5 + i, total);
-        ancho += digitos_existentes + 1;
-
-        sprintf(total,"$%.2f",getProductoPrecio(Producto));
-        winprint(STDOUTPUT,ancho, 5 + i, total);
-        ancho += digitos_precio + 1;
-
-        sprintf(total,"Estante %c",getProductoEstante(Producto));
-        winprint(STDOUTPUT,ancho, 5 + i, total);
+        setTableData(i, j++,data,getProductoName(Producto));
+        setTableData(i, j++,data,int2str(getProductoExistentes(Producto))); //
+        setTableData(i, j++,data,double2str(getProductoPrecio(Producto)));//
+        setTableData(i, j++,data,&est);
     }
+
+    //Imprimimos lo demas
+    printf(CLEAR);
+    winprint(STDOUTPUT,4,2,BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
+                            RESET "  " RESET
+                            BRGB(16,158,94) FRGB(255,255,255) " CONSULTAR DE ALMACEN " );
+    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar "); 
+
+    //Impresion de la tabla
+    // int ancho = 6 + 1 + digitos_existentes + 1 + digitos_precio + 1 + 10;
+    // ancho = (getcols(STDOUTPUT) - ancho)/2;
+    // winprint(STDOUTPUT,ancho, 4, "MODELO");
+    // ancho += 7;
+    // winprint(STDOUTPUT,ancho, 4, "TOTAL");
+    // ancho += digitos_existentes + 1;
+    // winprint(STDOUTPUT,ancho, 4, "PRECIO UNITARIO");
+    // ancho += digitos_precio + 1;
+    // winprint(STDOUTPUT,ancho, 4, "UBICACIÓN EN ALMACEN");
+
+    // for(int i = 0; i < getProductosSize(Almacen); i++ ){
+    //     Producto = getProductoByIndex(Almacen,i);
+    //     ancho = 6 + 1 + digitos_existentes + 1 + digitos_precio + 1 + 10;
+    //     ancho = (getcols(STDOUTPUT) - ancho)/2;
+    //     winprint(STDOUTPUT,ancho, 5 + i, getProductoName(Producto));
+    //     ancho += 7;
+
+    //     char* total = malloc(50 + 1);
+    //     sprintf(total,"%i",getProductoExistentes(Producto));
+        
+    //     winprint(STDOUTPUT,ancho, 5 + i, total);
+    //     ancho += digitos_existentes + 1;
+
+    //     sprintf(total,"$%.2f",getProductoPrecio(Producto));
+    //     winprint(STDOUTPUT,ancho, 5 + i, total);
+    //     ancho += digitos_precio + 1;
+
+    //     sprintf(total,"Estante %c",getProductoEstante(Producto));
+    //     winprint(STDOUTPUT,ancho, 5 + i, total);
+    // }
     getchar();
 }
 
 int salir(){
+    printf("\e[?1049l");
+    printf(SHOW_CURSOR);
+    printf(RESET);
     exit(0);
 };

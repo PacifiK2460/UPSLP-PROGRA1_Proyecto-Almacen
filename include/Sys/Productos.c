@@ -19,7 +19,7 @@ struct Producto* newProducto(){
 
 struct Producto* getProductoByName(struct Productos* Src, char* name){
     for(int i = 0; i < getProductosSize(Src); i++){
-        if( strcmp( getProductoName(getProductoByIndex(Src,i)),name ) == 0) return getProductoByIndex(Src,i);
+        if( cmp( getProductoName(getProductoByIndex(Src,i)),name ) == 0) return getProductoByIndex(Src,i);
     }
     return NULL;
 }
@@ -81,7 +81,7 @@ int modExistencia(struct Productos* Src, int index,int cant,char op){
 int addProduct(struct Productos* Dest,char* nombre, int existentes, double precio, char estante){
     struct Producto* new = newProducto();
     if(new == NULL) return ERROR;
-    strcpy(new->nombre, nombre);
+    cp(new->nombre, nombre);
     new->existentes = existentes;
     new->precioUnitario = precio;
     new->estante = estante;

@@ -144,17 +144,17 @@ int mostrarPedidosPor(char tipo){
     switch (tipo)
     {
     case 'A':
-        strcpy(color,"\e[1;91m");
-        strcpy(estado,"Activo");
+        cp(color,"\e[1;91m");
+        cp(estado,"Activo");
         break;
     
     case 'E':
-        strcpy(color,"\e[1;92m");
-        strcpy(estado,"Entregado");
+        cp(color,"\e[1;92m");
+        cp(estado,"Entregado");
         break;
     case 'C':
-        strcpy(color,"\e[1;91m");
-        strcpy(estado,"Cancelado");
+        cp(color,"\e[1;91m");
+        cp(estado,"Cancelado");
         break;
     }
 
@@ -296,17 +296,17 @@ int buscarID(char* ID){
             switch (getPedidoEstado(getPedidoByIndex(Pedidos,i)))
             {
             case 'A':
-                strcpy(color,"\e[1;91m");
-                strcpy(estado,"Activo");
+                cp(color,"\e[1;91m");
+                cp(estado,"Activo");
                 break;
             
             case 'E':
-                strcpy(color,"\e[1;92m");
-                strcpy(estado,"Entregado");
+                cp(color,"\e[1;92m");
+                cp(estado,"Entregado");
                 break;
             case 'C':
-                strcpy(color,"\e[1;91m");
-                strcpy(estado,"Cancelado");
+                cp(color,"\e[1;91m");
+                cp(estado,"Cancelado");
                 break;
             }
 

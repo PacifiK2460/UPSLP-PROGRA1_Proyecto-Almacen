@@ -76,7 +76,7 @@ int appendDetalle(struct Detalle* Src, struct Carrito* Dest){
 int addDetalle(struct Carrito* Dest, char* nombre, int cantidad){
     struct Detalle* new = newDetalle();
     if(new == NULL) return ERROR;
-    strcpy(new->nombre,nombre);
+    cp(new->nombre,nombre);
     new->cantidad = cantidad;
 
     return appendDetalle(new,Dest);

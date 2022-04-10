@@ -2,6 +2,7 @@
 #define SMARTIO_H
 
 #include <stdio.h>
+#include <stdlib.h>
 
 //IO
 int evaluarNombre(char* Src);
@@ -13,5 +14,10 @@ int evaluarNumero(char* Dest);
 
 //STR
 int len(char* text);
+char * cp(char* dest, char* src);
+int cmp(char* dest, char* src);
 
+//Conversiones
+char* int2str(int src);
+char* double2str(double src);
 #endif

@@ -71,9 +71,9 @@ int addPedido(struct Pedidos* Dest, char estado, char* nombre_del_cliente, char*
     struct Pedido* new = newPedido();
     if(new == NULL) return ERROR;
     new->estado = estado;
-    strcpy(new->nombre_de_cliente,nombre_del_cliente);
-    strcpy(new->telefono_de_cliente, telefono_del_cliente);
-    strcpy(new->correo,correo);
+    cp(new->nombre_de_cliente,nombre_del_cliente);
+    cp(new->telefono_de_cliente, telefono_del_cliente);
+    cp(new->correo,correo);
     new->Carrito = Carrito;
     new->numero = id;
 

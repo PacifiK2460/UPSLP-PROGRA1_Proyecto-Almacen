@@ -4,8 +4,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <locale.h>
-#include <string.h>
+#include <stdarg.h>
 #include "IO.h"
+
 
 #ifdef _WIN32
   #include <windows.h>
@@ -76,5 +77,10 @@ int gety(WINDOW* Window);
 MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,char** opciones,char** descripciones, int cant);
 int focusMenu(MENU* menu); 
 void updateMenu(MENU* menu); 
+
+// Table.h
+TABLE* newTable(int x, int y, int columnas, int filas, char*** data);
+char*** prepareTableData(int fila, int columna);
+void setTableData(int fila, int columna, char*** dest, char* src);
 
 #endif
