@@ -30,7 +30,7 @@ WINDOW* newWin(int y, int x, int COLS, int ROWS, WINDOW* Parent){
 void winprint(WINDOW* window,int X, int Y, char* text){
   X+= getx(window);
   Y+= gety(window);
-  printf("\x1B[%i;%iH%s"RESET,Y,X,text);
+  printf("\e[%i;%iH%s"RESET,Y,X,text);
 }
 
 void getcolsrows(WINDOW* Window, int* COLS, int* ROWS){

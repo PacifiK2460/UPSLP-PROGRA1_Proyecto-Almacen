@@ -38,3 +38,20 @@ void setTableData(int fila, int columna, char*** dest, char* src){
     dest[fila][columna] = malloc(len(src) * sizeof(char));
     cp(dest[fila][columna], src);
 }
+
+void printTable(TABLE* table){
+    int offset;
+    for(int i = 0; i < table->filas; i++){
+        for(int j = 0; j < table->columas; j++){
+            if(j == 0) offset = 0;
+            else offset = table->textoMasLargo[j];
+
+            printf(
+                RESET "%s"
+                "\e[%i;%iH%*s"
+                RESET,
+                (i == 0 ? BRGB(16,158,94) FRGB(255,255,255) : NONE),
+                table->y + i,table->x + offset +1 , offset,table->data[i][j]);
+        }
+    }
+}

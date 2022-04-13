@@ -109,13 +109,13 @@ int focusMenu(MENU* menu){
 
 void updateMenu(MENU* menu){
     for(int i = 0, x = 0; i < menu->numeroDeOpciones; i++){
-        printf( "\x1b[%i;%iH"
+        printf( "\e[%i;%iH"
                 "%s" "%s " "%s" RESET,
                 menu->X + i + x++,menu->Y, //Posicion
                 menu->selected == i ? BOLD FRGB(185, 251, 192) : NONE, //Color
                 menu->selected == i ? MENUVLINE : " ", //Caracter de seleccion
                 menu->opciones[i]);
-        printf( "\x1b[%i;%iH"
+        printf( "\e[%i;%iH"
                 "%s" "%s " "%s" RESET,
                 menu->X + i + x++,menu->Y,
                 menu->selected == i ? DIM FRGB(185, 251, 192) : NONE,

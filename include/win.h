@@ -82,5 +82,6 @@ void updateMenu(MENU* menu);
 TABLE* newTable(int x, int y, int columnas, int filas, char*** data);
 char*** prepareTableData(int fila, int columna);
 void setTableData(int fila, int columna, char*** dest, char* src);
+void printTable(TABLE* table);
 
 #endif

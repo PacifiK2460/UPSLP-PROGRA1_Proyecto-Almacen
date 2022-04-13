@@ -132,14 +132,22 @@ int consultarAlmacen(){
 
     //Preparamos la información para meterla a la tabla
     char*** data = prepareTableData(getProductosSize(Almacen),4);
-    for(int i = 0; i < getProductosSize(Almacen); i++){
+    for(int i = 0; i < getProductosSize(Almacen)+1; i++){
         int j = 0;
+        if(i == 0){
+            setTableData(i, j++,data,"Nombre");
+            setTableData(i, j++,data,"Existentes");
+            setTableData(i, j++,data,"Precio");
+            setTableData(i, j++,data,"Estante");
+            continue;
+        }
+        
         Producto = getProductoByIndex(Almacen,i);
         char est = getProductoEstante(Producto);
         
         setTableData(i, j++,data,getProductoName(Producto));
-        setTableData(i, j++,data,int2str(getProductoExistentes(Producto))); //
-        setTableData(i, j++,data,double2str(getProductoPrecio(Producto)));//
+        setTableData(i, j++,data,int2str(getProductoExistentes(Producto)));
+        setTableData(i, j++,data,double2str(getProductoPrecio(Producto)));
         setTableData(i, j++,data,&est);
     }
 
@@ -149,6 +157,9 @@ int consultarAlmacen(){
                             RESET "  " RESET
                             BRGB(16,158,94) FRGB(255,255,255) " CONSULTAR DE ALMACEN " );
     winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar "); 
+
+    TABLE* dataTable = newTable(0,4,4,getProductosSize(Almacen),data);
+    printTable(dataTable);
 
     //Impresion de la tabla
     // int ancho = 6 + 1 + digitos_existentes + 1 + digitos_precio + 1 + 10;
