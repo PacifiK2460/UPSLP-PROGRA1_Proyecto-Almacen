@@ -79,9 +79,10 @@ int focusMenu(MENU* menu);
 void updateMenu(MENU* menu); 
 
 // Table.h
-TABLE* newTable(int x, int y, int columnas, int filas, char*** data);
-char*** prepareTableData(int fila, int columna);
+TABLE* newTable(int columnas, int filas, char*** data);
+char*** prepareTableData(int fila, int columna, char* headers[]);
 void setTableData(int fila, int columna, char*** dest, char* src);
-void printTable(TABLE* table);
+void printTable(TABLE* table, int x, int y);
+int getTotal(TABLE* src);
 
 #endif

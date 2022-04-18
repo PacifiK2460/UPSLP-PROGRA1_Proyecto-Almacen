@@ -64,7 +64,8 @@ int getDouble(char* Dest, int size){
 int evaluarNombre(char* Src){
     int size = 51;
     if(getText(Src,size - 1) == 0) return 0;
-    for(int i = 0; Src[i] != '\0'; i++) if(esLetra(Src[i]) == 0) return 0;
+    for(int i = 0; i < 3; i++) if(esLetra(Src[i]) == 0) return 0;
+    for(int i = 3; i < 6; i++) if(esNumero(Src[i]) == 0) return 0;
     Src[size] = '\0'; 
     return 1;
 }

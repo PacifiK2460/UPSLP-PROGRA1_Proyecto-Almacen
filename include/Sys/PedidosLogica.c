@@ -2,28 +2,25 @@
 
 void input(char* bg_titulo, char* titulo, char* dest, int (*funcion)(char*)){
     printf(CLEAR);
-    box(STDOUTPUT);
-    printinthemiddle(STDOUTPUT,1,bg_titulo);
-
-    WINDOW* wininput;
-    wininput = newWin((getrows(STDOUTPUT) - 3)/2,2,getcols(STDOUTPUT)-3,2,STDOUTPUT);
-    box(wininput);
-    
-    winprint(wininput,1,0,titulo);
+    winprint(STDOUTPUT,4,2, bg_titulo);
     printf(SHOW_CURSOR);
     echo();
+    
+    winprint(STDOUTPUT,5, (getrows(STDOUTPUT)/2)-1,titulo);
+    winprint(STDOUTPUT,4, (getrows(STDOUTPUT)/2)-1,MENUVLINE);
+    winprint(STDOUTPUT,5, (getrows(STDOUTPUT)/2)," ");
+    winprint(STDOUTPUT,4, (getrows(STDOUTPUT)/2),MENUVLINE);
 
-    winprint(wininput,1,1," ");
 
     delimitador result = funcion;
     //Leemos el nombre y evaluamos
     while(result(dest) == 0){
         printf(CLEAR);
-        box(STDOUTPUT);
-        printinthemiddle(STDOUTPUT,1,bg_titulo);
-        box(wininput);
-        winprint(wininput,1,0,titulo);
-        winprint(wininput,1,1," ");
+        winprint(STDOUTPUT,4,2, bg_titulo);
+        winprint(STDOUTPUT,5, (getrows(STDOUTPUT)/2)-1,titulo);
+        winprint(STDOUTPUT,4, (getrows(STDOUTPUT)/2)-1,MENUVLINE);
+        winprint(STDOUTPUT,5, (getrows(STDOUTPUT)/2)," ");
+        winprint(STDOUTPUT,4, (getrows(STDOUTPUT)/2),MENUVLINE);
     }
     noEcho();
     printf(HIDE_CURSOR);

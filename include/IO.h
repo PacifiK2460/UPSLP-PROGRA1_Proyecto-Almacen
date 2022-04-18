@@ -17,6 +17,7 @@ int evaluarNumero(char* Dest);
 int len(char* text);
 char * cp(char* dest, char* src);
 int cmp(char* dest, char* src);
+char * strcat(char *dest, char *src);
 
 //Conversiones
 char* int2str(int src);

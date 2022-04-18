@@ -59,14 +59,23 @@ int nuevoProducto(){
     struct Productos* src = newProductos();
     loadAlmacen(src);
 
+    char titulo[] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
+                    RESET "  " RESET
+                    BRGB(75,75,75) FRGB(255,255,255) " ACTUALIZACIÓN DE ALMACEN "
+                    RESET "  " RESET
+                    BRGB(16,158,94) FRGB(255,255,255) " AGREGAR PRODUCTO ";
+
+    printf(CLEAR);
+    winprint(STDOUTPUT,4,2, titulo);
+
     char nombre[7] = {0};
     char existencia[10] = {0};
     char precio[10] = {0};
     char ubicacion[2] = {0};
-    input("AÑADIR PRODUCTO","MODELO",nombre,&evaluarNombre);
-    input("AÑADIR PRODUCTO","EXISTENCIA",existencia,&evaluarExistencia);
-    input("AÑADIR PRODUCTO","PRECIO",precio,&evaluarPrecio);
-    input("AÑADIR PRODUCTO","UBICACIÓN",ubicacion,&evaluarUbicacion);
+    input(titulo,BOLD FRGB(185, 251, 192) "MODELO",nombre,&evaluarNombre);
+    input(titulo,BOLD FRGB(185, 251, 192) "EXISTENCIA",existencia,&evaluarExistencia);
+    input(titulo,BOLD FRGB(185, 251, 192) "PRECIO",precio,&evaluarPrecio);
+    input(titulo,BOLD FRGB(185, 251, 192) "UBICACIÓN",ubicacion,&evaluarUbicacion);
 
     int existentes;
     double precios;
@@ -81,9 +90,8 @@ int nuevoProducto(){
     saveAlmacen(src);
     free(src);
 
-    box(STDOUTPUT);
-    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"AÑADIDO EXITOSO");
-    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presione cualquier tecla para continuar >");
+    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "AÑADIDO EXITOSO" RESET);
+    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar ");
     getchar();
     return 1;
 }
@@ -130,27 +138,6 @@ int consultarAlmacen(){
     struct Producto* Producto;
     loadAlmacen(Almacen);
 
-    //Preparamos la información para meterla a la tabla
-    char*** data = prepareTableData(getProductosSize(Almacen),4);
-    for(int i = 0; i < getProductosSize(Almacen)+1; i++){
-        int j = 0;
-        if(i == 0){
-            setTableData(i, j++,data,"Nombre");
-            setTableData(i, j++,data,"Existentes");
-            setTableData(i, j++,data,"Precio");
-            setTableData(i, j++,data,"Estante");
-            continue;
-        }
-        
-        Producto = getProductoByIndex(Almacen,i);
-        char est = getProductoEstante(Producto);
-        
-        setTableData(i, j++,data,getProductoName(Producto));
-        setTableData(i, j++,data,int2str(getProductoExistentes(Producto)));
-        setTableData(i, j++,data,double2str(getProductoPrecio(Producto)));
-        setTableData(i, j++,data,&est);
-    }
-
     //Imprimimos lo demas
     printf(CLEAR);
     winprint(STDOUTPUT,4,2,BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
@@ -158,40 +145,33 @@ int consultarAlmacen(){
                             BRGB(16,158,94) FRGB(255,255,255) " CONSULTAR DE ALMACEN " );
     winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar "); 
 
-    TABLE* dataTable = newTable(0,4,4,getProductosSize(Almacen),data);
-    printTable(dataTable);
+    if(getProductosSize(Almacen) == 0){
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No hay productos por listar" RESET);
+        getchar();
+        return 1;
+    }
 
-    //Impresion de la tabla
-    // int ancho = 6 + 1 + digitos_existentes + 1 + digitos_precio + 1 + 10;
-    // ancho = (getcols(STDOUTPUT) - ancho)/2;
-    // winprint(STDOUTPUT,ancho, 4, "MODELO");
-    // ancho += 7;
-    // winprint(STDOUTPUT,ancho, 4, "TOTAL");
-    // ancho += digitos_existentes + 1;
-    // winprint(STDOUTPUT,ancho, 4, "PRECIO UNITARIO");
-    // ancho += digitos_precio + 1;
-    // winprint(STDOUTPUT,ancho, 4, "UBICACIÓN EN ALMACEN");
-
-    // for(int i = 0; i < getProductosSize(Almacen); i++ ){
-    //     Producto = getProductoByIndex(Almacen,i);
-    //     ancho = 6 + 1 + digitos_existentes + 1 + digitos_precio + 1 + 10;
-    //     ancho = (getcols(STDOUTPUT) - ancho)/2;
-    //     winprint(STDOUTPUT,ancho, 5 + i, getProductoName(Producto));
-    //     ancho += 7;
-
-    //     char* total = malloc(50 + 1);
-    //     sprintf(total,"%i",getProductoExistentes(Producto));
+    //Preparamos la información para meterla a la tabla
+    char* headers[] = {
+        "Nombre",
+        "Existentes",
+        "Precio",
+        "Estante"
+    };
+    char* ** data = prepareTableData(getProductosSize(Almacen)+1,4,headers);
+    for(int i = 0, j = 0, fila = 1; i < getProductosSize(Almacen); i++, j = 0, fila++){
+        Producto = getProductoByIndex(Almacen,i);
+        char est = getProductoEstante(Producto);
         
-    //     winprint(STDOUTPUT,ancho, 5 + i, total);
-    //     ancho += digitos_existentes + 1;
+        setTableData(fila, j++,data,getProductoName(Producto));
+        setTableData(fila, j++,data,int2str(getProductoExistentes(Producto)));
+        setTableData(fila, j++,data,double2str(getProductoPrecio(Producto)));
+        setTableData(fila, j++,data,&est);
+    }
 
-    //     sprintf(total,"$%.2f",getProductoPrecio(Producto));
-    //     winprint(STDOUTPUT,ancho, 5 + i, total);
-    //     ancho += digitos_precio + 1;
-
-    //     sprintf(total,"Estante %c",getProductoEstante(Producto));
-    //     winprint(STDOUTPUT,ancho, 5 + i, total);
-    // }
+    TABLE* dataTable = newTable(4,getProductosSize(Almacen),data);
+    int total = getTotal(dataTable);
+    printTable(dataTable, (getcols(STDOUTPUT) - total)/2, 4);
     getchar();
 }
 
