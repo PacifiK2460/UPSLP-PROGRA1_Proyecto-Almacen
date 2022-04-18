@@ -84,5 +84,6 @@ char*** prepareTableData(int fila, int columna, char* headers[]);
 void setTableData(int fila, int columna, char*** dest, char* src);
 void printTable(TABLE* table, int x, int y);
 int getTotal(TABLE* src);
+int getTotalToerico(TABLE* src);
 
 #endif

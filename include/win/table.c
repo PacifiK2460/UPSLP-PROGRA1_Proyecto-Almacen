@@ -7,10 +7,15 @@ struct TABLE{
     //Tridimencional: columna, fila y texto
     char*** data;
     int total;
+    int toalTeorico;
 };
 
 int getTotal(TABLE* src){
     return src->total;
+}
+
+int getTotalToerico(TABLE* src){
+    return src->toalTeorico;
 }
 
 TABLE* newTable(int columnas, int filas, char*** data){
@@ -19,6 +24,7 @@ TABLE* newTable(int columnas, int filas, char*** data){
     table->filas = filas;
     table->data = data;
     table->total = 0;
+    table->toalTeorico = 0;
 
     table->textoMasLargo = malloc(columnas * sizeof(int));
     for(int i = 0; i<columnas;i++) table->textoMasLargo[i] = 0;
@@ -29,7 +35,12 @@ TABLE* newTable(int columnas, int filas, char*** data){
     }
 
     for(int i = 0; i < columnas; i++){
+        table->total += len(BOLD FRGB(185, 251, 192));
         table->total += table->textoMasLargo[i];
+        table->total += len(RESET);
+        table->total += len(" " VLINE " ");
+
+        table->toalTeorico += table->textoMasLargo[i];
     }
 
     return table;
@@ -55,12 +66,14 @@ void setTableData(int fila, int columna, char*** dest, char* src){
 void printTable(TABLE* table, int x, int y){
     for(int j = 0; j < table->filas+1; j++){
         char* headerbuff = (char*)malloc(table->total * sizeof(char));
+        for(int _ = 0; _ < table->total; _++ ) headerbuff[_] = '\0';
         for(int i = 0; i < table->columas; i++){
             char* colbuff = (char*)malloc(table->total * sizeof(char));
+            for(int _ = 0; _ < table->total; _++ ) colbuff[_] = '\0';
             if(j == 0)
-                sprintf(colbuff,BOLD FRGB(185, 251, 192) "%*s" RESET, table->textoMasLargo[i], table->data[j][i]);
+                snprintf(colbuff,table->total,BOLD FRGB(185, 251, 192) "%*s" RESET, table->textoMasLargo[i], table->data[j][i]);
             else
-                sprintf(colbuff,DIM  FRGB(185, 251, 192) "%*s" RESET, table->textoMasLargo[i], table->data[j][i]);
+                snprintf(colbuff,table->total,DIM  FRGB(185, 251, 192) "%*s" RESET, table->textoMasLargo[i], table->data[j][i]);
             strcat(headerbuff,colbuff);
             if(i+1 < table->columas) strcat(headerbuff," " VLINE " ");
             

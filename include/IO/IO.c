@@ -24,6 +24,38 @@ int getText(char* Dest, int size){
     return 0;
 }
 
+int getOnlyText(char* Dest, int size){
+    //getwchar();
+    char c;
+    int i = 0;
+    while(i < size){
+        c = getchar();
+        if(esLetra(c) == 1){
+            Dest[i++] = c;
+            continue;
+        } else if (c == 10) return 1;
+        return 0;
+    }
+    while ((c = getchar()) != 10);
+    return 0;
+}
+
+int getAll(char* Dest, int size){
+    //getwchar();
+    char c;
+    int i = 0;
+    while(i < size){
+        c = getchar();
+        if(c != 10){
+            Dest[i++] = c;
+            continue;
+        }
+        return 1;
+    }
+    while ((c = getchar()) != 10);
+    return 0;
+}
+
 int getInt(char* Dest, int size){
     //getwchar();
     char c;
@@ -54,7 +86,10 @@ int getDouble(char* Dest, int size){
 
             Dest[i++] = c;
             continue;
-        } else if (c == 10) return 1;
+        } else if (c == 10) {
+            Dest[i] = '\0';
+            return 1;
+        }
         return 0;
     }
     while ((c = getchar()) != 10);
@@ -66,6 +101,13 @@ int evaluarNombre(char* Src){
     if(getText(Src,size - 1) == 0) return 0;
     for(int i = 0; i < 3; i++) if(esLetra(Src[i]) == 0) return 0;
     for(int i = 3; i < 6; i++) if(esNumero(Src[i]) == 0) return 0;
+    Src[size] = '\0'; 
+    return 1;
+}
+
+int evaluarNombreDelCliente(char* Src){
+    int size = 51;
+    if(getOnlyText(Src,size - 1) == 0) return 0;
     Src[size] = '\0'; 
     return 1;
 }
@@ -97,5 +139,5 @@ int evaluarNumero(char* Dest){
 }
 
 int evaluarCorreo(char* Dest){
-    return getText(Dest, 51);
+    return getAll(Dest, 51);
 }

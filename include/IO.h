@@ -13,6 +13,8 @@ int evaluarUbicacion(char* Src);
 int evaluarCorreo(char* Des);
 int evaluarNumero(char* Dest);
 
+int evaluarNombreDelCliente(char* Src);
+
 //STR
 int len(char* text);
 char * cp(char* dest, char* src);

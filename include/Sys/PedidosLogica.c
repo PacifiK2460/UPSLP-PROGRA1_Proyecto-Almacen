@@ -43,9 +43,11 @@ int registrarPedido(){
     struct Pedidos* Pedidos = newPedidos();
     loadPedidos(Pedidos);
 
-    input("Registrar Pedido","Nombre del Cliente", nombre_de_cliente,evaluarNombre);
-    input("Registrar Pedido","Telefono del cliente", telefono_de_cliente,evaluarNumero);
-    input("Registrar Pedido","Correo del Cliente",correo,evaluarCorreo);
+    char tituto[] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL " RESET "  " RESET BRGB(16,158,94) FRGB(255,255,255) " REGISTRAR PEDIDO ";
+
+    input(tituto,BOLD FRGB(185, 251, 192) "Nombre del Cliente", nombre_de_cliente,evaluarNombreDelCliente);
+    input(tituto,BOLD FRGB(185, 251, 192) "Telefono del cliente", telefono_de_cliente,evaluarNumero);
+    input(tituto,BOLD FRGB(185, 251, 192) "Correo del Cliente",correo,evaluarCorreo);
 
     struct Carrito* Carrito = newCarrito();
     struct Detalle* Detalle = newDetalle();
@@ -55,30 +57,40 @@ int registrarPedido(){
     char cantidad[11] = {0};
     int cant;
     while(1){
-        box(STDOUTPUT);
-        printinthemiddle(STDOUTPUT,1,"MODELOS DISPONIBLES");
-        for(int i = 0; i < getProductosSize(Almacen); i++){
-            Producto = getProductoByIndex(Almacen,i);
-            char tit[51];
-            sprintf(tit,"%-2i %s", i, getProductoName(Producto));
-            printinthemiddle(STDOUTPUT, 2 + i,tit);
+        //Imprimimos tabla de productos
+        {
+            char* headers[] = {
+                "ID",
+                "Nombre"
+            };
+            char* ** data = prepareTableData(getProductosSize(Almacen)+1,2,headers);
+            for(int i = 0, j = 0, fila = 1; i < getProductosSize(Almacen); i++, j = 0, fila++){
+                Producto = getProductoByIndex(Almacen,i);
+                setTableData(fila,j++,data,int2str(i));
+                setTableData(fila,j++,data,getProductoName(Producto));
+            }
+            TABLE* dataTable = newTable(2,getProductosSize(Almacen),data);
+            printTable(dataTable, (getcols(STDOUTPUT) - getTotalToerico(dataTable))/2, 4);
+            winprint(STDOUTPUT,4,2,tituto);
+            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
+            getchar();
         }
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >");
-        getchar();
 
-        input("Registrar Pedido","ID del Producto",pedidos,evaluarNumero);
+        input(tituto, BOLD FRGB(185, 251, 192) "ID del Producto",pedidos,evaluarNumero);
         sscanf(pedidos,"%i",&ped);
         if(ped > getPedidosSize(Pedidos) || ped < 0){
             printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"ID INVALIDO");
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >");
+            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
+            getchar();
             continue;
         }
 
-        input("Registrar Pedido", "Cantidad",cantidad,evaluarNumero);
+        input(tituto,BOLD FRGB(185, 251, 192) "Cantidad",cantidad,evaluarNumero);
         sscanf(cantidad,"%i",&cant);
         if(cant <= 0 || cant >= getProductoExistentes(getProductoByIndex(Almacen,ped))){
             printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2, "INGRESA UNA CANTIDAD POSIBLE A COMPRAR");
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >");
+            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
+            getchar();
             continue;
         }
 
@@ -86,7 +98,7 @@ int registrarPedido(){
         addDetalle(Carrito,getProductoName(Producto),cant);
 
         printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"ITEM AGREGADO CORRECTAMENTE");
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para continuar >");
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
         getchar();
         break;
     }
@@ -96,31 +108,33 @@ int registrarPedido(){
     savePedidos(Pedidos);
 
     printf(CLEAR);
-    winprint(STDOUTPUT,1,2,NONE "Pedido: " BOLD "ACTIVO");
+    int x = 4,y=2;
+    winprint(STDOUTPUT,x,y,NONE "Pedido: " BOLD "ACTIVO");
 
     char t1[50];
     sprintf(t1,NONE"ID: " BOLD "%i" NONE,numero);
-    winprint(STDOUTPUT,17,2,t1);
+    winprint(STDOUTPUT,x + 17,y++,t1);
 
     sprintf(t1,NONE "NOMBRE DEL CLIENTE: " BOLD "%s",nombre_de_cliente);
-    winprint(STDOUTPUT,1, 3,t1);
+    winprint(STDOUTPUT,x,y++,t1);
 
     sprintf(t1,NONE "TÉLEFONO: " BOLD "%s",telefono_de_cliente);
-    winprint(STDOUTPUT,1,4,t1);
+    winprint(STDOUTPUT,x,y++,t1);
 
     sprintf(t1,NONE "CORREO: " BOLD "%s",correo);
-    winprint(STDOUTPUT,1,5,t1);
+    winprint(STDOUTPUT,x,y++,t1);
 
     for(int i = 0; i < getCarritoSize(Carrito); i++){
-        winprint(STDOUTPUT, 1,6+i,getDetalleNombre(getDetalleByIndex(Carrito,i)));
+        winprint(STDOUTPUT, x,y+i,getDetalleNombre(getDetalleByIndex(Carrito,i)));
     }
 
-    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona cualquier tecla para visualizarlo >");
+    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
 
     getchar();
 }
 
 int mostrarPedidosPor(char tipo){
+    //Rehacer logica, hacer *pager*
     struct Pedidos* Pedidos = newPedidos();
     struct Pedido* Pedido;
     
@@ -390,7 +404,7 @@ int consultarPedido(){
         "Pedidos Entregados",
         "Pedidos Cancelados",
         "Numero de Pedido",
-        "Cancelar"
+        "Regresar"
     };
     char* descripciones[] = {
         "Enlista los pedidos Activos",
@@ -407,8 +421,12 @@ int consultarPedido(){
         numeroDePedido,
         regresar
     };
-    menu = newMenu(STDOUTPUT,(getrows(STDOUTPUT) - 7)/2, (getcols(STDOUTPUT) - 30) / 2 ,30,5, opciones,descripciones,5);
 
+    printf(CLEAR);
+    winprint(STDOUTPUT,4,2,BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL " RESET "  " RESET BRGB(16,158,94) FRGB(255,255,255) " CONSULTAR PEDIDO ");
+    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "↓↑"     RESET DIM  " Arriba / Abajo ");
+    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " Seleccionar ");
+    menu = newMenu(STDOUTPUT,4, 4 ,30,5, opciones,descripciones,5);
     focusMenu(menu);
 }
 int registrarEntrega(){}

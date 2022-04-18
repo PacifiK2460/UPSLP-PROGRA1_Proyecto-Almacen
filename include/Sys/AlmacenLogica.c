@@ -170,8 +170,7 @@ int consultarAlmacen(){
     }
 
     TABLE* dataTable = newTable(4,getProductosSize(Almacen),data);
-    int total = getTotal(dataTable);
-    printTable(dataTable, (getcols(STDOUTPUT) - total)/2, 4);
+    printTable(dataTable, (getcols(STDOUTPUT) - getTotalToerico(dataTable))/2, 4);
     getchar();
 }
 
