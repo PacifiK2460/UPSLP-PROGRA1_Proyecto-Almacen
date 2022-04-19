@@ -7,7 +7,7 @@ struct Carrito{
 };
 
 struct Carrito* newCarrito(){
-    struct Carrito* temp = (struct Carrito*)calloc(1,sizeof(struct Carrito));
+    struct Carrito* temp = (struct Carrito*)malloc(sizeof(struct Carrito));
     if(temp == NULL) return NULL;
     temp->Head = NULL;
     temp->temp = NULL;
@@ -29,7 +29,7 @@ struct Detalle{
 };
 
 struct Detalle* newDetalle(){
-    struct Detalle* temp = (struct Detalle*)calloc(1, sizeof(struct Detalle));
+    struct Detalle* temp = (struct Detalle*)malloc( sizeof(struct Detalle));
     if(temp == NULL) return NULL;
     temp->next = NULL;
     temp->cantidad = 0;

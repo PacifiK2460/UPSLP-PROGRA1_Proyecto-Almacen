@@ -28,7 +28,7 @@ void input(char* bg_titulo, char* titulo, char* dest, int (*funcion)(char*)){
 }
 
 int registrarPedido(){
-    struct Productos* Almacen = newProductos();
+    struct Productos* Almacen=newProductos();
     struct Producto* Producto;
     loadAlmacen(Almacen);
 
@@ -63,14 +63,18 @@ int registrarPedido(){
                 "ID",
                 "Nombre"
             };
-            char* ** data = prepareTableData(getProductosSize(Almacen)+1,2,headers);
+            char* data[getProductosSize(Almacen)][2];
+            prepareTableData(getProductosSize(Almacen),4,headers,data);
+            //char*** data = prepareTableData(getProductosSize(Almacen)+1,2,headers);
             for(int i = 0, j = 0, fila = 1; i < getProductosSize(Almacen); i++, j = 0, fila++){
                 Producto = getProductoByIndex(Almacen,i);
-                setTableData(fila,j++,data,int2str(i));
-                setTableData(fila,j++,data,getProductoName(Producto));
+                char temp[30];
+                int2str(i, temp);
+                setTableData(data[fila][j++],temp);
+                setTableData(data[fila][j++],getProductoName(Producto));
             }
             TABLE* dataTable = newTable(2,getProductosSize(Almacen),data);
-            printTable(dataTable, (getcols(STDOUTPUT) - getTotalToerico(dataTable))/2, 4);
+            printTable(dataTable, (getcols(STDOUTPUT) - getTotalToerico(dataTable))/2, 4,getProductosSize(Almacen)+1,2,data);
             winprint(STDOUTPUT,4,2,tituto);
             winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
             getchar();

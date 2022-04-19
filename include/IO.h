@@ -22,6 +22,6 @@ int cmp(char* dest, char* src);
 char * strcat(char *dest, char *src);
 
 //Conversiones
-char* int2str(int src);
-char* double2str(double src);
+void int2str(int src, char* dest);
+void double2str(double src, char* dest);
 #endif

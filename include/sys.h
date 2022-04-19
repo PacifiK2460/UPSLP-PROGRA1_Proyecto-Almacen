@@ -21,7 +21,6 @@ typedef int (*delimitador)(char*);
     typedef struct Pedido Pedido;
     typedef struct Carrito Carrito;
     typedef struct Detalle Detalle;
-    struct Productos* newProductos();
     struct Producto* getProductoByIndex(struct Productos* Src, int index);
     int getProductosSize(struct Productos* Src);
     struct Producto* getProductoByName(struct Productos* Src, char* name);
@@ -32,7 +31,6 @@ typedef int (*delimitador)(char*);
     int appendProduct(struct Producto* Src, struct Productos* Dest);
 
 //Producto
-    struct Producto* newProducto();
     char* getProductoName(struct Producto* Src);
     int getProductoExistentes(struct Producto* Src);
     double getProductoPrecio(struct Producto* Src);
@@ -93,4 +91,8 @@ typedef int (*delimitador)(char*);
     int sumarExistentes();
     int nuevoProducto();
     int salir();
+
+#define newProducto() malloc(sizeof(struct Producto*))
+#define newProductos() malloc(sizeof(struct Productos*))
+
 #endif

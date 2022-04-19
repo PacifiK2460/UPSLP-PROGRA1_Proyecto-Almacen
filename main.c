@@ -45,6 +45,7 @@ void menu(){
     };
 
     menu = newMenu(STDOUTPUT,4, 4 ,30,7, opciones,descropciones,7);
+    int opcion;
 
     printf(HIDE_CURSOR);
     while(1){
@@ -52,7 +53,14 @@ void menu(){
         winprint(STDOUTPUT,4,2,BRGB(16,158,94) FRGB(255,255,255) " MENU PRINCIPAL ");
         winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "↓↑"     RESET DIM  " Arriba / Abajo ");
         winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " Seleccionar ");
-        Funciones[focusMenu(menu)]();
+        opcion = focusMenu(menu);
+        if(opcion == 6){
+            free(menu); //limpio memoria y salgoe
+            salir();
+        } else {
+            Funciones[opcion]();
+        }
+        //Funciones[focusMenu(menu)]();
         
     }
     printf(SHOW_CURSOR);

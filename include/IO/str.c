@@ -18,24 +18,14 @@ int cmp(char* dest, char* src){
     }
     return *(char*)dest - *(char*)src;
 }
-int _int2str(int src, char* dest){
-    if((src/10) != 0) dest += _int2str(src/10,dest);
-    *dest = (src%10) + '0';
-    return 1;
+void int2str(int src, char* dest){
+    snprintf(dest,29,"%i",src);
 }
-char* int2str(int src){
-    char* dest = (char*)malloc(30 * sizeof(char));
-    for(int i=0; i< 30; i++) dest[i] = '\0';
-    _int2str(src,dest);
-    return dest; 
-}
-char* double2str(double src){
+void double2str(double src, char* dest){
     // Me encontre con el problema de que los double
     // se convierten en notación cientifica, no voy
     // a reinventar la rueda para este.
-    char* dest = (char*)malloc(30 * sizeof(char));
-    snprintf(dest,29,"%f",src);
-    return dest; 
+    snprintf(dest,29,"%.2f",src);
 }
 
 char * strcat(char *dest, char *src){

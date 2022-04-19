@@ -19,7 +19,7 @@ void innit(){
 }
 
 WINDOW* newWin(int y, int x, int COLS, int ROWS, WINDOW* Parent){
-  WINDOW* Window = (struct WINDOW*)calloc(1,sizeof(struct WINDOW));
+  WINDOW* Window = (struct WINDOW*)malloc(sizeof(struct WINDOW));
   Window->X = x;
   Window->Y = y;
   Window->COLS = COLS;

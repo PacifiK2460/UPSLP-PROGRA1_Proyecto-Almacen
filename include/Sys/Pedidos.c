@@ -14,7 +14,7 @@ struct Pedido{
 //Get struct info
 
 struct Pedido* newPedido(){
-    struct Pedido* temp = (struct Pedido*)calloc(1, sizeof(struct Pedido));
+    struct Pedido* temp = (struct Pedido*)malloc( sizeof(struct Pedido));
     if(temp == NULL) return NULL;
     temp->next = NULL;
     return temp;
@@ -51,7 +51,7 @@ struct Pedidos{
 };
 
 struct Pedidos* newPedidos(){
-    struct Pedidos* temp = (struct Pedidos*)calloc(1,sizeof(struct Pedidos));
+    struct Pedidos* temp = (struct Pedidos*)malloc(sizeof(struct Pedidos));
     if(temp == NULL) return NULL;
     temp->Head = NULL;
     temp->size = 0;

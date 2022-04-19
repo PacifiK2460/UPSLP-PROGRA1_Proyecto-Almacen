@@ -10,13 +10,6 @@ struct Producto{
     struct Producto* next;
 };
 
-struct Producto* newProducto(){
-    struct Producto* temp = (struct Producto*)calloc(1,sizeof(struct Producto));
-    if(temp == NULL) return NULL;
-    temp->next = NULL;
-    return temp;
-}
-
 struct Producto* getProductoByName(struct Productos* Src, char* name){
     for(int i = 0; i < getProductosSize(Src); i++){
         if( cmp( getProductoName(getProductoByIndex(Src,i)),name ) == 0) return getProductoByIndex(Src,i);
@@ -45,16 +38,6 @@ struct Productos{
     struct Producto* temp;
     int size;
 };
-
-struct Productos* newProductos(){
-    struct Productos* temp = (struct Productos*)calloc(1,sizeof(struct Productos));
-    if(temp == NULL) return NULL;
-    temp->Head = NULL;
-    temp->size = 0;
-    temp->temp = NULL;
-
-    return temp;
-}
 
 int getProductosSize(struct Productos* Src){
     if(Src == NULL) return ERROR;
@@ -91,7 +74,7 @@ int addProduct(struct Productos* Dest,char* nombre, int existentes, double preci
 int loadAlmacen(struct Productos* Dest){
     if(Dest == NULL) return ERROR;
 
-    FILE* file = fopen("Almacen", "rb");
+    FILE* file = fopen("Almacen", "r");
     if(file == NULL){
         return ERROR;
     }
@@ -99,23 +82,36 @@ int loadAlmacen(struct Productos* Dest){
     struct Producto* buffer;
     buffer = newProducto();
 
-    while(fread(buffer,sizeof(struct Producto),1,file) == 1){
+    while(file != EOF){
+        fscanf(file,"%.7s %i %d %c", &buffer->nombre, &buffer->existentes, &buffer->precioUnitario, &buffer->estante);
         buffer->next = NULL;
         appendProduct(buffer,Dest);
+        free(buffer);
         buffer = newProducto();
     }
 
+    // while(fread(buffer,sizeof(struct Producto),1,file) == 1){
+    //     buffer->next = NULL;
+    //     appendProduct(buffer,Dest);
+    //     free(buffer);
+    //     buffer = newProducto();
+    // }
+
+    free(buffer);
     fclose(file);
     return OK;
 }
 
 int saveAlmacen(struct Productos* Dest){
     if(Dest == NULL) return ERROR;
-    FILE* file = fopen("Almacen","wb");
+    FILE* file = fopen("Almacen","w");
 
     if(file == NULL) return ERROR;
+    struct Producto* buffer;
     for(int i = 0; i < getProductosSize(Dest); i++){
-        fwrite(getProductoByIndex(Dest,i),sizeof(struct Producto),1,file);
+        getProductoByIndex(buffer,i);
+        fprintf(file,"%.7s %i %d %c",buffer->nombre, buffer->existentes, buffer->precioUnitario, buffer->estante);
+        //fwrite(getProductoByIndex(Dest,i),sizeof(struct Producto),1,file);
     }
 
     fclose(file);

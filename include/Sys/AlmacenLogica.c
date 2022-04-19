@@ -31,7 +31,7 @@ int modificarExistentes(){
 }
 
 int sumarExistentes(){
-    struct Productos* src = newProductos();
+    struct Productos* src=newProductos();
     struct Producto* Producto;
     loadAlmacen(src);
 
@@ -56,7 +56,7 @@ int sumarExistentes(){
 }
 
 int nuevoProducto(){
-    struct Productos* src = newProductos();
+    struct Productos* src=newProductos();
     loadAlmacen(src);
 
     char titulo[] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
@@ -140,9 +140,10 @@ int consultarAlmacen(){
 
     //Imprimimos lo demas
     printf(CLEAR);
-    winprint(STDOUTPUT,4,2,BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
-                            RESET "  " RESET
-                            BRGB(16,158,94) FRGB(255,255,255) " CONSULTAR DE ALMACEN " );
+    winprint(STDOUTPUT,4,2,
+        BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
+        RESET "  " RESET
+        BRGB(16,158,94) FRGB(255,255,255) " CONSULTAR DE ALMACEN " );
     winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar "); 
 
     if(getProductosSize(Almacen) == 0){
@@ -152,25 +153,40 @@ int consultarAlmacen(){
     }
 
     //Preparamos la información para meterla a la tabla
+    int filas = getProductosSize(Almacen)+1;
     char* headers[] = {
         "Nombre",
         "Existentes",
         "Precio",
         "Estante"
     };
-    char* ** data = prepareTableData(getProductosSize(Almacen)+1,4,headers);
-    for(int i = 0, j = 0, fila = 1; i < getProductosSize(Almacen); i++, j = 0, fila++){
+    char* data[filas][4];
+    prepareTableData(filas,4,headers,data);
+    //char*** data = prepareTableData(filas,4,headers);
+    for(int i = 0, j = 0, fila = 1; i < filas; i++, j = 0, fila++){
         Producto = getProductoByIndex(Almacen,i);
         char est = getProductoEstante(Producto);
+        char existentes[30];
+        int2str(getProductoExistentes(Producto), existentes);
+        char precio[30];
+        double2str(getProductoPrecio(Producto), precio);
         
-        setTableData(fila, j++,data,getProductoName(Producto));
-        setTableData(fila, j++,data,int2str(getProductoExistentes(Producto)));
-        setTableData(fila, j++,data,double2str(getProductoPrecio(Producto)));
-        setTableData(fila, j++,data,&est);
+        setTableData(data[fila][j++],getProductoName(Producto));
+        setTableData(data[fila][j++],existentes);
+        setTableData(data[fila][j++],precio);
+        setTableData(data[fila][j++],&est);
     }
 
     TABLE* dataTable = newTable(4,getProductosSize(Almacen),data);
-    printTable(dataTable, (getcols(STDOUTPUT) - getTotalToerico(dataTable))/2, 4);
+    printTable(dataTable, (getcols(STDOUTPUT) - getTotalToerico(dataTable))/2, 4, getProductosSize(Almacen)+1,4,data);
+    
+    // for(int i=0; i<filas;i++){
+    //     free(data[i]);
+    // }
+    freeTable(dataTable);
+    free(dataTable);
+    //free(Almacen);
+    //free(Producto);
     getchar();
 }
 

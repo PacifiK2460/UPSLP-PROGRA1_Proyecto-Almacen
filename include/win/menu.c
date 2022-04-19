@@ -54,7 +54,7 @@ void echo(){
 
 
 MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,char** opciones,char** descripciones, int cantOps){
-    MENU* menu = (MENU*)malloc(sizeof(MENU));
+    MENU* menu = malloc(sizeof(MENU));
     menu->opciones = opciones;
     menu->numeroDeOpciones = cantOps;
     menu->opcionMasLarga = 0;

@@ -5,11 +5,19 @@
         "type": "shell",
         "label": "g++ build active proyect",
         "command": "/usr/bin/gcc",
-        "args": ["${workspaceFolder}/main.c","${workspaceFolder}/include/*/*","-lm","-o", "${workspaceFolder}/main"],
+        "args": [
+          "${workspaceFolder}/main.c",
+          "${workspaceFolder}/include/*/*",
+          "-lm",
+          "-o",
+          "${workspaceFolder}/main"
+        ],
         "options": {
           "cwd": "/usr/bin"
         },
-        "problemMatcher": ["$gcc"],
+        "problemMatcher": [
+          "$gcc"
+        ],
         "group": {
           "kind": "build",
           "isDefault": true
@@ -19,11 +27,20 @@
         "type": "shell",
         "label": "g++ debug active proyect",
         "command": "/usr/bin/gcc",
-        "args": ["-g","${workspaceFolder}/main.c","${workspaceFolder}/include/*/*","-lm","-o", "${workspaceFolder}/main"],
+        "args": [
+          "-g",
+          "${workspaceFolder}/main.c",
+          "${workspaceFolder}/include/*/*",
+          "-lm",
+          "-o",
+          "${workspaceFolder}/main"
+        ],
         "options": {
           "cwd": "/usr/bin"
         },
-        "problemMatcher": ["$gcc"],
+        "problemMatcher": [
+          "$gcc"
+        ],
         "group": {
           "kind": "build",
           "isDefault": false
@@ -33,11 +50,20 @@
         "type": "shell",
         "label": "g++ debug active file",
         "command": "/usr/bin/gcc",
-        "args": ["-g","${file}","${workspaceFolder}/include/*/*","-lm","-o", "${workspaceFolder}/main"],
+        "args": [
+          "-g",
+          "${file}",
+          "${workspaceFolder}/include/*/*",
+          "-lm",
+          "-o",
+          "${workspaceFolder}/main"
+        ],
         "options": {
           "cwd": "/usr/bin"
         },
-        "problemMatcher": ["$gcc"],
+        "problemMatcher": [
+          "$gcc"
+        ],
         "group": {
           "kind": "build",
           "isDefault": false
