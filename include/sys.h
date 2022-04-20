@@ -15,26 +15,49 @@ enum ERRORES { OK, ERROR, FATAL_ERROR };
 typedef int (*delimitador)(char*);
 
 //Productos
-    typedef struct Pedidos Pedidos;
-    typedef struct Producto Producto;
-    typedef struct Productos Productos;
-    typedef struct Pedido Pedido;
-    typedef struct Carrito Carrito;
-    typedef struct Detalle Detalle;
-    struct Producto* getProductoByIndex(struct Productos* Src, int index);
-    int getProductosSize(struct Productos* Src);
-    struct Producto* getProductoByName(struct Productos* Src, char* name);
-    int modExistencia(struct Productos* Src, int index,int cant,char op);
-    int addProduct(struct Productos* Dest,char* nombre, int existentes, double precio, char estante);
-    int loadAlmacen(struct Productos* Dest);
-    int saveAlmacen(struct Productos* Dest);
-    int appendProduct(struct Producto* Src, struct Productos* Dest);
+    typedef struct _Producto{
+        char nombre[7];
+        int existentes;
+        double precioUnitario;
+        char estante;
+    }Producto;
+
+    typedef struct _Detalle{
+        char nombre[7];
+        int cantidad;
+    }Detalle;
+
+    typedef struct _Pedido{
+        int numero;
+        char estado;
+        char nombre_de_cliente[51];
+        char telefono_de_cliente[11];
+        char correo[51];
+        
+        Detalle Detalles[];
+    }Pedido;
+
+    //New
+    int getAlmacenSize();
+    int loadAlmacenFile(Producto Destination[]);
+    int saveAlmacenFile(Producto Source[]);
+    int appendAlmacenProduct(char* nombre, int existentes, double precio, char estante);
+
+    //DEPRECATED
+    Producto getProductoByIndex(Productos Src, int index);
+    int getProductosSize(Productos* Src);
+    Producto getProductoByName(Productos* Src, char* name);
+    int modExistencia(Productos* Src, int index,int cant,char op);
+    int addProduct(Productos* Dest,char* nombre, int existentes, double precio, char estante);
+    int loadAlmacen(Productos* Dest);
+    int saveAlmacen(Productos* Dest);
+    int appendProduct(Producto* Src, Productos* Dest);
 
 //Producto
-    char* getProductoName(struct Producto* Src);
-    int getProductoExistentes(struct Producto* Src);
-    double getProductoPrecio(struct Producto* Src);
-    char getProductoEstante(struct Producto* Src);
+    char* getProductoName(Producto* Src);
+    int getProductoExistentes(Producto* Src);
+    double getProductoPrecio(Producto* Src);
+    char getProductoEstante(Producto* Src);
 
 //Interfaz
     int consultarAlmacen();
@@ -46,13 +69,13 @@ typedef int (*delimitador)(char*);
     int regresar();
 
 //Pedidos
-    struct Pedidos* newPedidos();
-    int getPedidosSize(struct Pedidos* Src);
-    struct Pedido* getPedidoByIndex(struct Pedidos* Src, int index);
-    int appendPedido(struct Pedido* Src, struct Pedidos* Dest);
-    int savePedidos(struct Pedidos* Src);
-    int loadPedidos(struct Pedidos* Dest);
-    struct Pedido* getPedidosHead(struct Pedidos* Src);
+    Pedidos* newPedidos();
+    int getPedidosSize(Pedidos* Src);
+    Pedido* getPedidoByIndex(Pedidos* Src, int index);
+    int appendPedido(Pedido* Src, Pedidos* Dest);
+    int savePedidos(Pedidos* Src);
+    int loadPedidos(Pedidos* Dest);
+    Pedido* getPedidosHead(Pedidos* Src);
 
     //Logica
     void input(char* bg_titulo, char* titulo, char* dest, int (*funcion)(char*));
@@ -64,27 +87,28 @@ typedef int (*delimitador)(char*);
     int numeroDePedido();
 
 //Pedido
-    struct Pedido* newPedido();
-    int getPedidoNumero(struct Pedido* Src);
-    char getPedidoEstado(struct Pedido* Src);
-    char* getPedidoNombre(struct Pedido* Src);
-    char* getPedidoTelefono(struct Pedido* Src);
-    char* getPedidoCorreo(struct Pedido* Src);
-    struct Carrito* getPedidoCarrito(struct Pedido* Src);
+    Pedido* newPedido();
+    int getPedidoNumero(Pedido* Src);
+    char getPedidoEstado(Pedido* Src);
+    char* getPedidoNombre(Pedido* Src);
+    char* getPedidoTelefono(Pedido* Src);
+    char* getPedidoCorreo(Pedido* Src);
+    Carrito* getPedidoCarrito(Pedido* Src);
 
 //Carrito
     //Carrito
-    struct Carrito* newCarrito();
-    int getCarritoSize(struct Carrito* Src);
+    Carrito* newCarrito();
+    int getCarritoSize(Carrito* Src);
 
     //Detalle
-    struct Detalle* newDetalle();struct Detalle* getDetalleByIndex(struct Carrito* Src, int index);
-    char* getDetalleNombre(struct Detalle* Src);
-    int getDetalleCantidad(struct Detalle* Src);
-    int appendDetalle(struct Detalle* Src, struct Carrito* Dest);
-    int addDetalle(struct Carrito* Dest, char* nombre, int cantidad);
+    Detalle* newDetalle();
+    Detalle* getDetalleByIndex(Carrito* Src, int index);
+    char* getDetalleNombre(Detalle* Src);
+    int getDetalleCantidad(Detalle* Src);
+    int appendDetalle(Detalle* Src, Carrito* Dest);
+    int addDetalle(Carrito* Dest, char* nombre, int cantidad);
 
-    int addPedido(struct Pedidos* Dest, char estado, char* nombre_del_cliente, char* telefono_del_cliente, char* correo, struct Carrito* Carrito, int id);
+    int addPedido(Pedidos* Dest, char estado, char* nombre_del_cliente, char* telefono_del_cliente, char* correo, struct Carrito* Carrito, int id);
 
 //Logica
     int digitos(int n);
@@ -92,7 +116,7 @@ typedef int (*delimitador)(char*);
     int nuevoProducto();
     int salir();
 
-#define newProducto() malloc(sizeof(struct Producto*))
-#define newProductos() malloc(sizeof(struct Productos*))
+#define newProducto() malloc(sizeof(Producto))
+#define newProductos() malloc(sizeof(Productos))
 
 #endif

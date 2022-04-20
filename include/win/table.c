@@ -4,8 +4,7 @@ typedef struct FILA{
     char** columna;
 }FILA;
 
-
-struct TABLE{
+typedef struct TABLE{
     int columas, filas;
     int currentFilledRow;
     //Bidimencional: texto mas largo por columna
@@ -14,8 +13,8 @@ struct TABLE{
     int total;
     int toalTeorico;
     char** headers;
-    FILA data[];
-};
+    FILA* data;
+} TABLE;
 
 int getTotal(TABLE* src){
     return src->total;
@@ -26,42 +25,24 @@ int getTotalToerico(TABLE* src){
 }
 
 TABLE* newTable(int columnas, int filas){
-    TABLE* table = malloc(sizeof(*table) + filas*sizeof(*table->data));
+    TABLE* table = malloc(sizeof(*table));
     table->columas = columnas;
     table->filas = filas;
-
     table->total = 0;
     table->toalTeorico = 0;
-
     table->currentFilledRow = 0;
-
-    // table->textoMasLargo = malloc(columnas * sizeof(int*));
-    // for(int i = 0; i<columnas;i++) table->textoMasLargo[i] = 0;
-    // for(int i = 0; i < filas+1; i++){
-    //     for(int j = 0; j < columnas; j++){
-    //         int tam = len(data[i][j]); 
-    //         if(tam > table->textoMasLargo[j]) table->textoMasLargo[j] = tam;
-    //     }
-    // }
-
-    // for(int i = 0; i < columnas; i++){
-    //     table->total += len(BOLD FRGB(185, 251, 192));
-    //     table->total += table->textoMasLargo[i];
-    //     table->total += len(RESET);
-    //     table->total += len(" " VLINE " ");
-
-    //     table->toalTeorico += table->textoMasLargo[i];
-    // }
-
+    table->textoMasLargo = (int*)malloc(columnas * sizeof(int*));
+    //table->data = allocRows(filas);
+    table->data = (FILA*)malloc(filas * sizeof(FILA));
     return table;
 }
 
 void tableSetHeaders(TABLE *src,char** headers){
-    free(src->headers);
-    src->headers = malloc(src->columas*sizeof(char*));
+    //free(src->headers);
+    src->headers = (char**)malloc(src->columas*sizeof(char**));
     for(int col = 0; col < src->columas; col++){
-        free(src->headers[col]); //borramos por si acaso
-        src->headers[col] = malloc(sizeof(char*));
+        //free(src->headers[col]); //borramos por si acaso
+        //src->headers[col] = malloc(sizeof(char*));
         src->headers[col] = headers[col];
     }
 }
@@ -71,20 +52,16 @@ void tableAppendRow(TABLE *src, ...){
     if(src->currentFilledRow > src->filas) return;
     
     va_list column;
-    va_start(column,src->columas);
+    va_start(column,src);
 
-    //obtenemos la fila actual que deberia de estar vacia
-    FILA* currentRow = &(src->data[src->currentFilledRow]);
-    //Despejamos memoria, por si acaso
-    free(currentRow);
+    //src->data = malloc(src->filas * sizeof(src->data));
+    FILA* currentRow = src->data;
     //Obtenemos memoria para almacenar la fila
-    currentRow = malloc(src->columas * sizeof(char*));
+    //currentRow->columna = malloc(src->columas * sizeof(char**));
     
     for(int col=0; col < src->columas; col++){
-        //Liberamos memoria de la columna actual col de la fila seleccionada
-        free(currentRow->columna[col]);
         //Obtenemos memoria para guardar la string de la columna y fila actual
-        currentRow->columna[col] = malloc(sizeof(char*));
+        //currentRow->columna[col] = malloc(sizeof(char*));
         //Guardamos cada str en la columna
         currentRow->columna[col] = va_arg(column,char*); 
     }
@@ -221,6 +198,6 @@ void freeTable(TABLE *src){
         }
         free(cR);
     }
-    free(src->data);
+    //free(src->data);
     free(src);
 }

@@ -1,16 +1,5 @@
 #include "../sys.h"
 
-struct Pedido{
-    int numero;
-    char estado;
-    char nombre_de_cliente[51];
-    char telefono_de_cliente[11];
-    char correo[51];
-    
-    struct Carrito* Carrito;
-    struct Pedido* next;
-};
-
 //Get struct info
 
 struct Pedido* newPedido(){
@@ -43,12 +32,6 @@ char* getPedidoCorreo(struct Pedido* Src){
 struct Carrito* getPedidoCarrito(struct Pedido* Src){
     return Src->Carrito;
 }
-
-struct Pedidos{
-    struct Pedido* Head;
-    struct Pedido* temp;
-    int size;
-};
 
 struct Pedidos* newPedidos(){
     struct Pedidos* temp = (struct Pedidos*)malloc(sizeof(struct Pedidos));

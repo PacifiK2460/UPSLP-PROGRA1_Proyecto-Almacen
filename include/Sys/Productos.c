@@ -1,16 +1,73 @@
 #include "../sys.h"
 
-// Estructuras de la interfaz
-struct Producto{
-    char nombre[7];
-    int existentes;
-    double precioUnitario;
-    char estante;
+int getAlmacenSize(){
+    int rows = 0;
+    FILE* file;
+    //Si el archivo no existe, crea uno
+    //Con w+ podemos leer escribir
+    file = fopen("Almacen","w+");
 
-    struct Producto* next;
-};
+    //Como intenta crear un archivo, le hecho de que falle
+    //significa que ocurrio algo peor
+    if(file == NULL){
+        return -1;
+    }
 
-struct Producto* getProductoByName(struct Productos* Src, char* name){
+    for(char temp; scanf("%c",&temp) == 1;  ){
+        if(temp == '\n') rows++;
+    }
+
+    fclose(file);
+    return rows;
+}
+
+int loadAlmacenFile(Producto Destination[]){
+    FILE* file;
+    int fila = 0;
+    file = fopen("Almacen", "w+");
+    if(file == NULL) return -1;
+
+    for(Producto Temp; scanf("%6s %i %lf %c", Temp.nombre, &(Temp.existentes),&(Temp.precioUnitario), &(Temp.estante)) == 4; ){
+        Destination[fila].existentes = Temp.existentes;
+        Destination[fila].precioUnitario = Temp.precioUnitario;
+        Destination[fila].estante = Temp.estante;
+        cp(Destination[fila].nombre, Temp.nombre);
+        fila++;
+    }
+
+    fclose(file);
+    return 1;
+}
+
+int saveAlmacenFile(Producto Source[]){
+    remove("Almacen");
+    FILE* file;
+    int fila = 0;
+    int filas = sizeof(Source) / sizeof(Source[0]);
+    file = fopen("Almacen", "w+");
+    if(file == NULL) return -1;
+    for(; fila < filas; fila++){
+        fprintf(file,"%6s %i %lf %c\n", Source[fila].nombre, Source[fila].existentes,
+        Source[fila].precioUnitario, Source[fila].estante);
+    }
+    fclose(file);
+    return 1;
+}
+
+int appendAlmacenProduct(char* nombre, int existentes, double precio, char estante){
+    FILE* file;
+    int fila = 0;
+    file = fopen("Almacen", "a");
+    if(file == NULL) return -1;
+
+    fprintf((file,"%6s %i %lf %c\n",nombre,existentes,precio,estante);
+
+    fclose(file);
+    return 1;
+}
+
+// Estructuras de la interfaz DEPRECATED 
+struct Producto getProductoByName(struct Productos* Src, char* name){
     for(int i = 0; i < getProductosSize(Src); i++){
         if( cmp( getProductoName(getProductoByIndex(Src,i)),name ) == 0) return getProductoByIndex(Src,i);
     }
@@ -32,12 +89,6 @@ double getProductoPrecio(struct Producto* Src){
 char getProductoEstante(struct Producto* Src){
     return Src->estante;
 }
-
-struct Productos{
-    struct Producto* Head;
-    struct Producto* temp;
-    int size;
-};
 
 int getProductosSize(struct Productos* Src){
     if(Src == NULL) return ERROR;
@@ -78,20 +129,23 @@ int loadAlmacen(struct Productos* Dest){
     if(file == NULL){
         file = fopen("Almacen", "w");
         if(file == NULL) return ERROR;
+        fclose(file);
+        file = fopen("Almacen", "r");
+        if(file == NULL) return ERROR;
     }
 
     struct Producto* buffer;
-    buffer = newProducto();
+    buffer = (struct Producto*)malloc(sizeof(struct Producto));
 
-    while(fscanf(file,"%6s %i %lf %c", &buffer->nombre, &buffer->existentes, &buffer->precioUnitario, &buffer->estante) == 4){
+    while(fscanf(file,"%6s %i %lf %c", &(buffer->nombre), &(buffer->existentes), &(buffer->precioUnitario), &(buffer->estante)) == 4){
         buffer->next = NULL;
         appendProduct(buffer,Dest);
         //free(buffer);
-        buffer = newProducto();
+        buffer = (struct Producto*)malloc(sizeof(struct Producto));
 
     }
 
-    //free(buffer);
+    free(buffer);
     fclose(file);
     return OK;
 }
@@ -112,12 +166,10 @@ int saveAlmacen(struct Productos* Dest){
     return OK;
 }
 
-struct Producto* getProductoByIndex(struct Productos* Src, int index){
-    if(Src == NULL) return NULL;
-    if(index > getProductosSize(Src) || index < 0) return NULL;
-    if(index == 0) return Src->Head;
+Producto getProductoByIndex(Productos Src, int index){
+    if(index == 0) return Src.Head;
 
-    Src->temp = Src->Head;
+    Src.temp = Src.Head;
     while (index >= 1){
         Src->temp = Src->temp->next;
         index -= 1;

@@ -59,22 +59,38 @@ int registrarPedido(){
     while(1){
         //Imprimimos tabla de productos
         {
-            char* headers[] = {
+            TABLE* dataTable = newTable(2,getProductosSize(Almacen));
+            tableSetHeaders(dataTable,(char*[]){
                 "ID",
                 "Nombre"
-            };
-            char* data[getProductosSize(Almacen)][2];
-            prepareTableData(getProductosSize(Almacen),4,headers,data);
-            //char*** data = prepareTableData(getProductosSize(Almacen)+1,2,headers);
-            for(int i = 0, j = 0, fila = 1; i < getProductosSize(Almacen); i++, j = 0, fila++){
-                Producto = getProductoByIndex(Almacen,i);
+            });
+            for(int fila = 0; fila < getProductosSize(Almacen); fila++){
+                Producto = getProductoByIndex(Almacen,fila);
                 char temp[30];
-                int2str(i, temp);
-                setTableData(data[fila][j++],temp);
-                setTableData(data[fila][j++],getProductoName(Producto));
-            }
-            TABLE* dataTable = newTable(2,getProductosSize(Almacen));
-            printTable(dataTable, (getcols(STDOUTPUT) - getTotalToerico(dataTable))/2, 4,getProductosSize(Almacen)+1,2,data);
+                int2str(fila, temp);
+
+                tableAppendRow(dataTable,
+                    temp,
+                    getProductoName(Producto)
+                );
+            };
+            printTable(dataTable, (getcols(STDOUTPUT) - getTotalToerico(dataTable))/2, 4);
+            // char* headers[] = {
+            //     "ID",
+            //     "Nombre"
+            // };
+            //char* data[getProductosSize(Almacen)][2];
+            //prepareTableData(getProductosSize(Almacen),4,headers,data);
+            //char*** data = prepareTableData(getProductosSize(Almacen)+1,2,headers);
+            // for(int i = 0, j = 0, fila = 1; i < getProductosSize(Almacen); i++, j = 0, fila++){
+            //     Producto = getProductoByIndex(Almacen,i);
+            //     char temp[30];
+            //     int2str(i, temp);
+            //     setTableData(data[fila][j++],temp);
+            //     setTableData(data[fila][j++],getProductoName(Producto));
+            // }
+            //TABLE* dataTable = newTable(2,getProductosSize(Almacen));
+            //printTable(dataTable, (getcols(STDOUTPUT) - getTotalToerico(dataTable))/2, 4,getProductosSize(Almacen)+1,2,data);
             winprint(STDOUTPUT,4,2,tituto);
             winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
             getchar();
@@ -433,6 +449,7 @@ int consultarPedido(){
     menu = newMenu(STDOUTPUT,4, 4 ,30,5, opciones,descripciones,5);
     focusMenu(menu);
 }
+
 int registrarEntrega(){}
 int modificarPedido(){}
 

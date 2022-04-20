@@ -1,11 +1,5 @@
 #include "../sys.h"
 
-struct Carrito{
-    struct Detalle* Head;
-    struct Detalle* temp;
-    int size;
-};
-
 struct Carrito* newCarrito(){
     struct Carrito* temp = (struct Carrito*)malloc(sizeof(struct Carrito));
     if(temp == NULL) return NULL;
@@ -20,13 +14,6 @@ int getCarritoSize(struct Carrito* Src){
     if(Src == NULL) return -1;
     return Src->size;
 }
-
-struct Detalle{
-    char nombre[7];
-    int cantidad;
-
-    struct Detalle* next;
-};
 
 struct Detalle* newDetalle(){
     struct Detalle* temp = (struct Detalle*)malloc( sizeof(struct Detalle));

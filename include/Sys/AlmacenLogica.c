@@ -4,16 +4,29 @@ int digitos(int n){
     return floor(log10(n) + 1);
 }
 
-int modificarExistentes(){
-    struct Productos* src = newProductos();
-    struct Producto* Producto;
-    loadAlmacen(src);
+int modificar(char accion){
+    //struct Productos* src = newProductos();
+    //struct Producto* Producto;
+    int productos = getAlmacenSize();
+    Producto Almacen[productos];
+
+    if(productos == -1 ||loadAlmacenFile(Almacen) == -1){
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al leer el archivo" RESET);
+        getchar();
+        return 1;
+    }
+
+    if(productos == 0){
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No hay productos por listar" RESET);
+        getchar();
+        return 1;
+    }
 
     char id[10] = {0};
     input("MODIFICAR PRODUCTO","INDEX DEL PRODUCTO A MODIFICAR",id,&evaluarExistencia);
     int idx;
     sscanf(id,"%i",&idx);
-    if(idx < 0 || idx > getProductosSize(src)){
+    if(idx < 0 || idx > productos){
         printinthemiddle(STDOUTPUT,getcols(STDOUTPUT)/2,"NO PUEDES MODIFICAR UN PRODUCTO INEXISTENTE");
         printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presione cualquier tecla para continuar >");
         getchar();
@@ -21,43 +34,37 @@ int modificarExistentes(){
     }
 
     char sum[10] = {0};
-    input("MODIFICAR PRODUCTO","CANTIDAD A PONER",sum, &evaluarExistencia);
+    char titulo[100];
+    strcat(titulo,"CANTIDAD A ");
+    if(accion == 's'){
+        strcat(titulo,"SUMAR");
+    } else {
+        strcat(titulo,"PONER");
+    }
+    input("MODIFICAR PRODUCTO",titulo,sum, &evaluarExistencia);
     int s;
     sscanf(sum,"%i",&s);
-    modExistencia(src,idx,s,'S');
+    if(accion == 's') Almacen[idx].existentes += s;
+    else Almacen[idx].existentes = s;
+    //Almacen[idx].existentes += s;
+    //modExistencia(src,idx,s,'S');
 
-    remove("Almacen");
-    saveAlmacen(src);
+    if(saveAlmacenFile(Almacen) == -1){
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al guardar el archivo, el progreso se perdio" RESET);
+    }
+}
+
+int modificarExistentes(){
+    modificar('p');
 }
 
 int sumarExistentes(){
-    struct Productos* src=newProductos();
-    struct Producto* Producto;
-    loadAlmacen(src);
-
-    char id[10] = {0};
-    input("MODIFICAR PRODUCTO","INDEX DEL PRODUCTO A MODIFICAR",id,&evaluarExistencia);
-    int idx;
-    sscanf(id,"%i",&idx);
-    if(idx < 0 || idx > getProductosSize(src)){
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"NO PUEDES MODIFICAR UN PRODUCTO INEXISTENTE");
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presione cualquier tecla para continuar >");
-        getchar();
-        return 0;
-    }
-
-    char sum[10] = {0};
-    input("MODIFICAR PRODUCTO","CANTIDAD A SUMAR",sum, &evaluarExistencia);
-    int s;
-    sscanf(sum,"%i",&s);
-    modExistencia(src,idx,s,'A');
-    remove("Almacen");
-    saveAlmacen(src);
+    modificar('s');
 }
 
 int nuevoProducto(){
-    struct Productos* src=newProductos();
-    loadAlmacen(src);
+    int productos = getAlmacenSize();
+    Producto Almacen[productos];
 
     char titulo[] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
                     RESET "  " RESET
@@ -85,13 +92,18 @@ int nuevoProducto(){
     sscanf(precio,"%lf", &precios);
     ubi = ubicacion[0];
 
-    addProduct(src,nombre,existentes,precios,ubi);
-    remove("Almacen");
-    saveAlmacen(src);
-    free(src);
+    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar ");
+    
+    if(appendAlmacenProduct(nombre,existentes,precios,ubi) == -1){
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al guardar el archivo, el progreso se perdio" RESET);
+    }
+
+    // addProduct(src,nombre,existentes,precios,ubi);
+    // remove("Almacen");
+    // saveAlmacen(src);
+    // free(src);
 
     printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "AÑADIDO EXITOSO" RESET);
-    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar ");
     getchar();
     return 1;
 }
@@ -134,10 +146,10 @@ int actualizarAlmacen(){
 
 // Acciones
 int consultarAlmacen(){
-    struct Productos* Almacen = newProductos();
-    struct Producto* Producto;
+    int productos = getAlmacenSize();
+    Producto Almacen[productos];
 
-    //Imprimimos lo demas / UI
+    //Imprimimos / UI
     {
         printf(CLEAR);
         winprint(STDOUTPUT,4,2,
@@ -146,24 +158,20 @@ int consultarAlmacen(){
             BRGB(16,158,94) FRGB(255,255,255) " CONSULTAR DE ALMACEN " );
         winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar "); 
 
-        if(loadAlmacen(Almacen) == ERROR){
+        if(productos == -1 ||loadAlmacenFile(Almacen) == -1){
             printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al leer el archivo" RESET);
             getchar();
             return 1;
         }
 
-        if(getProductosSize(Almacen) == 0){
+        if(productos == 0){
             printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No hay productos por listar" RESET);
             getchar();
             return 1;
         }
     }
     
-    //Preparamos la información para meterla a la tabla
-    int filas = getProductosSize(Almacen);
-    //char* data[filas][4];
-    
-    TABLE* dataTable = newTable(4,filas);
+    TABLE* dataTable = newTable(4,productos);
     //Agregamos las cabeceras a la tabla
     tableSetHeaders(dataTable,(char*[]){
         "Nombre",
@@ -173,20 +181,22 @@ int consultarAlmacen(){
     });
 
     //Agregamos la info a la tabla
-    for(int fila = 0; fila < filas; fila++){
-        Producto = getProductoByIndex(Almacen,fila);
+    for(int fila = 0; fila < productos; fila++){
+        //Producto = getProductoByIndex(&Almacen,fila);
 
         char existentes[30];
-        int2str(getProductoExistentes(Producto), existentes);
+        int2str(Almacen[fila].existentes, existentes);
+        //int2str(getProductoExistentes(Producto), existentes);
         char precio[30];
-        double2str(getProductoPrecio(Producto), precio);
-        char est = getProductoEstante(Producto);
+        double2str(Almacen[fila].precioUnitario, precio);
+        //double2str(getProductoPrecio(Producto), precio);
+        //char est = getProductoEstante(Producto);
 
         tableAppendRow(dataTable,
-            getProductoName(Producto),
+            Almacen[fila].nombre,
             existentes,
             precio,
-            &est
+            &(Almacen[fila].estante)
         );
     }
     //prepareTableData(filas,4,headers,data);
@@ -205,7 +215,7 @@ int consultarAlmacen(){
     // for(int i=0; i<filas;i++){
     //     free(data[i]);
     // }
-    freeTable(dataTable);
+    //freeTable(dataTable);
     //free(Almacen);
     //free(Producto);
     getchar();
