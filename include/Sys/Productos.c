@@ -76,28 +76,22 @@ int loadAlmacen(struct Productos* Dest){
 
     FILE* file = fopen("Almacen", "r");
     if(file == NULL){
-        return ERROR;
+        file = fopen("Almacen", "w");
+        if(file == NULL) return ERROR;
     }
 
     struct Producto* buffer;
     buffer = newProducto();
 
-    while(file != EOF){
-        fscanf(file,"%.7s %i %d %c", &buffer->nombre, &buffer->existentes, &buffer->precioUnitario, &buffer->estante);
+    while(fscanf(file,"%6s %i %lf %c", &buffer->nombre, &buffer->existentes, &buffer->precioUnitario, &buffer->estante) == 4){
         buffer->next = NULL;
         appendProduct(buffer,Dest);
-        free(buffer);
+        //free(buffer);
         buffer = newProducto();
+
     }
 
-    // while(fread(buffer,sizeof(struct Producto),1,file) == 1){
-    //     buffer->next = NULL;
-    //     appendProduct(buffer,Dest);
-    //     free(buffer);
-    //     buffer = newProducto();
-    // }
-
-    free(buffer);
+    //free(buffer);
     fclose(file);
     return OK;
 }
@@ -109,7 +103,7 @@ int saveAlmacen(struct Productos* Dest){
     if(file == NULL) return ERROR;
     struct Producto* buffer;
     for(int i = 0; i < getProductosSize(Dest); i++){
-        getProductoByIndex(buffer,i);
+        buffer = getProductoByIndex(Dest,i);
         fprintf(file,"%.7s %i %d %c",buffer->nombre, buffer->existentes, buffer->precioUnitario, buffer->estante);
         //fwrite(getProductoByIndex(Dest,i),sizeof(struct Producto),1,file);
     }

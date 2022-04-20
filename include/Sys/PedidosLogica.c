@@ -73,7 +73,7 @@ int registrarPedido(){
                 setTableData(data[fila][j++],temp);
                 setTableData(data[fila][j++],getProductoName(Producto));
             }
-            TABLE* dataTable = newTable(2,getProductosSize(Almacen),data);
+            TABLE* dataTable = newTable(2,getProductosSize(Almacen));
             printTable(dataTable, (getcols(STDOUTPUT) - getTotalToerico(dataTable))/2, 4,getProductosSize(Almacen)+1,2,data);
             winprint(STDOUTPUT,4,2,tituto);
             winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
