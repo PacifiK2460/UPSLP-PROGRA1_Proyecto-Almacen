@@ -14,6 +14,12 @@ enum ERRORES { OK, ERROR, FATAL_ERROR };
 
 typedef int (*delimitador)(char*);
 
+//Logica
+    int digitos(int n);
+    int sumarExistentes();
+    int nuevoProducto();
+    int salir();
+
 //Productos
     typedef struct _Producto{
         char nombre[7];
@@ -37,27 +43,14 @@ typedef int (*delimitador)(char*);
         Detalle Detalles[];
     }Pedido;
 
-    //New
+    //Almacen
     int getAlmacenSize();
     int loadAlmacenFile(Producto Destination[]);
-    int saveAlmacenFile(Producto Source[]);
+    int saveAlmacenFile(Producto Source[], int filas);
     int appendAlmacenProduct(char* nombre, int existentes, double precio, char estante);
 
-    //DEPRECATED
-    Producto getProductoByIndex(Productos Src, int index);
-    int getProductosSize(Productos* Src);
-    Producto getProductoByName(Productos* Src, char* name);
-    int modExistencia(Productos* Src, int index,int cant,char op);
-    int addProduct(Productos* Dest,char* nombre, int existentes, double precio, char estante);
-    int loadAlmacen(Productos* Dest);
-    int saveAlmacen(Productos* Dest);
-    int appendProduct(Producto* Src, Productos* Dest);
-
-//Producto
-    char* getProductoName(Producto* Src);
-    int getProductoExistentes(Producto* Src);
-    double getProductoPrecio(Producto* Src);
-    char getProductoEstante(Producto* Src);
+    //Pedidos
+    int getPedidosSize();
 
 //Interfaz
     int consultarAlmacen();
@@ -68,16 +61,6 @@ typedef int (*delimitador)(char*);
     int modificarPedido();
     int regresar();
 
-//Pedidos
-    Pedidos* newPedidos();
-    int getPedidosSize(Pedidos* Src);
-    Pedido* getPedidoByIndex(Pedidos* Src, int index);
-    int appendPedido(Pedido* Src, Pedidos* Dest);
-    int savePedidos(Pedidos* Src);
-    int loadPedidos(Pedidos* Dest);
-    Pedido* getPedidosHead(Pedidos* Src);
-
-    //Logica
     void input(char* bg_titulo, char* titulo, char* dest, int (*funcion)(char*));
     int mostrarPedidosPor(char tipo);
     int pedidosActivos();
@@ -86,37 +69,58 @@ typedef int (*delimitador)(char*);
     int buscarID(char* ID);
     int numeroDePedido();
 
-//Pedido
-    Pedido* newPedido();
-    int getPedidoNumero(Pedido* Src);
-    char getPedidoEstado(Pedido* Src);
-    char* getPedidoNombre(Pedido* Src);
-    char* getPedidoTelefono(Pedido* Src);
-    char* getPedidoCorreo(Pedido* Src);
-    Carrito* getPedidoCarrito(Pedido* Src);
+//DEPRECATED
+//Toda función debajo será eliminada
+// Producto getProductoByIndex(Productos Src, int index);
+// int getProductosSize(Productos* Src);
+// Producto getProductoByName(Productos* Src, char* name);
+// int modExistencia(Productos* Src, int index,int cant,char op);
+// int addProduct(Productos* Dest,char* nombre, int existentes, double precio, char estante);
+// int loadAlmacen(Productos* Dest);
+// int saveAlmacen(Productos* Dest);
+// int appendProduct(Producto* Src, Productos* Dest);
 
-//Carrito
-    //Carrito
-    Carrito* newCarrito();
-    int getCarritoSize(Carrito* Src);
+// //Producto
+// char* getProductoName(Producto* Src);
+// int getProductoExistentes(Producto* Src);
+// double getProductoPrecio(Producto* Src);
+// char getProductoEstante(Producto* Src);
 
-    //Detalle
-    Detalle* newDetalle();
-    Detalle* getDetalleByIndex(Carrito* Src, int index);
-    char* getDetalleNombre(Detalle* Src);
-    int getDetalleCantidad(Detalle* Src);
-    int appendDetalle(Detalle* Src, Carrito* Dest);
-    int addDetalle(Carrito* Dest, char* nombre, int cantidad);
+// //Pedidos
+// Pedidos* newPedidos();
+// int getPedidosSize(Pedidos* Src);
+// Pedido* getPedidoByIndex(Pedidos* Src, int index);
+// int appendPedido(Pedido* Src, Pedidos* Dest);
+// int savePedidos(Pedidos* Src);
+// int loadPedidos(Pedidos* Dest);
+// Pedido* getPedidosHead(Pedidos* Src);
 
-    int addPedido(Pedidos* Dest, char estado, char* nombre_del_cliente, char* telefono_del_cliente, char* correo, struct Carrito* Carrito, int id);
 
-//Logica
-    int digitos(int n);
-    int sumarExistentes();
-    int nuevoProducto();
-    int salir();
+// //Pedido
+// Pedido* newPedido();
+// int getPedidoNumero(Pedido* Src);
+// char getPedidoEstado(Pedido* Src);
+// char* getPedidoNombre(Pedido* Src);
+// char* getPedidoTelefono(Pedido* Src);
+// char* getPedidoCorreo(Pedido* Src);
+// Carrito* getPedidoCarrito(Pedido* Src);
 
-#define newProducto() malloc(sizeof(Producto))
-#define newProductos() malloc(sizeof(Productos))
+// //Carrito
+// //Carrito
+// Carrito* newCarrito();
+// int getCarritoSize(Carrito* Src);
+
+// //Detalle
+// Detalle* newDetalle();
+// Detalle* getDetalleByIndex(Carrito* Src, int index);
+// char* getDetalleNombre(Detalle* Src);
+// int getDetalleCantidad(Detalle* Src);
+// int appendDetalle(Detalle* Src, Carrito* Dest);
+// int addDetalle(Carrito* Dest, char* nombre, int cantidad);
+
+// int addPedido(Pedidos* Dest, char estado, char* nombre_del_cliente, char* telefono_del_cliente, char* correo, struct Carrito* Carrito, int id);
+
+// #define newProducto() malloc(sizeof(Producto))
+// #define newProductos() malloc(sizeof(Productos))
 
 #endif

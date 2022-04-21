@@ -28,9 +28,9 @@ void input(char* bg_titulo, char* titulo, char* dest, int (*funcion)(char*)){
 }
 
 int registrarPedido(){
-    struct Productos* Almacen=newProductos();
-    struct Producto* Producto;
-    loadAlmacen(Almacen);
+    // struct Productos* Almacen=newProductos();
+    // struct Producto* Producto;
+    // loadAlmacen(Almacen);
 
     int numero = randrang(99999,00000);
     char numid[6] = {0};
@@ -40,8 +40,8 @@ int registrarPedido(){
     char telefono_de_cliente[11] = {0};
     char correo[51] = {0};
 
-    struct Pedidos* Pedidos = newPedidos();
-    loadPedidos(Pedidos);
+    // struct Pedidos* Pedidos = newPedidos();
+    // loadPedidos(Pedidos);
 
     char tituto[] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL " RESET "  " RESET BRGB(16,158,94) FRGB(255,255,255) " REGISTRAR PEDIDO ";
 
@@ -49,8 +49,8 @@ int registrarPedido(){
     input(tituto,BOLD FRGB(185, 251, 192) "Telefono del cliente", telefono_de_cliente,evaluarNumero);
     input(tituto,BOLD FRGB(185, 251, 192) "Correo del Cliente",correo,evaluarCorreo);
 
-    struct Carrito* Carrito = newCarrito();
-    struct Detalle* Detalle = newDetalle();
+    // struct Carrito* Carrito = newCarrito();
+    // struct Detalle* Detalle = newDetalle();
 
     char pedidos[2] = {0};
     int ped = -1;
@@ -58,8 +58,8 @@ int registrarPedido(){
     int cant;
     while(1){
         //Imprimimos tabla de productos
-        {
-            TABLE* dataTable = newTable(2,getProductosSize(Almacen));
+        { 
+            TABLE* dataTable = newTable(2,getAlmacenSize());
             tableSetHeaders(dataTable,(char*[]){
                 "ID",
                 "Nombre"

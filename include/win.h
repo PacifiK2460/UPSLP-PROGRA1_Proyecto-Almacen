@@ -27,8 +27,6 @@
 
 #define MENUVLINE "▏"
 
-#define STDOUTPUT NULL
-
 #define RESET     "\e[0m"
 #define NONE      ""
 
@@ -53,29 +51,61 @@ void noEcho();
 void echo();
 
 // Window.h
-typedef struct WINDOW WINDOW;
-typedef struct MENU MENU;
-typedef struct TABLE TABLE;
+typedef struct _WINDOW
+{
+  int X;
+  int Y;
+  int COLS;
+  int ROWS;
+
+  struct WINDOW* Parent;
+}WINDOW;
+
+WINDOW *STDOUTPUT = NULL;
+
+typedef struct _MENU{
+    WINDOW* Parent;
+    int X;
+    int Y;
+    int ROWS;
+    char** opciones;
+    char** descripcion;
+    int selected;
+} MENU;
+
+typedef struct _TABLE{
+    int columas, filas;
+    int currentFilledRow;
+    //Bidimencional: texto mas largo por columna
+    int* textoMasLargo;
+    //Tridimencional: columna, fila y texto
+    int total;
+    int toalTeorico;
+    char** headers;
+    struct FILA* data;
+} TABLE;
 
 typedef int (*Funciones)(void);
+
+void setMenuData(MENU* Destination,WINDOW Parent, int x, int y, int rows,char* opciones[], char* descripciones[]);
 
 void innit();
 
 WINDOW* newWin(int y, int x, int COLS, int ROWS, WINDOW* Parent);
-void winprint(WINDOW* window,int X, int Y, char* text);
-void printinthemiddle(WINDOW* Window, int Y, char* texto);
-void printinthemiddlesize(WINDOW* Window, int Y, char* texto, int tam);
-void box(WINDOW* Window);
-void getcolsrows(WINDOW* Window, int* COLS, int* ROWS);
-void getxy(WINDOW* Window, int* X, int* Y);
-int getcols(WINDOW* Window);
-int getrows(WINDOW* Window);
-int getx(WINDOW* Window);
-int gety(WINDOW* Window);
+void winprint(WINDOW window,int X, int Y, char* text);
+void printinthemiddle(WINDOW Window, int Y, char* texto);
+void printinthemiddlesize(WINDOW Window, int Y, char* texto, int tam);
+void box(WINDOW Window);
+void getcolsrows(WINDOW Window, int* COLS, int* ROWS);
+void getxy(WINDOW Window, int* X, int* Y);
+int getcols(WINDOW Window);
+int getrows(WINDOW Window);
+int getx(WINDOW Window);
+int gety(WINDOW Window);
 
 // Menu.h
-MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,char** opciones,char** descripciones, int cant);
-int focusMenu(MENU* menu); 
+//MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,char** opciones,char** descripciones, int cant);
+void focusMenu(MENU* menu); 
 void updateMenu(MENU* menu); 
 
 // Table.h

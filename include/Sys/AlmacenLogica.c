@@ -11,13 +11,13 @@ int modificar(char accion){
     Producto Almacen[productos];
 
     if(productos == -1 ||loadAlmacenFile(Almacen) == -1){
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al leer el archivo" RESET);
+        printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)/2,DIM "Hubo un error al leer el archivo" RESET);
         getchar();
         return 1;
     }
 
     if(productos == 0){
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No hay productos por listar" RESET);
+        printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)/2,DIM "No hay productos por listar" RESET);
         getchar();
         return 1;
     }
@@ -27,19 +27,19 @@ int modificar(char accion){
     int idx;
     sscanf(id,"%i",&idx);
     if(idx < 0 || idx > productos){
-        printinthemiddle(STDOUTPUT,getcols(STDOUTPUT)/2,"NO PUEDES MODIFICAR UN PRODUCTO INEXISTENTE");
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presione cualquier tecla para continuar >");
+        printinthemiddle(*STDOUTPUT,getcols(*STDOUTPUT)/2,"NO PUEDES MODIFICAR UN PRODUCTO INEXISTENTE");
+        printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)-2,"< Presione cualquier tecla para continuar >");
         getchar();
         return 0;
     }
 
     char sum[10] = {0};
     char titulo[100];
-    strcat(titulo,"CANTIDAD A ");
+    cat(titulo,"CANTIDAD A ");
     if(accion == 's'){
-        strcat(titulo,"SUMAR");
+        cat(titulo,"SUMAR");
     } else {
-        strcat(titulo,"PONER");
+        cat(titulo,"PONER");
     }
     input("MODIFICAR PRODUCTO",titulo,sum, &evaluarExistencia);
     int s;
@@ -49,8 +49,8 @@ int modificar(char accion){
     //Almacen[idx].existentes += s;
     //modExistencia(src,idx,s,'S');
 
-    if(saveAlmacenFile(Almacen) == -1){
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al guardar el archivo, el progreso se perdio" RESET);
+    if(saveAlmacenFile(Almacen, productos) == -1){
+        printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)/2,DIM "Hubo un error al guardar el archivo, el progreso se perdio" RESET);
     }
 }
 
@@ -73,7 +73,7 @@ int nuevoProducto(){
                     BRGB(16,158,94) FRGB(255,255,255) " AGREGAR PRODUCTO ";
 
     printf(CLEAR);
-    winprint(STDOUTPUT,4,2, titulo);
+    winprint(*STDOUTPUT,4,2, titulo);
 
     char nombre[7] = {0};
     char existencia[10] = {0};
@@ -92,10 +92,10 @@ int nuevoProducto(){
     sscanf(precio,"%lf", &precios);
     ubi = ubicacion[0];
 
-    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar ");
+    winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar ");
     
     if(appendAlmacenProduct(nombre,existentes,precios,ubi) == -1){
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al guardar el archivo, el progreso se perdio" RESET);
+        printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)/2,DIM "Hubo un error al guardar el archivo, el progreso se perdio" RESET);
     }
 
     // addProduct(src,nombre,existentes,precios,ubi);
@@ -103,25 +103,13 @@ int nuevoProducto(){
     // saveAlmacen(src);
     // free(src);
 
-    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "AÑADIDO EXITOSO" RESET);
+    printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)/2,DIM "AÑADIDO EXITOSO" RESET);
     getchar();
     return 1;
 }
 
 int actualizarAlmacen(){
-    MENU* menu;
-    char* opciones[] = {
-        "Sumar Existentes",
-        "Modificar Existentes",
-        "Agregar Producto",
-        "Regresar"
-    };
-    char* descripcines[] = {
-        "Suma la cantidad ingresada al producto seleccionado",
-        "Establece la cantidad ingresada al producto selecccionado",
-        "Crea un nuevo espacio en el almacen",
-        "Regresa al menu principal"
-    };
+    //MENU* menu;
     Funciones Funciones[] = {
         sumarExistentes,
         modificarExistentes,
@@ -129,18 +117,35 @@ int actualizarAlmacen(){
         regresar
     };
 
-    menu = newMenu(STDOUTPUT,4, 4,30,4, opciones,descripcines,4);
-    int respuesta;
+    MENU menu;
+    setMenuData(&menu,*STDOUTPUT,4,4,7,
+        (char*[]){
+            "Sumar Existentes",
+            "Modificar Existentes",
+            "Agregar Producto",
+            "Regresar"
+        },
+        (char*[]){
+            "Suma la cantidad ingresada al producto seleccionado",
+            "Establece la cantidad ingresada al producto selecccionado",
+            "Crea un nuevo espacio en el almacen",
+            "Regresa al menu principal"
+        }
+    );
+
 
     while(1){
         printf(CLEAR);
-        winprint(STDOUTPUT,4,2,BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
+        winprint(*STDOUTPUT,4,2,BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
                                 RESET "  " RESET
                                 BRGB(16,158,94) FRGB(255,255,255) " ACTUALIZACIÓN DE ALMACEN " );
-        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "↓↑"     RESET DIM  " Arriba / Abajo ");
-        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " Seleccionar "); 
-        if((respuesta = focusMenu(menu)) == 3) break;
-        Funciones[respuesta]();
+        winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "↓↑"     RESET DIM  " Arriba / Abajo ");
+        winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " Seleccionar "); 
+        focusMenu(&menu);
+        if(menu.selected == 3) break;
+        Funciones[menu.selected]();
+        //if((respuesta = focusMenu(menu)) == 3) break;
+        //Funciones[respuesta]();
     }
 }
 
@@ -152,20 +157,20 @@ int consultarAlmacen(){
     //Imprimimos / UI
     {
         printf(CLEAR);
-        winprint(STDOUTPUT,4,2,
+        winprint(*STDOUTPUT,4,2,
             BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
             RESET "  " RESET
             BRGB(16,158,94) FRGB(255,255,255) " CONSULTAR DE ALMACEN " );
-        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar "); 
+        winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar "); 
 
         if(productos == -1 ||loadAlmacenFile(Almacen) == -1){
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al leer el archivo" RESET);
+            printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)/2,DIM "Hubo un error al leer el archivo" RESET);
             getchar();
             return 1;
         }
 
         if(productos == 0){
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No hay productos por listar" RESET);
+            printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)/2,DIM "No hay productos por listar" RESET);
             getchar();
             return 1;
         }
@@ -210,7 +215,7 @@ int consultarAlmacen(){
     //     setTableData(data[fila][j++],&est);
     // }
 
-    printTable(dataTable,(getcols(STDOUTPUT) - getTotalToerico(dataTable))/2,4);
+    printTable(dataTable,(getcols(*STDOUTPUT) - getTotalToerico(dataTable))/2,4);
     
     // for(int i=0; i<filas;i++){
     //     free(data[i]);

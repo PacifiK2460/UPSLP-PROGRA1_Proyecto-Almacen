@@ -4,18 +4,6 @@ typedef struct FILA{
     char** columna;
 }FILA;
 
-typedef struct TABLE{
-    int columas, filas;
-    int currentFilledRow;
-    //Bidimencional: texto mas largo por columna
-    int* textoMasLargo;
-    //Tridimencional: columna, fila y texto
-    int total;
-    int toalTeorico;
-    char** headers;
-    FILA* data;
-} TABLE;
-
 int getTotal(TABLE* src){
     return src->total;
 }
@@ -132,9 +120,9 @@ void printTable(TABLE* table, int x, int y){
                 table->headers[col]
             );
 
-            strcat(rowbuffer,colbuffer);
+            cat(rowbuffer,colbuffer);
             if(col+1 < table->columas)
-                strcat(rowbuffer, " " VLINE " ");
+                cat(rowbuffer, " " VLINE " ");
             
             free(colbuffer);
         }
@@ -156,9 +144,9 @@ void printTable(TABLE* table, int x, int y){
                     currentRow.columna[col]
                 );
 
-                strcat(rowbuffer,colbuffer);
+                cat(rowbuffer,colbuffer);
                 if(col+1 < table->columas)
-                    strcat(rowbuffer, " " VLINE " ");
+                    cat(rowbuffer, " " VLINE " ");
 
                 free(colbuffer);
             }
@@ -177,8 +165,8 @@ void printTable(TABLE* table, int x, int y){
     //             snprintf(colbuff,table->total,BOLD FRGB(185, 251, 192) "%*s" RESET, table->textoMasLargo[i], data[j][i]);
     //         else
     //             snprintf(colbuff,table->total,DIM  FRGB(185, 251, 192) "%*s" RESET, table->textoMasLargo[i], data[j][i]);
-    //         strcat(headerbuff,colbuff);
-    //         if(i+1 < table->columas) strcat(headerbuff," " VLINE " ");
+    //         cat(headerbuff,colbuff);
+    //         if(i+1 < table->columas) cat(headerbuff," " VLINE " ");
     //         free(colbuff);
     //     }
     //     winprint(STDOUTPUT,x,y + j,headerbuff);

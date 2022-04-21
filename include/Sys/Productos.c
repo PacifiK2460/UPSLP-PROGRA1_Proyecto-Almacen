@@ -1,24 +1,7 @@
 #include "../sys.h"
 
 int getAlmacenSize(){
-    int rows = 0;
-    FILE* file;
-    //Si el archivo no existe, crea uno
-    //Con w+ podemos leer escribir
-    file = fopen("Almacen","w+");
-
-    //Como intenta crear un archivo, le hecho de que falle
-    //significa que ocurrio algo peor
-    if(file == NULL){
-        return -1;
-    }
-
-    for(char temp; scanf("%c",&temp) == 1;  ){
-        if(temp == '\n') rows++;
-    }
-
-    fclose(file);
-    return rows;
+    return getFileLines("Almacen");
 }
 
 int loadAlmacenFile(Producto Destination[]){
@@ -39,11 +22,10 @@ int loadAlmacenFile(Producto Destination[]){
     return 1;
 }
 
-int saveAlmacenFile(Producto Source[]){
+int saveAlmacenFile(Producto Source[], int filas){
     remove("Almacen");
     FILE* file;
     int fila = 0;
-    int filas = sizeof(Source) / sizeof(Source[0]);
     file = fopen("Almacen", "w+");
     if(file == NULL) return -1;
     for(; fila < filas; fila++){
@@ -60,138 +42,139 @@ int appendAlmacenProduct(char* nombre, int existentes, double precio, char estan
     file = fopen("Almacen", "a");
     if(file == NULL) return -1;
 
-    fprintf((file,"%6s %i %lf %c\n",nombre,existentes,precio,estante);
+    fprintf(
+        file,"%6s %i %lf %c\n",nombre,existentes,precio,estante);
 
     fclose(file);
     return 1;
 }
 
 // Estructuras de la interfaz DEPRECATED 
-struct Producto getProductoByName(struct Productos* Src, char* name){
-    for(int i = 0; i < getProductosSize(Src); i++){
-        if( cmp( getProductoName(getProductoByIndex(Src,i)),name ) == 0) return getProductoByIndex(Src,i);
-    }
-    return NULL;
-}
+// struct Producto getProductoByName(struct Productos* Src, char* name){
+//     for(int i = 0; i < getProductosSize(Src); i++){
+//         if( cmp( getProductoName(getProductoByIndex(Src,i)),name ) == 0) return getProductoByIndex(Src,i);
+//     }
+//     return NULL;
+// }
 
-char* getProductoName(struct Producto* Src){
-    return Src->nombre;
-}
+// char* getProductoName(struct Producto* Src){
+//     return Src->nombre;
+// }
 
-int getProductoExistentes(struct Producto* Src){
-    return Src->existentes;
-}
+// int getProductoExistentes(struct Producto* Src){
+//     return Src->existentes;
+// }
 
-double getProductoPrecio(struct Producto* Src){
-    return Src->precioUnitario;
-}
+// double getProductoPrecio(struct Producto* Src){
+//     return Src->precioUnitario;
+// }
 
-char getProductoEstante(struct Producto* Src){
-    return Src->estante;
-}
+// char getProductoEstante(struct Producto* Src){
+//     return Src->estante;
+// }
 
-int getProductosSize(struct Productos* Src){
-    if(Src == NULL) return ERROR;
-    return Src->size;
-}
+// int getProductosSize(struct Productos* Src){
+//     if(Src == NULL) return ERROR;
+//     return Src->size;
+// }
 
-int modExistencia(struct Productos* Src, int index,int cant,char op){
-    if(Src == NULL) return ERROR;
-    if(index > getProductosSize(Src) || index < 0) return ERROR;
+// int modExistencia(struct Productos* Src, int index,int cant,char op){
+//     if(Src == NULL) return ERROR;
+//     if(index > getProductosSize(Src) || index < 0) return ERROR;
 
-    Src->temp = Src->Head;
-    while(index > 0){
-        Src->temp = Src->temp->next;
-        index -= 1;
-    }
+//     Src->temp = Src->Head;
+//     while(index > 0){
+//         Src->temp = Src->temp->next;
+//         index -= 1;
+//     }
 
-    if(op == 'A') Src->temp->existentes += cant;
-    else if(op == 'S') Src->temp->existentes = cant;
-    else return ERROR;
+//     if(op == 'A') Src->temp->existentes += cant;
+//     else if(op == 'S') Src->temp->existentes = cant;
+//     else return ERROR;
 
-    return OK;
-}
+//     return OK;
+// }
 
-int addProduct(struct Productos* Dest,char* nombre, int existentes, double precio, char estante){
-    struct Producto* new = newProducto();
-    if(new == NULL) return ERROR;
-    cp(new->nombre, nombre);
-    new->existentes = existentes;
-    new->precioUnitario = precio;
-    new->estante = estante;
-    return appendProduct(new,Dest);
-}
+// int addProduct(struct Productos* Dest,char* nombre, int existentes, double precio, char estante){
+//     struct Producto* new = newProducto();
+//     if(new == NULL) return ERROR;
+//     cp(new->nombre, nombre);
+//     new->existentes = existentes;
+//     new->precioUnitario = precio;
+//     new->estante = estante;
+//     return appendProduct(new,Dest);
+// }
 
-int loadAlmacen(struct Productos* Dest){
-    if(Dest == NULL) return ERROR;
+// int loadAlmacen(struct Productos* Dest){
+//     if(Dest == NULL) return ERROR;
 
-    FILE* file = fopen("Almacen", "r");
-    if(file == NULL){
-        file = fopen("Almacen", "w");
-        if(file == NULL) return ERROR;
-        fclose(file);
-        file = fopen("Almacen", "r");
-        if(file == NULL) return ERROR;
-    }
+//     FILE* file = fopen("Almacen", "r");
+//     if(file == NULL){
+//         file = fopen("Almacen", "w");
+//         if(file == NULL) return ERROR;
+//         fclose(file);
+//         file = fopen("Almacen", "r");
+//         if(file == NULL) return ERROR;
+//     }
 
-    struct Producto* buffer;
-    buffer = (struct Producto*)malloc(sizeof(struct Producto));
+//     struct Producto* buffer;
+//     buffer = (struct Producto*)malloc(sizeof(struct Producto));
 
-    while(fscanf(file,"%6s %i %lf %c", &(buffer->nombre), &(buffer->existentes), &(buffer->precioUnitario), &(buffer->estante)) == 4){
-        buffer->next = NULL;
-        appendProduct(buffer,Dest);
-        //free(buffer);
-        buffer = (struct Producto*)malloc(sizeof(struct Producto));
+//     while(fscanf(file,"%6s %i %lf %c", &(buffer->nombre), &(buffer->existentes), &(buffer->precioUnitario), &(buffer->estante)) == 4){
+//         buffer->next = NULL;
+//         appendProduct(buffer,Dest);
+//         //free(buffer);
+//         buffer = (struct Producto*)malloc(sizeof(struct Producto));
 
-    }
+//     }
 
-    free(buffer);
-    fclose(file);
-    return OK;
-}
+//     free(buffer);
+//     fclose(file);
+//     return OK;
+// }
 
-int saveAlmacen(struct Productos* Dest){
-    if(Dest == NULL) return ERROR;
-    FILE* file = fopen("Almacen","w");
+// int saveAlmacen(struct Productos* Dest){
+//     if(Dest == NULL) return ERROR;
+//     FILE* file = fopen("Almacen","w");
 
-    if(file == NULL) return ERROR;
-    struct Producto* buffer;
-    for(int i = 0; i < getProductosSize(Dest); i++){
-        buffer = getProductoByIndex(Dest,i);
-        fprintf(file,"%.7s %i %d %c",buffer->nombre, buffer->existentes, buffer->precioUnitario, buffer->estante);
-        //fwrite(getProductoByIndex(Dest,i),sizeof(struct Producto),1,file);
-    }
+//     if(file == NULL) return ERROR;
+//     struct Producto* buffer;
+//     for(int i = 0; i < getProductosSize(Dest); i++){
+//         buffer = getProductoByIndex(Dest,i);
+//         fprintf(file,"%.7s %i %d %c",buffer->nombre, buffer->existentes, buffer->precioUnitario, buffer->estante);
+//         //fwrite(getProductoByIndex(Dest,i),sizeof(struct Producto),1,file);
+//     }
 
-    fclose(file);
-    return OK;
-}
+//     fclose(file);
+//     return OK;
+// }
 
-Producto getProductoByIndex(Productos Src, int index){
-    if(index == 0) return Src.Head;
+// Producto getProductoByIndex(Productos Src, int index){
+//     if(index == 0) return Src.Head;
 
-    Src.temp = Src.Head;
-    while (index >= 1){
-        Src->temp = Src->temp->next;
-        index -= 1;
-    }
+//     Src.temp = Src.Head;
+//     while (index >= 1){
+//         Src->temp = Src->temp->next;
+//         index -= 1;
+//     }
 
-    return Src->temp;
-}
+//     return Src->temp;
+// }
 
-int appendProduct(struct Producto* Src, struct Productos* Dest){
-    if(Dest == NULL) return ERROR;
+// int appendProduct(struct Producto* Src, struct Productos* Dest){
+//     if(Dest == NULL) return ERROR;
 
-    if(getProductosSize(Dest) == 0){
-        Dest->Head = Src;
-        Dest->size += 1;
-        return OK;
-    }
+//     if(getProductosSize(Dest) == 0){
+//         Dest->Head = Src;
+//         Dest->size += 1;
+//         return OK;
+//     }
 
-    Dest->temp = Dest->Head;
-    while(Dest->temp->next != NULL) Dest->temp = Dest->temp->next;
+//     Dest->temp = Dest->Head;
+//     while(Dest->temp->next != NULL) Dest->temp = Dest->temp->next;
 
-    Dest->temp->next = Src;
-    Dest->size += 1;
+//     Dest->temp->next = Src;
+//     Dest->size += 1;
 
-    return OK;
-}
+//     return OK;
+// }
