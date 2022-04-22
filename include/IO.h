@@ -15,6 +15,7 @@ int evaluarNumero(char* Dest);
 int evaluarNombreDelCliente(char* Src);
 
 //STR
+int stringlen(char* text);
 char* cp(char* dest, char* src);
 int cmp(char* dest, char* src);
 char* cat(char* dest, char* src);

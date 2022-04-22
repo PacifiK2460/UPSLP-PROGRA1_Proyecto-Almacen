@@ -40,7 +40,8 @@ typedef int (*delimitador)(char*);
         char telefono_de_cliente[11];
         char correo[51];
         
-        Detalle Detalles[];
+        int productos;
+        Detalle* Detalles;
     }Pedido;
 
     //Almacen
@@ -48,9 +49,15 @@ typedef int (*delimitador)(char*);
     int loadAlmacenFile(Producto Destination[]);
     int saveAlmacenFile(Producto Source[], int filas);
     int appendAlmacenProduct(char* nombre, int existentes, double precio, char estante);
+    Producto getProductoByName(char* name);
 
     //Pedidos
     int getPedidosSize();
+    int appendPedido(Pedido Src);
+    int loadPedidoFile(Pedido Destination[]);
+
+    //Carrito
+    void imprimirCarrito(Pedido Pedido, int x, int y);
 
 //Interfaz
     int consultarAlmacen();

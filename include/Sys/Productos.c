@@ -10,7 +10,7 @@ int loadAlmacenFile(Producto Destination[]){
     file = fopen("Almacen", "w+");
     if(file == NULL) return -1;
 
-    for(Producto Temp; scanf("%6s %i %lf %c", Temp.nombre, &(Temp.existentes),&(Temp.precioUnitario), &(Temp.estante)) == 4; ){
+    for(Producto Temp; fscanf(file,"%6s %i %lf %c", Temp.nombre, &(Temp.existentes),&(Temp.precioUnitario), &(Temp.estante)) == 4; ){
         Destination[fila].existentes = Temp.existentes;
         Destination[fila].precioUnitario = Temp.precioUnitario;
         Destination[fila].estante = Temp.estante;
@@ -25,10 +25,9 @@ int loadAlmacenFile(Producto Destination[]){
 int saveAlmacenFile(Producto Source[], int filas){
     remove("Almacen");
     FILE* file;
-    int fila = 0;
     file = fopen("Almacen", "w+");
     if(file == NULL) return -1;
-    for(; fila < filas; fila++){
+    for(int fila = 0; fila < filas; fila++){
         fprintf(file,"%6s %i %lf %c\n", Source[fila].nombre, Source[fila].existentes,
         Source[fila].precioUnitario, Source[fila].estante);
     }
@@ -47,6 +46,18 @@ int appendAlmacenProduct(char* nombre, int existentes, double precio, char estan
 
     fclose(file);
     return 1;
+}
+
+Producto getProductoByName(char* name){
+    Producto ProductoBuffer[getAlmacenSize()];
+    //Por ahora no checamos ni regresamos en caso de error
+    loadAlmacenFile(ProductoBuffer);
+
+    for(int i = 0; i < getAlmacenSize(); i++){
+        if(cmp(ProductoBuffer[i].nombre, name) == 0){
+            return ProductoBuffer[i];
+        }
+    }
 }
 
 // Estructuras de la interfaz DEPRECATED 

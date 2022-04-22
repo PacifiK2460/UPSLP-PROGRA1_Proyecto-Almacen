@@ -112,7 +112,7 @@ int gety(WINDOW Window){
 }
 void printinthemiddle(WINDOW Window, int Y, char* texto){
   int X = getcols(Window);
-  int tam = len(texto);
+  int tam = stringlen(texto);
   X = X - tam;
   X = X / 2;
   Y+=1;

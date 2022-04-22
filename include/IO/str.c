@@ -1,10 +1,10 @@
 #include "../IO.h"
 
-// int len(char* text){
-//     int i = 0;
-//     while(*text++ != '\0') i++;
-//     return i;
-// }
+int stringlen(char* text){
+    int i = 0;
+    while(*text++ != '\0') i++;
+    return i;
+}
 
 char* cp(char* dest, char* src){
     char *temp = dest;

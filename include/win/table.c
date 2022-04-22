@@ -65,7 +65,7 @@ void tablePrepareDataAling(TABLE *src){
     
     //Headers
     for(int col = 0; col < src->columas; col++){
-        int tam = len(src->headers[col]);
+        int tam = stringlen(src->headers[col]);
         if(tam > src->textoMasLargo[col])
             src->textoMasLargo[col] = tam;
     }
@@ -75,16 +75,16 @@ void tablePrepareDataAling(TABLE *src){
         FILA _fila = src->data[fila];
         for(int col = 0; col < src->columas; col++){
             //De cada fila, voy columna por columna
-            int tam = len(_fila.columna[col]);
+            int tam = stringlen(_fila.columna[col]);
             //Saco el largo de cada columna
             if(tam > src->textoMasLargo[col])
                 src->textoMasLargo[col] = tam;
 
             //Información que nos ayudará a alinear la tabla
-            src->total += len(BOLD FRGB(185, 251, 192));
+            src->total += stringlen(BOLD FRGB(185, 251, 192));
             src->total += src->textoMasLargo[col];
-            src->total += len(RESET);
-            src->total += len(" " VLINE " ");
+            src->total += stringlen(RESET);
+            src->total += stringlen(" " VLINE " ");
 
             src->toalTeorico += src->textoMasLargo[col];
         }
@@ -126,7 +126,7 @@ void printTable(TABLE* table, int x, int y){
             
             free(colbuffer);
         }
-        winprint(STDOUTPUT,x,y++,rowbuffer);
+        winprint(*STDOUTPUT,x,y++,rowbuffer);
     }
 
     //Rows
@@ -150,7 +150,7 @@ void printTable(TABLE* table, int x, int y){
 
                 free(colbuffer);
             }
-            winprint(STDOUTPUT,x,y++,rowbuffer);
+            winprint(*STDOUTPUT,x,y++,rowbuffer);
             free(rowbuffer);
         }
     }
