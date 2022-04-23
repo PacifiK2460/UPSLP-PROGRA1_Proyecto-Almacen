@@ -61,7 +61,6 @@ typedef struct _WINDOW
   struct WINDOW* Parent;
 }WINDOW;
 
-WINDOW *STDOUTPUT = NULL;
 
 typedef struct _MENU{
     WINDOW* Parent;
@@ -119,5 +118,7 @@ void setTableData(char* dest, char* src);
 int getTotal(TABLE* src);
 int getTotalToerico(TABLE* src);
 void freeTable(TABLE *src);
+
+extern WINDOW* STDOUTPUT;
 
 #endif
