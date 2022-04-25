@@ -46,6 +46,8 @@
 #define SHOW_CURSOR "\e[?25h"
 #define CLEAR "\e[2J"
 
+#define STDOUTPUT NULL
+
 // Posición del Cursor
 void noEcho();
 void echo();
@@ -86,21 +88,21 @@ typedef struct _TABLE{
 
 typedef int (*Funciones)(void);
 
-void setMenuData(MENU* Destination,WINDOW Parent, int x, int y, int rows,char* opciones[], char* descripciones[]);
+void setMenuData(MENU* Destination,WINDOW* Parent, int x, int y, int rows,char* opciones[], char* descripciones[]);
 
 void innit();
 
 WINDOW* newWin(int y, int x, int COLS, int ROWS, WINDOW* Parent);
-void winprint(WINDOW window,int X, int Y, char* text);
-void printinthemiddle(WINDOW Window, int Y, char* texto);
-void printinthemiddlesize(WINDOW Window, int Y, char* texto, int tam);
-void box(WINDOW Window);
-void getcolsrows(WINDOW Window, int* COLS, int* ROWS);
-void getxy(WINDOW Window, int* X, int* Y);
-int getcols(WINDOW Window);
-int getrows(WINDOW Window);
-int getx(WINDOW Window);
-int gety(WINDOW Window);
+void winprint(WINDOW* window,int X, int Y, char* text);
+void printinthemiddle(WINDOW* Window, int Y, char* texto);
+void printinthemiddlesize(WINDOW* Window, int Y, char* texto, int tam);
+void box(WINDOW* Window);
+void getcolsrows(WINDOW* Window, int* COLS, int* ROWS);
+void getxy(WINDOW* Window, int* X, int* Y);
+int getcols(WINDOW* Window);
+int getrows(WINDOW* Window);
+int getx(WINDOW* Window);
+int gety(WINDOW* Window);
 
 // Menu.h
 //MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,char** opciones,char** descripciones, int cant);
@@ -111,6 +113,7 @@ void updateMenu(MENU* menu);
 TABLE* newTable(int columnas, int filas);
 void tableSetHeaders(TABLE *src,char** headers);
 void tableAppendRow(TABLE *src, ...);
+void tablePrepareDataAling(TABLE *src);
 void printTable(TABLE* table, int x, int y);
 
 void prepareTableData(int fila, int columna, char* headers[],char* dest[fila][columna]);
@@ -118,7 +121,5 @@ void setTableData(char* dest, char* src);
 int getTotal(TABLE* src);
 int getTotalToerico(TABLE* src);
 void freeTable(TABLE *src);
-
-extern WINDOW* STDOUTPUT;
 
 #endif

@@ -7,10 +7,10 @@ int getAlmacenSize(){
 int loadAlmacenFile(Producto Destination[]){
     FILE* file;
     int fila = 0;
-    file = fopen("Almacen", "w+");
+    file = fopen("Almacen", "r+");
     if(file == NULL) return -1;
 
-    for(Producto Temp; fscanf(file,"%6s %i %lf %c", Temp.nombre, &(Temp.existentes),&(Temp.precioUnitario), &(Temp.estante)) == 4; ){
+    for(Producto Temp; fscanf(file,"%6s %i %lf %c", Temp.nombre, &Temp.existentes,&Temp.precioUnitario, &Temp.estante) == 4; ){
         Destination[fila].existentes = Temp.existentes;
         Destination[fila].precioUnitario = Temp.precioUnitario;
         Destination[fila].estante = Temp.estante;

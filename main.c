@@ -16,7 +16,7 @@ void menu(){
     // Preparamos el menu
 
     MENU menu;
-    setMenuData(&menu,*STDOUTPUT,4,4,7,
+    setMenuData(&menu,STDOUTPUT,4,4,7,
         (char*[]){
             "Consulta de almacén",
             "Actualizar almacén",
@@ -52,9 +52,9 @@ void menu(){
     printf(HIDE_CURSOR);
     while(1){
         printf(CLEAR);
-        winprint(*STDOUTPUT,4,2,BRGB(16,158,94) FRGB(255,255,255) " MENU PRINCIPAL ");
-        winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "↓↑"     RESET DIM  " Arriba / Abajo ");
-        winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " Seleccionar ");
+        winprint(STDOUTPUT,4,2,BRGB(16,158,94) FRGB(255,255,255) " MENU PRINCIPAL ");
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "↓↑"     RESET DIM  " Arriba / Abajo ");
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " Seleccionar ");
         focusMenu(&menu);
         if(menu.selected == 6){
             //free(menu.selected); //limpio memoria y salgoe
@@ -73,48 +73,48 @@ void menu(){
 void splashScreen(){
     innit();
 
-    box(*STDOUTPUT);
+    box(STDOUTPUT);
     noEcho();
     printf(HIDE_CURSOR);
-    printinthemiddle(*STDOUTPUT,1,"BY:");
-    printinthemiddle(*STDOUTPUT,2,"Sistemas Plus S.A. DE C.V.");
+    printinthemiddle(STDOUTPUT,1,"BY:");
+    printinthemiddle(STDOUTPUT,2,"Sistemas Plus S.A. DE C.V.");
     int x = 3;
-    printinthemiddlesize(*STDOUTPUT,x++,"                      ▗▄▄▄▄                       ",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"                   ▗▄████████▄▖                   ",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"                ▗▄██████████████▄▖                ",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"             ▄▄████████▛▀▀█████████▄▖             ",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"          ▗▄█████████▀▘     ▀█████████▄           ",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"       ▗▄██████████▙          ▝▀█████████▄        ",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"     ▄███████████████▙▄          ▝▀████████▙▄     ",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"  ▗▟████████▀▘▝▀████████▙▄          ▝▀████████▙▖  ",50);
-    printinthemiddlesize(*STDOUTPUT,x++," ▟███████▀▘      ▀▀████████▙▖          ▝▀███████▙ ",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"▐███████▄           ▀▜████████▙▖        ▗▄███████▙",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"██████████▙▄           ▀▜████████▄▖   ▄▟██████████",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"█████████████▙▖           ▀▜████████▟█████████████",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"█████ ▀▜████████▙▖           ▀████████████▀▘ █████",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"█████    ▀▜████████▄▖        ▗▄████████▛▀    █████",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"█████       ▀▜████████▄▖  ▗▄█████████▀       █████",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"█████          ▀████████▙████████▛▀          █████",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"█████            ▝▀████████████▀             █████",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"█████               ▝▀██████▀▘               █████",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"█████                 ▐████▌                 █████",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"█████                 ▐████▌                 █████",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"█████                 ▐████▌                 █████",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"█████                 ▐████▌                 █████",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"█████                 ▐████▌                 █████",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"█████▖                ▐████▌                ▗█████",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"▐█████▙▖              ▐████▌              ▄▟█████▌",50);
-    printinthemiddlesize(*STDOUTPUT,x++," ▜███████▄▖           ▐████▌           ▄▟███████▛ ",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"  ▝▜████████▄▖        ▐████▌        ▗▟████████▛▘  ",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"     ▀▜████████▄▖     ▐████▌     ▗▄████████▛▀     ",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"       ▝▀█████████▄   ▐████▌  ▗▄████████▛▀        ",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"          ▝▀█████████▄▐████▌▄████████▛▀           ",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"             ▝▀████████████████████▀▘             ",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"                ▝▀██████████████▀                 ",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"                   ▝▀████████▀▘                   ",50);
-    printinthemiddlesize(*STDOUTPUT,x++,"                      ▝▀▀▀▀                       ",50);
+    printinthemiddlesize(STDOUTPUT,x++,"                      ▗▄▄▄▄                       ",50);
+    printinthemiddlesize(STDOUTPUT,x++,"                   ▗▄████████▄▖                   ",50);
+    printinthemiddlesize(STDOUTPUT,x++,"                ▗▄██████████████▄▖                ",50);
+    printinthemiddlesize(STDOUTPUT,x++,"             ▄▄████████▛▀▀█████████▄▖             ",50);
+    printinthemiddlesize(STDOUTPUT,x++,"          ▗▄█████████▀▘     ▀█████████▄           ",50);
+    printinthemiddlesize(STDOUTPUT,x++,"       ▗▄██████████▙          ▝▀█████████▄        ",50);
+    printinthemiddlesize(STDOUTPUT,x++,"     ▄███████████████▙▄          ▝▀████████▙▄     ",50);
+    printinthemiddlesize(STDOUTPUT,x++,"  ▗▟████████▀▘▝▀████████▙▄          ▝▀████████▙▖  ",50);
+    printinthemiddlesize(STDOUTPUT,x++," ▟███████▀▘      ▀▀████████▙▖          ▝▀███████▙ ",50);
+    printinthemiddlesize(STDOUTPUT,x++,"▐███████▄           ▀▜████████▙▖        ▗▄███████▙",50);
+    printinthemiddlesize(STDOUTPUT,x++,"██████████▙▄           ▀▜████████▄▖   ▄▟██████████",50);
+    printinthemiddlesize(STDOUTPUT,x++,"█████████████▙▖           ▀▜████████▟█████████████",50);
+    printinthemiddlesize(STDOUTPUT,x++,"█████ ▀▜████████▙▖           ▀████████████▀▘ █████",50);
+    printinthemiddlesize(STDOUTPUT,x++,"█████    ▀▜████████▄▖        ▗▄████████▛▀    █████",50);
+    printinthemiddlesize(STDOUTPUT,x++,"█████       ▀▜████████▄▖  ▗▄█████████▀       █████",50);
+    printinthemiddlesize(STDOUTPUT,x++,"█████          ▀████████▙████████▛▀          █████",50);
+    printinthemiddlesize(STDOUTPUT,x++,"█████            ▝▀████████████▀             █████",50);
+    printinthemiddlesize(STDOUTPUT,x++,"█████               ▝▀██████▀▘               █████",50);
+    printinthemiddlesize(STDOUTPUT,x++,"█████                 ▐████▌                 █████",50);
+    printinthemiddlesize(STDOUTPUT,x++,"█████                 ▐████▌                 █████",50);
+    printinthemiddlesize(STDOUTPUT,x++,"█████                 ▐████▌                 █████",50);
+    printinthemiddlesize(STDOUTPUT,x++,"█████                 ▐████▌                 █████",50);
+    printinthemiddlesize(STDOUTPUT,x++,"█████                 ▐████▌                 █████",50);
+    printinthemiddlesize(STDOUTPUT,x++,"█████▖                ▐████▌                ▗█████",50);
+    printinthemiddlesize(STDOUTPUT,x++,"▐█████▙▖              ▐████▌              ▄▟█████▌",50);
+    printinthemiddlesize(STDOUTPUT,x++," ▜███████▄▖           ▐████▌           ▄▟███████▛ ",50);
+    printinthemiddlesize(STDOUTPUT,x++,"  ▝▜████████▄▖        ▐████▌        ▗▟████████▛▘  ",50);
+    printinthemiddlesize(STDOUTPUT,x++,"     ▀▜████████▄▖     ▐████▌     ▗▄████████▛▀     ",50);
+    printinthemiddlesize(STDOUTPUT,x++,"       ▝▀█████████▄   ▐████▌  ▗▄████████▛▀        ",50);
+    printinthemiddlesize(STDOUTPUT,x++,"          ▝▀█████████▄▐████▌▄████████▛▀           ",50);
+    printinthemiddlesize(STDOUTPUT,x++,"             ▝▀████████████████████▀▘             ",50);
+    printinthemiddlesize(STDOUTPUT,x++,"                ▝▀██████████████▀                 ",50);
+    printinthemiddlesize(STDOUTPUT,x++,"                   ▝▀████████▀▘                   ",50);
+    printinthemiddlesize(STDOUTPUT,x++,"                      ▝▀▀▀▀                       ",50);
 
-    printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT) - 2,"< Presiona cualquier tecla para continuar >");
+    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT) - 2,"< Presiona cualquier tecla para continuar >");
     getchar();
     printf(SHOW_CURSOR);
     echo();

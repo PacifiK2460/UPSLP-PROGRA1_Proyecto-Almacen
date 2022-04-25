@@ -19,9 +19,17 @@ TABLE* newTable(int columnas, int filas){
     table->total = 0;
     table->toalTeorico = 0;
     table->currentFilledRow = 0;
-    table->textoMasLargo = (int*)malloc(columnas * sizeof(int*));
+    table->textoMasLargo = (int*)malloc(columnas * sizeof(int));
+    for(int i = 0; i < table->columas; i++) table->textoMasLargo[i] = 0;
     //table->data = allocRows(filas);
     table->data = (FILA*)malloc(filas * sizeof(FILA));
+    
+    for(int fil = 0; fil < filas; fil++){
+        table->data[fil].columna = (char**)malloc(table->columas * sizeof(char**));
+        for(int col = 0; col < columnas; col++){
+            table->data[fil].columna[col] = (char*)malloc(sizeof(char*));
+        }
+    }
     return table;
 }
 
@@ -43,7 +51,6 @@ void tableAppendRow(TABLE *src, ...){
     va_start(column,src);
 
     //src->data = malloc(src->filas * sizeof(src->data));
-    FILA* currentRow = src->data;
     //Obtenemos memoria para almacenar la fila
     //currentRow->columna = malloc(src->columas * sizeof(char**));
     
@@ -51,7 +58,9 @@ void tableAppendRow(TABLE *src, ...){
         //Obtenemos memoria para guardar la string de la columna y fila actual
         //currentRow->columna[col] = malloc(sizeof(char*));
         //Guardamos cada str en la columna
-        currentRow->columna[col] = va_arg(column,char*); 
+        char* watch = va_arg(column,char*);
+        src->data[src->currentFilledRow].columna[col] = watch;
+        watch =  src->data[src->currentFilledRow].columna[col];
     }
 
     //Aumentamos el index fila vacia
@@ -60,8 +69,6 @@ void tableAppendRow(TABLE *src, ...){
 }
 
 void tablePrepareDataAling(TABLE *src){
-    src->textoMasLargo = malloc(src->columas * sizeof(int*));
-    for(int i = 0; i < src->columas; i++) src->textoMasLargo[i] = 0;
     
     //Headers
     for(int col = 0; col < src->columas; col++){
@@ -106,12 +113,16 @@ void setTableData(char* dest, char* src){
 }
 
 void printTable(TABLE* table, int x, int y){
+
     tablePrepareDataAling(table);
     //Headers
     {
         char* rowbuffer = malloc(table->total * sizeof(char));
+        for(int i = 0; i < table->total; i++) rowbuffer[i] = '\0';
+
         for(int col = 0; col < table->columas; col++){
             char* colbuffer = malloc(table->total * sizeof(char));
+            for(int i = 0; i < table->total; i++) colbuffer[i] = '\0';
             
             snprintf(colbuffer,
                 table->total-1,
@@ -126,31 +137,37 @@ void printTable(TABLE* table, int x, int y){
             
             free(colbuffer);
         }
-        winprint(*STDOUTPUT,x,y++,rowbuffer);
+        winprint(STDOUTPUT,x,y++,rowbuffer);
     }
 
     //Rows
     {
         for(int row = 0; row < table->filas; row++){
             char* rowbuffer = malloc(table->total * sizeof(char));
-            FILA currentRow = table->data[row];
+            for(int i = 0; i < table->total; i++) rowbuffer[i] = '\0';
+            
             for(int col = 0; col < table->columas; col++){
+
                 char* colbuffer = malloc(table->total * sizeof(char));
-                
+                for(int i=0; i < table->total; i++) colbuffer[i] = '\0';
+
+                //char* watch= table->data[row].columna[col];
+             
                 snprintf(colbuffer,
                     table->total-1,
                     DIM FRGB(185, 251, 192) "%*s" RESET,
                     table->textoMasLargo[col],
-                    currentRow.columna[col]
+                    table->data[row].columna[col]
                 );
 
                 cat(rowbuffer,colbuffer);
-                if(col+1 < table->columas)
+                if(col+1 < table->columas){
                     cat(rowbuffer, " " VLINE " ");
+                }
 
                 free(colbuffer);
             }
-            winprint(*STDOUTPUT,x,y++,rowbuffer);
+            winprint(STDOUTPUT,x,y++,rowbuffer);
             free(rowbuffer);
         }
     }

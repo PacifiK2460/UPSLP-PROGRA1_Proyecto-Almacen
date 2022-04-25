@@ -12,23 +12,6 @@ int esLetra(char letra){
     return ( (letra >= 'a' && letra <= 'z') || (letra >= 'A' && letra <= 'Z') );
 }
 
-//Caracteres de la tabla ASCII que podrian usarse en texto.
-int getText(char* Dest, int size){
-    //getwchar();
-    char c;
-    int longitudActual = 0;
-    while(longitudActual < size){
-        c = getchar();
-        if(c >= '!' && c <= '~'){
-            Dest[longitudActual++] = c;
-            continue;
-        } else if (c == 10) return longitudActual;
-        return -1;
-    }
-    while ((c = getchar()) != 10);
-    return -1;
-
-}
 
 // int getOnlyText(char* Dest, int size){
 //     //getwchar();
@@ -104,7 +87,8 @@ int getText(char* Dest, int size){
 
 int evaluarNombreDeProducto(char* Src){
     int size = MAX_TEXT_LENGTH;
-    if(getText(Src,size - 1) == 0) return 0;
+    if( scanf(" %6s ", Src) == 0 ) return 0;
+    //if(getText(Src,size - 1) == 0) return 0;
     Src[size] = '\0'; 
 
     //REGLAS ESPECIFICADAS EN EL DOCUMENTO
@@ -115,7 +99,7 @@ int evaluarNombreDeProducto(char* Src){
 
 int evaluarNombreDelCliente(char* Src){
     int size = MAX_TEXT_LENGTH;
-    if(getText(Src,size - 1) == 0) return 0;
+    if(scanf(" %*s ", size, Src) == 0) return 0;
     Src[size] = '\0'; 
 
     //EL NOMBRE SOLO PUEDE SER TEXTO
@@ -125,34 +109,39 @@ int evaluarNombreDelCliente(char* Src){
 
 int evaluarExistencia(char* Src){
     int size = 11;
-    if(getText(Src,size - 1)==0)return 0;
-    for(int i = 0; i < 11-1; i++) if(esNumero(Src[i]) == 0) return 0;
+    int temp;
+    if( scanf("%i", &temp) == 0 ) return 0;
+    snprintf(Src, size-1, "%i", temp);
     Src[size] = '\0';
     return 1;
 }
 
 int evaluarPrecio(char* Src){
     int size = 11;
-    if(getText(Src,size - 1)==0)return 0;
+    int temp;
+    if(scanf(" %i ", &temp)==0)return 0;
+    snprintf(Src, size-1, "%i", temp);
     for(int i = 0; i < 11-1; i++) if(esNumero(Src[i]) == 0 || Src[i] != '.') return 0;
     Src[size] = '\0';
     return 1;
 }
 
 int evaluarUbicacion(char* Src){
-    if(getText(Src,2)==0)return 0;
+    if(scanf(" %1s ", Src)==0) return 0;
     for(int i = 0; i < 2-1; i++) if(esLetra(Src[i]) == 0) return 0;
     Src[1] = '\0';
     return 1;
 }
 
 int evaluarNumero(char* Src){
-    if(getText(Src,11 - 1)==0)return 0;
+    int temp;
+    if(scanf(" %i ",&temp)==0)return 0;
+    snprintf(Src, 10,"%i", temp);
     for(int i = 0; i < 11-1; i++) if(esNumero(Src[i]) == 0) return 0;
     Src[11] = '\0';
     return 1;
 }
 
 int evaluarCorreo(char* Dest){
-    return getText(Dest, 51);
+    return scanf(" %s ", Dest);
 }

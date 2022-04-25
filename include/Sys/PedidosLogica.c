@@ -2,25 +2,25 @@
 
 void input(char* bg_titulo, char* titulo, char* dest, int (*funcion)(char*)){
     printf(CLEAR);
-    winprint(*STDOUTPUT,4,2, bg_titulo);
+    winprint(STDOUTPUT,4,2, bg_titulo);
     printf(SHOW_CURSOR);
     echo();
     
-    winprint(*STDOUTPUT,5, (getrows(*STDOUTPUT)/2)-1,titulo);
-    winprint(*STDOUTPUT,4, (getrows(*STDOUTPUT)/2)-1,MENUVLINE);
-    winprint(*STDOUTPUT,5, (getrows(*STDOUTPUT)/2)," ");
-    winprint(*STDOUTPUT,4, (getrows(*STDOUTPUT)/2),MENUVLINE);
+    winprint(STDOUTPUT,5, (getrows(STDOUTPUT)/2)-1,titulo);
+    winprint(STDOUTPUT,4, (getrows(STDOUTPUT)/2)-1,MENUVLINE);
+    winprint(STDOUTPUT,5, (getrows(STDOUTPUT)/2)," ");
+    winprint(STDOUTPUT,4, (getrows(STDOUTPUT)/2),MENUVLINE);
 
 
     delimitador result = funcion;
     //Leemos el nombre y evaluamos
     while(result(dest) == 0){
         printf(CLEAR);
-        winprint(*STDOUTPUT,4,2, bg_titulo);
-        winprint(*STDOUTPUT,5, (getrows(*STDOUTPUT)/2)-1,titulo);
-        winprint(*STDOUTPUT,4, (getrows(*STDOUTPUT)/2)-1,MENUVLINE);
-        winprint(*STDOUTPUT,5, (getrows(*STDOUTPUT)/2)," ");
-        winprint(*STDOUTPUT,4, (getrows(*STDOUTPUT)/2),MENUVLINE);
+        winprint(STDOUTPUT,4,2, bg_titulo);
+        winprint(STDOUTPUT,5, (getrows(STDOUTPUT)/2)-1,titulo);
+        winprint(STDOUTPUT,4, (getrows(STDOUTPUT)/2)-1,MENUVLINE);
+        winprint(STDOUTPUT,5, (getrows(STDOUTPUT)/2)," ");
+        winprint(STDOUTPUT,4, (getrows(STDOUTPUT)/2),MENUVLINE);
     }
     noEcho();
     printf(HIDE_CURSOR);
@@ -38,14 +38,14 @@ int registrarPedido(){
     Pedido nuevoPedido;
 
     if(productos == -1 ||loadAlmacenFile(Almacen) == -1){
-        printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)/2,DIM "Hubo un error al leer el archivo" RESET);
-        winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar ");
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al leer el archivo" RESET);
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar ");
         getchar();
         return 1;
     }
 
     if(productos == 0){
-        printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)/2,DIM "No puedes pedir algo de un inventario inexistente" RESET);
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes pedir algo de un inventario inexistente" RESET);
         getchar();
         return 1;
     }
@@ -97,7 +97,7 @@ int registrarPedido(){
                     Almacen[fila].nombre//getProductoName(Tmp)
                 );
             };
-            printTable(dataTable, (getcols(*STDOUTPUT) - getTotalToerico(dataTable))/2, 4);
+            printTable(dataTable, (getcols(STDOUTPUT) - getTotalToerico(dataTable))/2, 4);
             // char* headers[] = {
             //     "ID",
             //     "Nombre"
@@ -113,9 +113,9 @@ int registrarPedido(){
             //     setTableData(data[fila][j++],getProductoName(Producto));
             // }
             //TABLE* dataTable = newTable(2,getProductosSize(Almacen));
-            //printTable(dataTable, (getcols(*STDOUTPUT) - getTotalToerico(dataTable))/2, 4,getProductosSize(Almacen)+1,2,data);
-            winprint(*STDOUTPUT,4,2,tituto);
-            winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
+            //printTable(dataTable, (getcols(STDOUTPUT) - getTotalToerico(dataTable))/2, 4,getProductosSize(Almacen)+1,2,data);
+            winprint(STDOUTPUT,4,2,tituto);
+            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
             getchar();
         }
 
@@ -123,8 +123,8 @@ int registrarPedido(){
             input(tituto, BOLD FRGB(185, 251, 192) "ID del Producto",pedidos,evaluarNumero);
             sscanf(pedidos,"%i",&ped);
             if(ped > productos || ped < 0){
-                printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)/2,"ID INVALIDO");
-                winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
+                printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"ID INVALIDO");
+                winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
                 getchar();
                 continue;
             }
@@ -135,8 +135,8 @@ int registrarPedido(){
             input(tituto,BOLD FRGB(185, 251, 192) "Cantidad",cantidad,evaluarNumero);
             sscanf(cantidad,"%i",&cant);
             if(cant <= 0 || cant >= Almacen[ped].existentes){
-                printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)/2, "INGRESA UNA CANTIDAD POSIBLE A COMPRAR");
-                winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
+                printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2, "INGRESA UNA CANTIDAD POSIBLE A COMPRAR");
+                winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
                 getchar();
                 continue;
             }
@@ -150,9 +150,9 @@ int registrarPedido(){
         cp(Carrito[productosPedidos].nombre, Almacen[ped].nombre);
 
 
-        printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)/2,"ITEM AGREGADO CORRECTAMENTE");
-        winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " agregar otro producto ");
-        winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"ITEM AGREGADO CORRECTAMENTE");
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " agregar otro producto ");
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
 
         if(getchar() == 10) continue;
         break;
@@ -168,8 +168,8 @@ int registrarPedido(){
     nuevoPedido.Detalles = Carrito;
 
     if( appendPedido(nuevoPedido) == -1){
-        printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)/2,DIM "Hubo un error al leer el archivo, cambios perdidos" RESET);
-        winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar ");
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al leer el archivo, cambios perdidos" RESET);
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar ");
         getchar();
         return 1;
     }
@@ -183,26 +183,26 @@ int registrarPedido(){
 
     printf(CLEAR);
     int x = 4,y=2;
-    winprint(*STDOUTPUT,x,y,NONE "Pedido: " BOLD "ACTIVO");
+    winprint(STDOUTPUT,x,y,NONE "Pedido: " BOLD "ACTIVO");
 
     char t1[50];
     sprintf(t1,NONE"ID: " BOLD "%i" NONE,numero);
-    winprint(*STDOUTPUT,x + 17,y++,t1);
+    winprint(STDOUTPUT,x + 17,y++,t1);
 
     sprintf(t1,NONE "NOMBRE DEL CLIENTE: " BOLD "%s",nombre_de_cliente);
-    winprint(*STDOUTPUT,x,y++,t1);
+    winprint(STDOUTPUT,x,y++,t1);
 
     sprintf(t1,NONE "TÉLEFONO: " BOLD "%s",telefono_de_cliente);
-    winprint(*STDOUTPUT,x,y++,t1);
+    winprint(STDOUTPUT,x,y++,t1);
 
     sprintf(t1,NONE "CORREO: " BOLD "%s",correo);
-    winprint(*STDOUTPUT,x,y++,t1);
+    winprint(STDOUTPUT,x,y++,t1);
 
     for(int i = 0; i < productosPedidos; i++){
-        winprint(*STDOUTPUT, x,y+i,Carrito[i].nombre);
+        winprint(STDOUTPUT, x,y+i,Carrito[i].nombre);
     }
 
-    winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
+    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
 
     getchar();
 }
@@ -214,16 +214,16 @@ int mostrarPedidosPor(char tipo){
     
     int pedidos = getPedidosSize();
     if(pedidos == 0){
-        printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)/2,DIM "No hay pedidos por mostrar" RESET);
-        winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar "); 
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No hay pedidos por mostrar" RESET);
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar "); 
         getchar();
         return 1;   
     }
 
     Pedido Pedidos[pedidos];
     if( loadPedidoFile(Pedidos) == -1){
-        printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)/2,DIM "Hubo un error al cargar el archivo" RESET);
-        winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar "); 
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al cargar el archivo" RESET);
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar "); 
         getchar();
         return 1;   
     }
@@ -239,8 +239,8 @@ int mostrarPedidosPor(char tipo){
     }
 
     if(cantidadDePedidosDelTipoSolicitado == 0){
-        printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)/2,DIM "No hay pedidos por mostrar" RESET);
-        winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar "); 
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No hay pedidos por mostrar" RESET);
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar "); 
         getchar();
         return 1;   
     }
@@ -295,13 +295,13 @@ int mostrarPedidosPor(char tipo){
         // Carrito = getPedidoCarrito(Pedido);
 
         //Imprimirmos la Info General
-        box(*STDOUTPUT);
-        printinthemiddle(*STDOUTPUT,1," PEDIDOS ");
+        box(STDOUTPUT);
+        printinthemiddle(STDOUTPUT,1," PEDIDOS ");
 
         char informacion_del_cliente[300] = {0};
         snprintf(informacion_del_cliente,299,NONE BOLD "Pedido N°: " NONE "%i" BOLD "ESTADO: " "%s%s" BOLD "Nombre del Cliente: " NONE "%s" BOLD "Télefono: " NONE "%s" BOLD "Correo electrónico: " NONE  "%s", PedidosDelTipo[i].numero,color,PedidosDelTipo[i].estado,PedidosDelTipo[i].telefono_de_cliente, PedidosDelTipo[i].correo);
         
-        printinthemiddle(*STDOUTPUT,3,informacion_del_cliente);
+        printinthemiddle(STDOUTPUT,3,informacion_del_cliente);
 
         //Imprimirmos el carrito
         imprimirCarrito(PedidosDelTipo[i], -1,4);
@@ -329,7 +329,7 @@ int mostrarPedidosPor(char tipo){
         //     );
         // }
 
-        // printTable(carritoTable,(getcols(*STDOUTPUT) - getTotalToerico(carritoTable))/2,4);
+        // printTable(carritoTable,(getcols(STDOUTPUT) - getTotalToerico(carritoTable))/2,4);
 
             //Obtenemos la cantida de caracteres a alinear
         // int mayor_cantidad = 0, mayor_precio = 0, mayor_total = 0;
@@ -346,52 +346,52 @@ int mostrarPedidosPor(char tipo){
 
         //     //Imprimimos Encabezados
         // int ancho = 6 + 1 + mayor_cantidad + 1 + mayor_precio + 1 + mayor_total;
-        // ancho = (getcols(*STDOUTPUT)-ancho)/2;
-        // winprint(*STDOUTPUT,ancho, 4, "MODELO");
+        // ancho = (getcols(STDOUTPUT)-ancho)/2;
+        // winprint(STDOUTPUT,ancho, 4, "MODELO");
         // ancho += 7;
-        // winprint(*STDOUTPUT,ancho,4,"CANTIDAD");
+        // winprint(STDOUTPUT,ancho,4,"CANTIDAD");
         // ancho += mayor_cantidad + 1;
-        // winprint(*STDOUTPUT,ancho,4,"PRECIO UNITARIO");
+        // winprint(STDOUTPUT,ancho,4,"PRECIO UNITARIO");
         // ancho += mayor_precio + 1;
-        // winprint(*STDOUTPUT,ancho,4, "SubTotal");
+        // winprint(STDOUTPUT,ancho,4, "SubTotal");
         //     //Imprimimos Contenido
         // for(int j = 0; j < getCarritoSize(Carrito);){
         //     Detalle = getDetalleByIndex(Carrito,j);
         //     ancho = 6 + 1 + mayor_cantidad + 1 + mayor_precio + 1 + mayor_total;
 
-        //     ancho = (getcols(*STDOUTPUT)-ancho)/2;
+        //     ancho = (getcols(STDOUTPUT)-ancho)/2;
             
-        //     winprint(*STDOUTPUT,ancho,5+j,getDetalleNombre(Detalle));
+        //     winprint(STDOUTPUT,ancho,5+j,getDetalleNombre(Detalle));
 
         //     ancho += 7;
 
         //     sprintf(temp, "%i", getDetalleCantidad(Detalle));
-        //     winprint(*STDOUTPUT,ancho,5+j,temp);
+        //     winprint(STDOUTPUT,ancho,5+j,temp);
 
         //     ancho += mayor_cantidad + 1;
 
         //     sprintf(temp,"%.2f",getProductoPrecio(getProductoByIndex(Productos,i)));
-        //     winprint(*STDOUTPUT,ancho,5+j,temp);
+        //     winprint(STDOUTPUT,ancho,5+j,temp);
             
         //     ancho += mayor_precio + 1;
             
         //     total += getProductoPrecio(getProductoByIndex(Productos,i)) * getDetalleCantidad(Detalle);
 
         //     sprintf(temp,"%.2f",getProductoPrecio(getProductoByIndex(Productos,i)) * getDetalleCantidad(Detalle));
-        //     winprint(*STDOUTPUT,ancho,5+j, temp);
+        //     winprint(STDOUTPUT,ancho,5+j, temp);
         // }
 
         // sprintf(temp,BOLD "TOTAL: " NONE "%.2f",total);
-        // printinthemiddle(*STDOUTPUT,getCarritoSize(Carrito),temp);
+        // printinthemiddle(STDOUTPUT,getCarritoSize(Carrito),temp);
 
         //Imprimimos pie de pagina
         if(i != 0){
-            printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)-3,"< Presiona «A» para ver el pedido anterior >");
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-3,"< Presiona «A» para ver el pedido anterior >");
         }
         if(i < getPedidosSize(Pedidos)){
-            printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)-2,"< Presiona «S» para ver el pedido siguiente >");
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona «S» para ver el pedido siguiente >");
         }
-        printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)-1,"< Presiona cualquier tecla para salir >");
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-1,"< Presiona cualquier tecla para salir >");
 
         c = getchar();
         if(i != 0){
@@ -466,13 +466,13 @@ int buscarID(char* ID){
 
             printf(CLEAR);
 
-            box(*STDOUTPUT);
-            printinthemiddle(*STDOUTPUT,1," PEDIDOS ");
+            box(STDOUTPUT);
+            printinthemiddle(STDOUTPUT,1," PEDIDOS ");
 
             char informacion_del_cliente[300] = {0};
             sprintf(informacion_del_cliente,NONE BOLD "Pedido N°: " NONE "%i" BOLD "ESTADO: " "%s%s" BOLD "Nombre del Cliente: " NONE "%s" BOLD "Télefono: " NONE "%s" BOLD "Correo electrónico: " NONE  "%s",  Pedidos[i].numero ,color,estado,Pedidos[i].nombre_de_cliente, Pedidos[i].telefono_de_cliente, Pedidos[i].correo);
 
-            printinthemiddle(*STDOUTPUT,3,informacion_del_cliente);
+            printinthemiddle(STDOUTPUT,3,informacion_del_cliente);
 
             //Imprimirmos el carrito
             imprimirCarrito(Pedidos[i],-1,4);
@@ -491,44 +491,44 @@ int buscarID(char* ID){
 
             //     //Imprimimos Encabezados
             // int ancho = 6 + 1 + mayor_cantidad + 1 + mayor_precio + 1 + mayor_total;
-            // ancho = (getcols(*STDOUTPUT)-ancho)/2;
-            // winprint(*STDOUTPUT,ancho, 4, "MODELO");
+            // ancho = (getcols(STDOUTPUT)-ancho)/2;
+            // winprint(STDOUTPUT,ancho, 4, "MODELO");
             // ancho += 7;
-            // winprint(*STDOUTPUT,ancho,4,"CANTIDAD");
+            // winprint(STDOUTPUT,ancho,4,"CANTIDAD");
             // ancho += mayor_cantidad + 1;
-            // winprint(*STDOUTPUT,ancho,4,"PRECIO UNITARIO");
+            // winprint(STDOUTPUT,ancho,4,"PRECIO UNITARIO");
             // ancho += mayor_precio + 1;
-            // winprint(*STDOUTPUT,ancho,4, "SubTotal");
+            // winprint(STDOUTPUT,ancho,4, "SubTotal");
             //     //Imprimimos Contenido
             // for(int j = 0; j < getCarritoSize(Carrito);){
             //     Detalle = getDetalleByIndex(Carrito,j);
             //     ancho = 6 + 1 + mayor_cantidad + 1 + mayor_precio + 1 + mayor_total;
 
-            //     ancho = (getcols(*STDOUTPUT)-ancho)/2;
+            //     ancho = (getcols(STDOUTPUT)-ancho)/2;
                 
-            //     winprint(*STDOUTPUT,ancho,5+j,getDetalleNombre(Detalle));
+            //     winprint(STDOUTPUT,ancho,5+j,getDetalleNombre(Detalle));
 
             //     ancho += 7;
 
             //     sprintf(temp, "%i", getDetalleCantidad(Detalle));
-            //     winprint(*STDOUTPUT,ancho,5+j,temp);
+            //     winprint(STDOUTPUT,ancho,5+j,temp);
 
             //     ancho += mayor_cantidad + 1;
 
             //     sprintf(temp,"%.2f",getProductoPrecio(getProductoByIndex(Productos,i)));
-            //     winprint(*STDOUTPUT,ancho,5+j,temp);
+            //     winprint(STDOUTPUT,ancho,5+j,temp);
                 
             //     ancho += mayor_precio + 1;
                 
             //     total += getProductoPrecio(getProductoByIndex(Productos,i)) * getDetalleCantidad(Detalle);
 
             //     sprintf(temp,"%.2f", getProductoPrecio(getProductoByIndex(Productos,i)) * getDetalleCantidad(Detalle));
-            //     winprint(*STDOUTPUT,ancho,5+j, temp);
+            //     winprint(STDOUTPUT,ancho,5+j, temp);
             // }
 
             //sprintf(temp,BOLD "TOTAL: " NONE "%.2f",total);
-            //printinthemiddle(*STDOUTPUT,getCarritoSize(Carrito),temp);
-            printinthemiddle(*STDOUTPUT,getrows(*STDOUTPUT)-1,"< Presiona cualquier tecla para salir >");
+            //printinthemiddle(STDOUTPUT,getCarritoSize(Carrito),temp);
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-1,"< Presiona cualquier tecla para salir >");
             getchar();
             break;
         }
@@ -543,7 +543,7 @@ int numeroDePedido(){
 
 int consultarPedido(){
     MENU menu;
-    setMenuData(&menu, *STDOUTPUT, 4,4,5,(char*[]){
+    setMenuData(&menu, NULL, 4,4,5,(char*[]){
             "Pedidos Activos",
             "Pedidos Entregados",
             "Pedidos Cancelados",
@@ -567,12 +567,12 @@ int consultarPedido(){
 
     while(1){
         printf(CLEAR);
-        winprint(*STDOUTPUT,4,2,BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL " RESET "  " RESET BRGB(16,158,94) FRGB(255,255,255) " CONSULTAR PEDIDO ");
-        winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "↓↑"     RESET DIM  " Arriba / Abajo ");
-        winprint(*STDOUTPUT,4,getrows(*STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " Seleccionar ");
+        winprint(STDOUTPUT,4,2,BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL " RESET "  " RESET BRGB(16,158,94) FRGB(255,255,255) " CONSULTAR PEDIDO ");
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "↓↑"     RESET DIM  " Arriba / Abajo ");
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " Seleccionar ");
         
         
-        //menu = newMenu(*STDOUTPUT,4, 4 ,30,5, opciones,descripciones,5);
+        //menu = newMenu(STDOUTPUT,4, 4 ,30,5, opciones,descripciones,5);
         focusMenu(&menu);
         if(menu.selected == 5) break;
         Funciones[menu.selected]();

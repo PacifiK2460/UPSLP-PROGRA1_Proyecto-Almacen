@@ -6,13 +6,13 @@
 #include <math.h>
 
 //IO
-int evaluarNombre(char* Src);
+int evaluarNombreDeProducto(char* Src);
+int evaluarNombreDelCliente(char* Src);
 int evaluarExistencia(char* Src);
 int evaluarPrecio(char* Src);
 int evaluarUbicacion(char* Src);
-int evaluarCorreo(char* Des);
 int evaluarNumero(char* Dest);
-int evaluarNombreDelCliente(char* Src);
+int evaluarCorreo(char* Des);
 
 //STR
 int stringlen(char* text);

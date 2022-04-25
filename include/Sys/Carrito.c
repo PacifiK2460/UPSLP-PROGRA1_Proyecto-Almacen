@@ -26,7 +26,7 @@ void imprimirCarrito(Pedido Pedido, int x, int y){
     }
 
     if(x == -1){
-        x = (getcols(*STDOUTPUT) - getTotalToerico(carritoTable))/2;
+        x = (getcols(STDOUTPUT) - getTotalToerico(carritoTable))/2;
     }
 
     printTable(carritoTable,x,y);
