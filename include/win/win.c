@@ -7,6 +7,7 @@ void innit(){
   #endif
   printf("\e[?1049h");
   setlocale(LC_ALL, "");
+  srand(time(NULL));
 }
 
 // WINDOW* newWin(int y, int x, int COLS, int ROWS, WINDOW* Parent){

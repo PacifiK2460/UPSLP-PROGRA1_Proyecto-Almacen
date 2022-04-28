@@ -9,10 +9,13 @@ void imprimirCarrito(Pedido Pedido, int x, int y){
         "SUBTOTAL"
     });
 
+    char *precio;
+    char *sub;
     for(int fila = 0; fila < Pedido.productos; fila++){
         Producto temp = getProductoByName(Pedido.Detalles[fila].nombre);
-        char precio[30];
-        char sub[30];
+
+        precio = malloc(30);
+        sub = malloc(30);
 
         double2str(temp.precioUnitario, precio);
         double2str(temp.precioUnitario * Pedido.Detalles[fila].cantidad, sub); 

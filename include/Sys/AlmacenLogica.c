@@ -84,8 +84,11 @@ int nuevoProducto(){
     char precio[10] = {0};
     char ubicacion[2] = {0};
     input(titulo,BOLD FRGB(185, 251, 192) "MODELO",nombre,&evaluarNombreDeProducto);
+    cleanInput();
     input(titulo,BOLD FRGB(185, 251, 192) "EXISTENCIA",existencia,&evaluarExistencia);
+    cleanInput();
     input(titulo,BOLD FRGB(185, 251, 192) "PRECIO",precio,&evaluarPrecio);
+    cleanInput();
     input(titulo,BOLD FRGB(185, 251, 192) "UBICACIÓN",ubicacion,&evaluarUbicacion);
 
     int existentes;

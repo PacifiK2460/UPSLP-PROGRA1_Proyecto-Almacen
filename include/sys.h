@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 #include "IO.h"
 #include "win.h"
@@ -55,6 +56,7 @@ typedef int (*delimitador)(char*);
     int getPedidosSize();
     int appendPedido(Pedido Src);
     int loadPedidoFile(Pedido Destination[]);
+    void imprimirPedido(Pedido Src, int x, int y);
 
     //Carrito
     void imprimirCarrito(Pedido Pedido, int x, int y);

@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <locale.h>
 #include <stdarg.h>
+#include <time.h>
 #include "IO.h"
 
 

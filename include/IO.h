@@ -14,6 +14,8 @@ int evaluarUbicacion(char* Src);
 int evaluarNumero(char* Dest);
 int evaluarCorreo(char* Des);
 
+void cleanInput();
+
 //STR
 int stringlen(char* text);
 char* cp(char* dest, char* src);
