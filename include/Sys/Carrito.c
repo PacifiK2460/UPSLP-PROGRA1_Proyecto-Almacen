@@ -1,7 +1,8 @@
 #include "../sys.h"
 
 void imprimirCarrito(Pedido Pedido, int x, int y){
-    TABLE* carritoTable = newTable(4, Pedido.productos);
+    TABLE* carritoTable = newTable(4, Pedido.productos+1);
+    double total = 0;
     tableSetHeaders(carritoTable, (char*[]){
         "MODELO",
         "CANTIDAD",
@@ -14,6 +15,7 @@ void imprimirCarrito(Pedido Pedido, int x, int y){
     char *cant;
     for(int fila = 0; fila < Pedido.productos; fila++){
         Producto temp = getProductoByName(Pedido.Detalles[fila].nombre);
+        total += temp.precioUnitario * Pedido.Detalles[fila].cantidad;
 
         precio = malloc(30);
         sub = malloc(30);
@@ -30,6 +32,15 @@ void imprimirCarrito(Pedido Pedido, int x, int y){
             sub
         );
     }
+
+    precio = malloc(30);
+    double2str(total, precio);
+    tableAppendRow(carritoTable,
+        NULL,
+        NULL,
+        "TOTAL",
+        precio
+    );
 
     if(x == -1){
         x = (getcols(STDOUTPUT) - getTotalToerico(carritoTable))/2;
