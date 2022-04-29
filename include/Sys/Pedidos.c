@@ -30,12 +30,16 @@ int appendPedido(Pedido Src){
 //TODOS
 int loadPedidoFile(Pedido Destination[]){
     FILE* file;
-    char* n = "\n";
     int fila = 0;
     file = fopen("Pedidos", "a+");
     if(file == NULL) return -1;
 
-    char* format = "%s %i ";
+    char* format;
+    char* n;
+    n = malloc(5);
+    cp(n, "\n");
+    format = malloc(10);
+    cp(format,"%s %i ");
 
     for(Pedido Temp; fscanf(file,
     "%i %c %s %s %s %i ",&Temp.numero, &Temp.estado, &Temp.nombre_de_cliente,
