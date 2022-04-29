@@ -14,6 +14,14 @@ int modificar(char accion){
     int productos = getAlmacenSize();
     Producto Almacen[productos];
 
+    char titulo[] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
+                    RESET "  " RESET
+                    BRGB(75,75,75) FRGB(255,255,255) " ACTUALIZACIÓN DE ALMACEN "
+                    RESET "  " RESET
+                    BRGB(16,158,94) FRGB(255,255,255) " MODIFICAR PRODUCTO ";
+
+    winprint(STDOUTPUT,4,2, titulo);
+
     if(productos == -1 ||loadAlmacenFile(Almacen) == -1){
         printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al leer el archivo" RESET);
         getchar();
@@ -26,26 +34,29 @@ int modificar(char accion){
         return 1;
     }
 
-    char id[10] = {0};
-    input("MODIFICAR PRODUCTO","INDEX DEL PRODUCTO A MODIFICAR",id,&evaluarExistencia);
     int idx;
-    sscanf(id,"%i",&idx);
-    if(idx < 0 || idx > productos){
-        printinthemiddle(STDOUTPUT,getcols(STDOUTPUT)/2,"NO PUEDES MODIFICAR UN PRODUCTO INEXISTENTE");
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presione cualquier tecla para continuar >");
-        getchar();
-        return 0;
-    }
+    do{
+        char id[10] = {0};
+        input(titulo,"INDEX DEL PRODUCTO A MODIFICAR",id,&evaluarExistencia);
+        sscanf(id,"%i",&idx);
+        if(idx < 0 || idx > productos){
+            printinthemiddle(STDOUTPUT,getcols(STDOUTPUT)/2,"No puedes modificar un producto inexistente");
+            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
+            getchar();
+            continue;
+        }
+        break;
+    }while(1);
 
     char sum[10] = {0};
-    char titulo[100];
-    cat(titulo,"CANTIDAD A ");
+    char titulo2[100];
+    cat(titulo2,"CANTIDAD A ");
     if(accion == 's'){
-        cat(titulo,"SUMAR");
+        cat(titulo2,"SUMAR");
     } else {
-        cat(titulo,"PONER");
+        cat(titulo2,"PONER");
     }
-    input("MODIFICAR PRODUCTO",titulo,sum, &evaluarExistencia);
+    input(titulo,titulo2,sum, &evaluarExistencia);
     int s;
     sscanf(sum,"%i",&s);
     if(accion == 's') Almacen[idx].existentes += s;
@@ -55,6 +66,8 @@ int modificar(char accion){
 
     if(saveAlmacenFile(Almacen, productos) == -1){
         printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al guardar el archivo, el progreso se perdio" RESET);
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
+        getchar();
     }
 }
 
@@ -69,26 +82,34 @@ int sumarExistentes(){
 int nuevoProducto(){
     int productos = getAlmacenSize();
     Producto Almacen[productos];
-
+    loadAlmacenFile(Almacen);
     char titulo[] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
                     RESET "  " RESET
                     BRGB(75,75,75) FRGB(255,255,255) " ACTUALIZACIÓN DE ALMACEN "
                     RESET "  " RESET
                     BRGB(16,158,94) FRGB(255,255,255) " AGREGAR PRODUCTO ";
 
-    printf(CLEAR);
-    winprint(STDOUTPUT,4,2, titulo);
-
     char nombre[7] = {0};
     char existencia[10] = {0};
     char precio[10] = {0};
     char ubicacion[2] = {0};
-    input(titulo,BOLD FRGB(185, 251, 192) "MODELO",nombre,&evaluarNombreDeProducto);
-    cleanInput();
+    do{
+        printf(CLEAR);
+        winprint(STDOUTPUT,4,2, titulo);
+        input(titulo,BOLD FRGB(185, 251, 192) "MODELO",nombre,&evaluarNombreDeProducto);
+        if ( getProductoByName(nombre).existentes != -1 ){
+            winprint(STDOUTPUT,4,2, titulo);
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes agregar productos repetidos." RESET);
+            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
+            getchar();
+            winprint(STDOUTPUT,4,2, titulo);
+            continue;
+        }
+        break;
+    }while(1);
+    
     input(titulo,BOLD FRGB(185, 251, 192) "EXISTENCIA",existencia,&evaluarExistencia);
-    cleanInput();
     input(titulo,BOLD FRGB(185, 251, 192) "PRECIO",precio,&evaluarPrecio);
-    cleanInput();
     input(titulo,BOLD FRGB(185, 251, 192) "UBICACIÓN",ubicacion,&evaluarUbicacion);
 
     int existentes;

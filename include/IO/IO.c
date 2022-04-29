@@ -42,7 +42,7 @@ int evaluarNombreDelCliente(char* Src){
 int evaluarExistencia(char* Src){
     int size = 11;
     int temp;
-    if( scanf("%i", &temp) == 0 ) return 0;
+    if( scanf("%ui", &temp) == 0 ) return 0;
     snprintf(Src, size-1, "%i", temp);
     Src[size] = '\0';
     return 1;
@@ -51,7 +51,7 @@ int evaluarExistencia(char* Src){
 int evaluarPrecio(char* Src){
     int size = 11;
     int temp;
-    if(scanf("%i", &temp)==0)return 0;
+    if(scanf("%ui", &temp)==0)return 0;
     snprintf(Src, size-1, "%i", temp);
     Src[size] = '\0';
     return 1;
@@ -66,9 +66,9 @@ int evaluarUbicacion(char* Src){
 
 int evaluarNumero(char* Src){
     int temp;
-    if(scanf("%i",&temp)==0)return 0;
+    if(scanf("%ui",&temp)==0)return 0;
     snprintf(Src, 10,"%i", temp);
-    Src[11] = '\0';
+    Src[10] = '\0';
     return 1;
 }
 

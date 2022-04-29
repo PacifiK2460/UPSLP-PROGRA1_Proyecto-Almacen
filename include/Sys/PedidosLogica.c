@@ -107,11 +107,11 @@ int registrarPedido(){
             input(tituto, BOLD FRGB(185, 251, 192) "ID del Producto",pedidos,evaluarNumero);
             sscanf(pedidos,"%i",&ped);
             if(ped > productos || ped < 0){
+                printf(CLEAR);
                 printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"ID INVALIDO");
 
                 winprint(STDOUTPUT,4,2,tituto);
                 winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
-                cleanInput();
                 getchar();
                 continue;
             }
@@ -122,6 +122,7 @@ int registrarPedido(){
             input(tituto,BOLD FRGB(185, 251, 192) "Cantidad",cantidad,evaluarNumero);
             sscanf(cantidad,"%i",&cant);
             if(cant <= 0 || cant >= Almacen[ped].existentes){
+                printf(CLEAR);
                 printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2, "INGRESA UNA CANTIDAD POSIBLE A COMPRAR");
                 winprint(STDOUTPUT,4,2,tituto);
                 winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
@@ -229,14 +230,13 @@ int mostrarPedidosPor(char tipo){
         printf(CLEAR);
 
         //Imprimirmos la Info General
-
         imprimirPedido(PedidosDelTipo[i], 4, 2);
 
         //Imprimimos pie de pagina
         if(i != 0){
             printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-3,"< Presiona «A» para ver el pedido anterior >");
         }
-        if(i < getPedidosSize(Pedidos)){
+        if(i < cantidadDePedidosDelTipoSolicitado){
             printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona «S» para ver el pedido siguiente >");
         }
         printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-1,"< Presiona cualquier tecla para salir >");

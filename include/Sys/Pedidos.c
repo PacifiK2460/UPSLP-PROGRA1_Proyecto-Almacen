@@ -30,8 +30,9 @@ int appendPedido(Pedido Src){
 //TODOS
 int loadPedidoFile(Pedido Destination[]){
     FILE* file;
+    char* n = "\n";
     int fila = 0;
-    file = fopen("Pedidos", "w+");
+    file = fopen("Pedidos", "a+");
     if(file == NULL) return -1;
 
     char* format = "%s %i ";
@@ -57,7 +58,7 @@ int loadPedidoFile(Pedido Destination[]){
                 Destination[fila].Detalles[producto].cantidad = ProductoBuffer.cantidad;
                 producto++;
 
-                if(producto == Destination[fila].productos) cat(format, "\n");
+                if(producto == Destination[fila].productos) cat(format, n);
         }
         //Detalle Producto[Temp.productos];
     }

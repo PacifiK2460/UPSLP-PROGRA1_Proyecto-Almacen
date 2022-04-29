@@ -11,18 +11,21 @@ void imprimirCarrito(Pedido Pedido, int x, int y){
 
     char *precio;
     char *sub;
+    char *cant;
     for(int fila = 0; fila < Pedido.productos; fila++){
         Producto temp = getProductoByName(Pedido.Detalles[fila].nombre);
 
         precio = malloc(30);
         sub = malloc(30);
+        cant = malloc(30);
 
         double2str(temp.precioUnitario, precio);
         double2str(temp.precioUnitario * Pedido.Detalles[fila].cantidad, sub); 
+        int2str(Pedido.Detalles[fila].cantidad, cant);
 
         tableAppendRow(carritoTable,
             Pedido.Detalles[fila].nombre,
-            Pedido.Detalles[fila].cantidad,
+            cant,
             precio,
             sub
         );
@@ -35,72 +38,3 @@ void imprimirCarrito(Pedido Pedido, int x, int y){
     printTable(carritoTable,x,y);
 
 }
-
-// struct Carrito* newCarrito(){
-//     struct Carrito* temp = (struct Carrito*)malloc(sizeof(struct Carrito));
-//     if(temp == NULL) return NULL;
-//     temp->Head = NULL;
-//     temp->temp = NULL;
-//     temp->size = 0;
-
-//     return temp;
-// }
-
-// int getCarritoSize(struct Carrito* Src){
-//     if(Src == NULL) return -1;
-//     return Src->size;
-// }
-
-// struct Detalle* newDetalle(){
-//     struct Detalle* temp = (struct Detalle*)malloc( sizeof(struct Detalle));
-//     if(temp == NULL) return NULL;
-//     temp->next = NULL;
-//     temp->cantidad = 0;
-// }
-
-// struct Detalle* getDetalleByIndex(struct Carrito* Src, int index){
-//     if(Src == NULL) return NULL;
-//     if(index > getCarritoSize(Src) || index < 0) return NULL;
-
-//     Src->temp = Src->Head;
-//     while(index >= 1){
-//         Src->temp = Src->temp->next;
-//         index -= 1;
-//     }
-
-//     return Src->temp;
-// }
-
-// char* getDetalleNombre(struct Detalle* Src){
-//     return Src->nombre;
-// }
-
-// int getDetalleCantidad(struct Detalle* Src){
-//     return Src->cantidad;
-// }
-
-// int appendDetalle(struct Detalle* Src, struct Carrito* Dest){
-//     if(Dest == NULL) return ERROR;
-
-//     if(getCarritoSize(Dest) == 0){
-//         Dest->Head = Src;
-//         Dest->size += 1;
-//         return OK; 
-//     }
-
-//     Dest->temp = Dest->Head;
-//     while(Dest->temp->next != NULL) Dest->temp = Dest->temp->next;
-    
-//     Dest->temp->next = Src;
-//     Dest->size += 1;
-//     return OK;
-// }
-
-// int addDetalle(struct Carrito* Dest, char* nombre, int cantidad){
-//     struct Detalle* new = newDetalle();
-//     if(new == NULL) return ERROR;
-//     cp(new->nombre,nombre);
-//     new->cantidad = cantidad;
-
-//     return appendDetalle(new,Dest);
-// }

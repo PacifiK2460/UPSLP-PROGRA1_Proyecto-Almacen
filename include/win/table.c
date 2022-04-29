@@ -82,6 +82,7 @@ void tablePrepareDataAling(TABLE *src){
         FILA _fila = src->data[fila];
         for(int col = 0; col < src->columas; col++){
             //De cada fila, voy columna por columna
+            char* temp = _fila.columna[col];
             int tam = stringlen(_fila.columna[col]);
             //Saco el largo de cada columna
             if(tam > src->textoMasLargo[col])
