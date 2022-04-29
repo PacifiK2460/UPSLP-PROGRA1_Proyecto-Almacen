@@ -223,7 +223,7 @@ int mostrarPedidosPor(char tipo){
     int i = 0;
 
     int c;
-    char tituto[] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL " RESET "  " RESET BRGB(16,158,94) FRGB(255,255,255) " REGISTRAR PEDIDO ";
+    char tituto[] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL " RESET "  " RESET BRGB(16,158,94) FRGB(255,255,255) " MOSTRAR PEDIDO ";
 
     noEcho();
 
@@ -282,56 +282,45 @@ int pedidosCancelados(){
 int buscarID(char* ID){
     int Id;
     sscanf(ID,"%i",&Id);
+    
+    int pedidos = getPedidosSize();
+    if(pedidos == 0){
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No hay pedidos por mostrar" RESET);
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar "); 
+        getchar();
+        return 1;   
+    }
 
-    char color[10] = {0};
-    char estado[10] = {0};
-    char temp[20] = {0};
-    double total = {0};
+    Pedido Pedidos[pedidos];
+    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar "); 
+    if( loadPedidoFile(Pedidos) == -1){
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al cargar el archivo" RESET);
+        getchar();
+        return 1;   
+    }
 
-    for(int i = 0; i <  getPedidosSize(); i++){
-        Pedido Pedidos[getPedidosSize()];
-        loadPedidoFile(Pedidos);
-        
-        if(Pedidos[i].numero == Id){
-            Pedido Carrito[Pedidos[i].productos];
-            //Carrito carrito = getPedidoCarrito(getPedidoByIndex(Pedidos,i));
-            switch (Pedidos[i].estado)
-            {
-            case 'A':
-                cp(color,"\e[1;91m");
-                cp(estado,"Activo");
-                break;
-            
-            case 'E':
-                cp(color,"\e[1;92m");
-                cp(estado,"Entregado");
-                break;
-            case 'C':
-                cp(color,"\e[1;91m");
-                cp(estado,"Cancelado");
-                break;
-            }
-
-            printf(CLEAR);
-
-            box(STDOUTPUT);
-            printinthemiddle(STDOUTPUT,1," PEDIDOS ");
-
-            char informacion_del_cliente[300] = {0};
-            sprintf(informacion_del_cliente,NONE BOLD "Pedido N°: " NONE "%i" BOLD "ESTADO: " "%s%s" BOLD "Nombre del Cliente: " NONE "%s" BOLD "Télefono: " NONE "%s" BOLD "Correo electrónico: " NONE  "%s",  Pedidos[i].numero ,color,estado,Pedidos[i].nombre_de_cliente, Pedidos[i].telefono_de_cliente, Pedidos[i].correo);
-
-            printinthemiddle(STDOUTPUT,3,informacion_del_cliente);
-
-            //Imprimirmos el carrito
-            imprimirCarrito(Pedidos[i],-1,4);
-
-            //printinthemiddle(STDOUTPUT,getCarritoSize(Carrito),temp);
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-1,"< Presiona cualquier tecla para salir >");
-            getchar();
+    int i = 0;
+    for(i = 0; i < pedidos; i++){
+        if( Pedidos[i].numero == Id ){
             break;
         }
     }
 
+    if(i == pedidos-1){
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No se encontro el pedido" RESET);
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar "); 
+        getchar();
+        return 1;   
+    }
+
+    int c;
+    char tituto[] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL " RESET "  " RESET BRGB(16,158,94) FRGB(255,255,255) " BUSCAR PEDIDO ";
+
+    printf(CLEAR);
+    winprint(STDOUTPUT,4,2,tituto);
+
+    imprimirPedido(Pedidos[i], 4,4);
+    getchar();
 }
 
 int numeroDePedido(){

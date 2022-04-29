@@ -66,7 +66,7 @@ int evaluarUbicacion(char* Src){
 
 int evaluarNumero(char* Src){
     int temp;
-    if(scanf("%ui",&temp)==0)return 0;
+    if(scanf("%i",&temp)==0)return 0;
     snprintf(Src, 10,"%i", temp);
     Src[10] = '\0';
     return 1;
