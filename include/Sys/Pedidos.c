@@ -34,13 +34,6 @@ int loadPedidoFile(Pedido Destination[]){
     file = fopen("Pedidos", "a+");
     if(file == NULL) return -1;
 
-    char* format;
-    char* n;
-    n = malloc(5);
-    cp(n, "\n");
-    format = malloc(10);
-    cp(format,"%s %i ");
-
     for(Pedido Temp; fscanf(file,
     "%i %c %s %s %s %i ",&Temp.numero, &Temp.estado, &Temp.nombre_de_cliente,
     &Temp.telefono_de_cliente, &Temp.correo, &Temp.productos) == 6; ){
@@ -55,16 +48,14 @@ int loadPedidoFile(Pedido Destination[]){
 
         Destination[fila].Detalles = malloc(Temp.productos * sizeof(*Destination[fila].Detalles));
 
-        int producto = 0;
-        for(Detalle ProductoBuffer;
-            fscanf(file,  format, &ProductoBuffer.nombre, &ProductoBuffer.cantidad) == 2;){
-                cp(Destination[fila].Detalles[producto].nombre, ProductoBuffer.nombre);
-                Destination[fila].Detalles[producto].cantidad = ProductoBuffer.cantidad;
-                producto++;
+        for(int producto=0; producto < Destination[fila].productos; producto++){
+            Detalle ProductoBuffer;
+            if(fscanf(file, "%s %i \n", &ProductoBuffer.nombre, &ProductoBuffer.cantidad) != 2) break;
+            cp(Destination[fila].Detalles[producto].nombre, ProductoBuffer.nombre);
+            Destination[fila].Detalles[producto].cantidad = ProductoBuffer.cantidad;
 
-                if(producto == Destination[fila].productos) cat(format, n);
         }
-        //Detalle Producto[Temp.productos];
+        fila++;
     }
     fclose(file);
     return 1;

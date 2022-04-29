@@ -223,35 +223,46 @@ int mostrarPedidosPor(char tipo){
     int i = 0;
 
     int c;
+    char tituto[] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL " RESET "  " RESET BRGB(16,158,94) FRGB(255,255,255) " REGISTRAR PEDIDO ";
 
     noEcho();
 
     while(1){
         printf(CLEAR);
+        winprint(STDOUTPUT,4,2,tituto);
 
         //Imprimirmos la Info General
-        imprimirPedido(PedidosDelTipo[i], 4, 2);
+        imprimirPedido(PedidosDelTipo[i], 4, 4);
 
         //Imprimimos pie de pagina
-        if(i != 0){
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-3,"< Presiona «A» para ver el pedido anterior >");
+        if(i > 0 && i < cantidadDePedidosDelTipoSolicitado-1){
+            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-4,RESET FRGB(185, 251, 192)  "↑"  RESET DIM  " siguiente pedido "); 
+            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "↓"  RESET DIM  " anterior pedido "); 
+        } else if(i > 0){
+            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "↑"  RESET DIM  " siguiente pedido "); 
+        } else if(i < cantidadDePedidosDelTipoSolicitado-1){
+            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "↓"  RESET DIM  " anterior pedido "); 
         }
-        if(i < cantidadDePedidosDelTipoSolicitado){
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-2,"< Presiona «S» para ver el pedido siguiente >");
-        }
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)-1,"< Presiona cualquier tecla para salir >");
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " salir "); 
 
         c = getchar();
-        if(i != 0){
-            i--;
-            continue;
+        if(c == '\033'){ //ESC
+            getchar(); //Omitimos el 2do [
+            switch ( (c = getchar()) )
+            {
+                case 'A':
+                    if(i > 0) i--;
+                    break;
+                
+                case 'B':
+                    if(i < cantidadDePedidosDelTipoSolicitado-1) i++;
+                    break;
+            }
         }
-        if(i < getPedidosSize(Pedidos)){
-            i++;
-
-            continue;
+        //Enter
+        if(c == 10){
+            break;
         }
-        break;
     }
     echo();
 }
@@ -361,7 +372,7 @@ int consultarPedido(){
         
         //menu = newMenu(STDOUTPUT,4, 4 ,30,5, opciones,descripciones,5);
         focusMenu(&menu);
-        if(menu.selected == 5) break;
+        if(menu.selected == 4) break;
         Funciones[menu.selected]();
     }
 }
