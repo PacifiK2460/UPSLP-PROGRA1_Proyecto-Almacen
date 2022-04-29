@@ -13,6 +13,7 @@ void imprimirCarrito(Pedido Pedido, int x, int y){
     char *precio;
     char *sub;
     char *cant;
+    char empty[] = "  ";
     for(int fila = 0; fila < Pedido.productos; fila++){
         Producto temp = getProductoByName(Pedido.Detalles[fila].nombre);
         total += temp.precioUnitario * Pedido.Detalles[fila].cantidad;
@@ -22,7 +23,7 @@ void imprimirCarrito(Pedido Pedido, int x, int y){
         cant = malloc(30);
 
         double2str(temp.precioUnitario, precio);
-        double2str(temp.precioUnitario * Pedido.Detalles[fila].cantidad, sub); 
+        double2str(temp.precioUnitario * (double)Pedido.Detalles[fila].cantidad, sub); 
         int2str(Pedido.Detalles[fila].cantidad, cant);
 
         tableAppendRow(carritoTable,
@@ -36,8 +37,8 @@ void imprimirCarrito(Pedido Pedido, int x, int y){
     precio = malloc(30);
     double2str(total, precio);
     tableAppendRow(carritoTable,
-        NULL,
-        NULL,
+        empty,
+        empty,
         "TOTAL",
         precio
     );

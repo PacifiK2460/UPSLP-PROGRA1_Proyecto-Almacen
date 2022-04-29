@@ -124,5 +124,5 @@ void imprimirPedido(Pedido Src, int x, int y){
         winprint(STDOUTPUT, x, y++, RowBuffer5);
     }
 
-    imprimirCarrito(Src, -1, y++);
+    imprimirCarrito(Src, -1, y+2);
 }

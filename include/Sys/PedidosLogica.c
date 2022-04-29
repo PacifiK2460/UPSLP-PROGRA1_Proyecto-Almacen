@@ -172,7 +172,7 @@ int registrarPedido(){
 
     winprint(STDOUTPUT,4,2,tituto);
 
-    imprimirPedido(nuevoPedido, 4, 2);
+    imprimirPedido(nuevoPedido, 4, 4);
 
     winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
 
