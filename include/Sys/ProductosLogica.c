@@ -34,13 +34,39 @@ int modificar(char accion){
         return 1;
     }
 
+    //Imprimimos tabla de productos
+    { 
+        printf(CLEAR);
+        winprint(STDOUTPUT,4,2,titulo);
+        TABLE* dataTable = newTable(2,getAlmacenSize());
+        tableSetHeaders(dataTable,(char*[]){
+            "ID",
+            "Nombre"
+        });
+        char* temp;
+        for(int fila = 0; fila < productos; fila++){
+            //Producto Tmp = Almacen[fila]; 
+            temp = malloc(30);
+            int2str(fila, temp);
+            tableAppendRow(dataTable,
+                temp,
+                Almacen[fila].nombre//getProductoName(Tmp)
+            );
+        };
+        printTable(dataTable, -1, 4);
+
+        winprint(STDOUTPUT,4,2,titulo);
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
+        getchar();
+    }
+
     int idx;
     do{
         char id[10] = {0};
-        input(titulo,"INDEX DEL PRODUCTO A MODIFICAR",id,&evaluarExistencia);
+        input(titulo,BOLD FRGB(185, 251, 192) "INDEX DEL PRODUCTO A MODIFICAR",id,&evaluarExistencia);
         sscanf(id,"%i",&idx);
-        if(idx < 0 || idx > productos){
-            printinthemiddle(STDOUTPUT,getcols(STDOUTPUT)/2,"No puedes modificar un producto inexistente");
+        if(idx < 0 || idx > productos-1){
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes modificar un producto inexistente");
             winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
             getchar();
             continue;
@@ -49,13 +75,15 @@ int modificar(char accion){
     }while(1);
 
     char sum[10] = {0};
-    char titulo2[100];
-    cat(titulo2,"CANTIDAD A ");
+    char titulo2[100] = BOLD FRGB(185, 251, 192) "CANTIDAD A";
+    //cat(titulo2,BOLD FRGB(185, 251, 192) "CANTIDAD A ");
     if(accion == 's'){
         cat(titulo2,"SUMAR");
     } else {
         cat(titulo2,"PONER");
     }
+    printf(CLEAR);
+    winprint(STDOUTPUT,4,2, titulo);
     input(titulo,titulo2,sum, &evaluarExistencia);
     int s;
     sscanf(sum,"%i",&s);
@@ -64,11 +92,19 @@ int modificar(char accion){
     //Almacen[idx].existentes += s;
     //modExistencia(src,idx,s,'S');
 
+    printf(CLEAR);
+    winprint(STDOUTPUT,4,2, titulo);
+
     if(saveAlmacenFile(Almacen, productos) == -1){
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al guardar el archivo, el progreso se perdio" RESET);
-        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM  "Hubo un error al guardar el archivo, el progreso se perdio" RESET);
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " finalizar ");
         getchar();
+        return 0;
     }
+
+    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM  "Cambios guardados correctamente" RESET);
+    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " finalizar ");
+    getchar();
 }
 
 int modificarExistentes(){
@@ -172,7 +208,6 @@ int actualizarAlmacen(){
         focusMenu(&menu);
         if(menu.selected == 3) break;
         Funciones[menu.selected]();
-        getchar();
         //if((respuesta = focusMenu(menu)) == 3) break;
         //Funciones[respuesta]();
     }
@@ -251,7 +286,7 @@ int consultarAlmacen(){
     //     setTableData(data[fila][j++],&est);
     // }
 
-    printTable(dataTable, (getcols(STDOUTPUT) - getTotalToerico(dataTable))/2,4);
+    printTable(dataTable, -1,4);
     
     // for(int i=0; i<filas;i++){
     //     free(data[i]);

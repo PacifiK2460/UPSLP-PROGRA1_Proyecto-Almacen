@@ -116,12 +116,16 @@ void setTableData(char* dest, char* src){
 void printTable(TABLE* table, int x, int y){
 
     tablePrepareDataAling(table);
+    
+    if(x == -1) x = (getcols(STDOUTPUT) - table->toalTeorico)/2;
+    
     //Headers
     {
         char* rowbuffer = malloc(table->total * sizeof(char));
         for(int i = 0; i < table->total; i++) rowbuffer[i] = '\0';
 
         for(int col = 0; col < table->columas; col++){
+
             char* colbuffer = malloc(table->total * sizeof(char));
             for(int i = 0; i < table->total; i++) colbuffer[i] = '\0';
             
@@ -173,23 +177,6 @@ void printTable(TABLE* table, int x, int y){
         }
     }
 
-    // for(int j = 0; j < table->filas+1; j++){
-    //     char* headerbuff = (char*)malloc(table->total * sizeof(char));
-    //     //for(int _ = 0; _ < table->total; _++ ) headerbuff[_] = '\0';
-    //     for(int i = 0; i < table->columas; i++){
-    //         char* colbuff = (char*)malloc(table->total * sizeof(char));
-    //         //for(int _ = 0; _ < table->total; _++ ) colbuff[_] = '\0';
-    //         if(j == 0)
-    //             snprintf(colbuff,table->total,BOLD FRGB(185, 251, 192) "%*s" RESET, table->textoMasLargo[i], data[j][i]);
-    //         else
-    //             snprintf(colbuff,table->total,DIM  FRGB(185, 251, 192) "%*s" RESET, table->textoMasLargo[i], data[j][i]);
-    //         cat(headerbuff,colbuff);
-    //         if(i+1 < table->columas) cat(headerbuff," " VLINE " ");
-    //         free(colbuff);
-    //     }
-    //     winprint(STDOUTPUT,x,y + j,headerbuff);
-    //     free(headerbuff);
-    // }
 }
 
 void freeTable(TABLE *src){

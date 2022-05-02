@@ -27,7 +27,8 @@
 			"bitset": "c",
 			"initializer_list": "c",
 			"utility": "c",
-			"valarray": "c"
+			"valarray": "c",
+			"thread": "c"
 		}
 	}
 }

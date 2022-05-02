@@ -50,6 +50,7 @@ La funcionalidad esta marcada si esta no presenta ningun error de logica (los er
   - [X] Modificar Existentes
   - [X] Agregar Producto
 - [X] Registrar Pedido
-- [ ] Consultar Pedido
+- [X] Consultar Pedido
 - [ ] Registrar Entrega
-- [ ] Modificar Estado de Pedido 
+- [ ] Modificar Estado de Pedido
+- [X] Salir 
