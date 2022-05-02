@@ -22,6 +22,7 @@ int modificar(char accion){
 
     winprint(STDOUTPUT,4,2, titulo);
 
+    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
     if(productos == -1 ||loadAlmacenFile(Almacen) == -1){
         printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al leer el archivo" RESET);
         getchar();

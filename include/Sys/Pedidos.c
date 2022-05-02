@@ -61,6 +61,27 @@ int loadPedidoFile(Pedido Destination[]){
     return 1;
 }
 
+int savePedidoFile(Pedido Source[], int filas){
+    remove("Pedidos");
+    FILE* file;
+    file = fopen("Pedidos","w+");
+    if(file == NULL) return -1;
+    for(int fila = 0; fila < filas; fila++){
+        fprintf(file,"%i %c %s %s %s %i ",Source[fila].numero,
+        Source[fila].estado, Source[fila].nombre_de_cliente,
+        Source[fila].telefono_de_cliente, Source[fila].correo,
+        Source[fila].productos);
+        
+        for(int producto = 0; producto < Source[fila].productos; producto++){
+            fprintf(fila,"%s %i",Source[fila].Detalles[producto].nombre,
+            Source[fila].Detalles[producto].cantidad);
+        }
+        fprintf(file, "\n");
+    }
+    fclose(file);
+    return 1;
+}
+
 void imprimirPedido(Pedido Src, int x, int y){
     //Declaramos info
     char RowBuffer1[100] = "Pedido: ";

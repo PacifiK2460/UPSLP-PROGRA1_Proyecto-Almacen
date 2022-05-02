@@ -359,8 +359,244 @@ int consultarPedido(){
     }
 }
 
-int registrarEntrega(){}
-int modificarPedido(){}
+int registrarEntrega(){
+    printf(CLEAR);
+    int pedidos = getPedidosSize();
+    Pedido Pedidos[pedidos];
+
+    char titulo[] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
+                    RESET "  " RESET
+                    BRGB(16,158,94) FRGB(255,255,255) " MODIFICAR PEDIDO ";
+
+    { //UI & File Managin
+        winprint(STDOUTPUT,4,2, titulo);
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
+
+        if(pedidos == -1 ||loadPedidoFile(Pedidos) == -1){
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al leer el archivo" RESET);
+            getchar();
+            return 1;
+        }
+
+        if(pedidos == 0){
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No hay productos por listar" RESET);
+            getchar();
+            return 1;
+        }
+    }
+
+    //Imprimimos tabla de pedido
+    { 
+        winprint(STDOUTPUT,4,2,titulo);
+        TABLE* dataTable = newTable(2,getPedidosSize());
+        tableSetHeaders(dataTable,(char*[]){
+            "ID",
+            "Nombre"
+        });
+        char* temp;
+        for(int fila = 0; fila < pedidos; fila++){
+            //Producto Tmp = Almacen[fila]; 
+            temp = malloc(30);
+            int2str(Pedidos[fila].numero , temp);
+            tableAppendRow(dataTable,
+                temp,
+                Pedidos[fila].nombre_de_cliente//getProductoName(Tmp)
+            );
+        };
+        printTable(dataTable, -1, 4);
+        getchar();
+    }
+
+    int idx;
+    int index;
+    char cont = 0;
+    do{
+        index = 0;
+        cont = 0;
+        char id[10] = {0};
+        printf(CLEAR);
+        winprint(STDOUTPUT, 4,2, titulo);
+        input(titulo,BOLD FRGB(185, 251, 192) "ID DEL PEDIDO A MODIFICAR",id,&evaluarExistencia);
+        sscanf(id,"%i",&idx);
+        for(int i = 0; i < pedidos; i++){
+            if( Pedidos[i].numero == idx ){
+                if(Pedidos[i].estado == 'E'){
+                    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Por ahora no sabemos viajar al pasado, no puedes modificar un pedido entregado");
+                    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
+                    getchar();
+                    break;
+                } else if( Almacen[i].estado == 'C'){
+                    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "¿Estas haciendo fraude?, no puedes entregar un pedido cancelado");
+                    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
+                    getchar();
+                    break;
+                }
+
+                cont = 1;
+                index = i;
+                break;
+            }
+        }
+        if(cont == 0){
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes modificar un pedido inexistente");
+            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
+            getchar();
+        }
+    }while(cont == 0);
+
+    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " finalizar ");
+
+
+    int productos = getAlmacenSize();
+    Producto Almacen[productos];
+    {// Actualizar almacen
+        if(productos == -1 ||loadAlmacenFile(Almacen) == -1){
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al actulizar el almacen" RESET);
+            getchar();
+            return 1;
+        }
+
+        if(productos == 0){
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "El almacen ah desaparecido, nada que actualizar" RESET);
+            getchar();
+            return 1;
+        }
+
+        for(int CarritoPedido = 0; CarritoPedido < pedidos; CarritoPedido++){
+            for(int producto = 0; producto < producto; producto++){
+                if( cmp(Pedidos[index].Detalles[CarritoPedido].nombre, Almacen[producto].nombre) == 0 ){
+                    if( (Almacen[producto].existentes - Pedidos[index].Detalles[CarritoPedido].cantidad) < 0 ){
+                        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No hay suficientes productos para completar la entrega. No se ah actualizado el Almacen" RESET);
+                        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " finalizar ");
+                        return;
+                    }
+                }
+            }
+        }
+
+        for(int CarritoPedido = 0; CarritoPedido < pedidos; CarritoPedido++){
+            for(int producto = 0; producto < producto; producto++){
+                if( cmp(Pedidos[index].Detalles[CarritoPedido].nombre, Almacen[producto].nombre) == 0 ){
+                    Almacen[producto].existentes -= Pedidos[index].Detalles[CarritoPedido].cantidad;
+                    break;
+                }
+            }
+        }
+    }
+
+    Pedidos[index].estado = 'E';
+    if(savePedidoFile(Pedidos, pedidos) == -1 || saveAlmacenFile(Almacen,productos) == -1){
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM  "Hubo un error al guardar el archivo, el progreso se perdio" RESET);
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " finalizar ");
+        getchar();
+        return 0;
+    }
+
+    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM  "Cambios guardados correctamente" RESET);
+    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " finalizar ");
+    getchar();
+}
+
+int modificarPedido(){
+    printf(CLEAR);
+    int productos = getPedidosSize();
+    Pedido Almacen[productos];
+
+    char titulo[] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
+                    RESET "  " RESET
+                    BRGB(16,158,94) FRGB(255,255,255) " MODIFICAR PEDIDO ";
+
+    { //UI & File Managin
+        winprint(STDOUTPUT,4,2, titulo);
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
+
+        if(productos == -1 ||loadPedidoFile(Almacen) == -1){
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al leer el archivo" RESET);
+            getchar();
+            return 1;
+        }
+
+        if(productos == 0){
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No hay productos por listar" RESET);
+            getchar();
+            return 1;
+        }
+    }
+
+    //Imprimimos tabla de pedido
+    { 
+        winprint(STDOUTPUT,4,2,titulo);
+        TABLE* dataTable = newTable(2,getPedidosSize());
+        tableSetHeaders(dataTable,(char*[]){
+            "ID",
+            "Nombre"
+        });
+        char* temp;
+        for(int fila = 0; fila < productos; fila++){
+            //Producto Tmp = Almacen[fila]; 
+            temp = malloc(30);
+            int2str(Almacen[fila].numero , temp);
+            tableAppendRow(dataTable,
+                temp,
+                Almacen[fila].nombre_de_cliente//getProductoName(Tmp)
+            );
+        };
+        printTable(dataTable, -1, 4);
+        getchar();
+    }
+
+    int idx;
+    int index;
+    char cont = 0;
+    do{
+        index = 0;
+        cont = 0;
+        char id[10] = {0};
+        printf(CLEAR);
+        winprint(STDOUTPUT, 4,2, titulo);
+        input(titulo,BOLD FRGB(185, 251, 192) "ID DEL PEDIDO A MODIFICAR",id,&evaluarExistencia);
+        sscanf(id,"%i",&idx);
+        for(int i = 0; i < productos; i++){
+            if( Almacen[i].numero == idx ){
+                if(Almacen[i].estado == 'E'){
+                    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Por ahora no sabemos viajar al pasado, no puedes modificar un pedido entregado");
+                    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
+                    getchar();
+                    break;
+                }
+
+                cont = 1;
+                index = i;
+                break;
+            }
+        }
+        if(cont == 0){
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes modificar un pedido inexistente");
+            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
+            getchar();
+        }
+    }while(cont == 0);
+
+
+    if(Almacen[index].estado == 'A'){
+        Almacen[index].estado = 'C';        
+    } else if(Almacen[index].estado == 'C'){
+        Almacen[index].estado = 'A';
+    } else {
+        exit(1);
+    }
+
+    if(savePedidoFile(Almacen, productos) == -1){
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM  "Hubo un error al guardar el archivo, el progreso se perdio" RESET);
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " finalizar ");
+        getchar();
+        return 0;
+    }
+
+    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM  "Cambios guardados correctamente" RESET);
+    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " finalizar ");
+    getchar();
+}
 
 int regresar(){
     return 1;

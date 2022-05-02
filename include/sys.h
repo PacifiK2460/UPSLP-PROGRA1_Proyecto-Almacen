@@ -57,6 +57,7 @@ typedef int (*delimitador)(char*);
     int appendPedido(Pedido Src);
     int loadPedidoFile(Pedido Destination[]);
     void imprimirPedido(Pedido Src, int x, int y);
+    int savePedidoFile(Pedido Source[], int filas);
 
     //Carrito
     void imprimirCarrito(Pedido Pedido, int x, int y);
