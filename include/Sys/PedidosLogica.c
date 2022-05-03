@@ -411,6 +411,7 @@ int registrarEntrega(){
     int index;
     char cont = 0;
     do{
+        int q1 = 0;
         index = 0;
         cont = 0;
         char id[10] = {0};
@@ -424,11 +425,13 @@ int registrarEntrega(){
                     printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Por ahora no sabemos viajar al pasado, no puedes modificar un pedido entregado");
                     winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
                     getchar();
+                    q1 = 1;
                     break;
-                } else if( Almacen[i].estado == 'C'){
+                } else if( Pedidos[i].estado == 'C'){
                     printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "¿Estas haciendo fraude?, no puedes entregar un pedido cancelado");
                     winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
                     getchar();
+                    q1 =1;
                     break;
                 }
 
@@ -437,7 +440,7 @@ int registrarEntrega(){
                 break;
             }
         }
-        if(cont == 0){
+        if(cont == 0 && q1 == 0){
             printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes modificar un pedido inexistente");
             winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
             getchar();
@@ -463,19 +466,19 @@ int registrarEntrega(){
         }
 
         for(int CarritoPedido = 0; CarritoPedido < pedidos; CarritoPedido++){
-            for(int producto = 0; producto < producto; producto++){
+            for(int producto = 0; producto < productos; producto++){
                 if( cmp(Pedidos[index].Detalles[CarritoPedido].nombre, Almacen[producto].nombre) == 0 ){
                     if( (Almacen[producto].existentes - Pedidos[index].Detalles[CarritoPedido].cantidad) < 0 ){
                         printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No hay suficientes productos para completar la entrega. No se ah actualizado el Almacen" RESET);
                         winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " finalizar ");
-                        return;
+                        return 0;
                     }
                 }
             }
         }
 
-        for(int CarritoPedido = 0; CarritoPedido < pedidos; CarritoPedido++){
-            for(int producto = 0; producto < producto; producto++){
+        for(int CarritoPedido = 0; CarritoPedido < Pedidos[index].productos; CarritoPedido++){
+            for(int producto = 0; producto < productos; producto++){
                 if( cmp(Pedidos[index].Detalles[CarritoPedido].nombre, Almacen[producto].nombre) == 0 ){
                     Almacen[producto].existentes -= Pedidos[index].Detalles[CarritoPedido].cantidad;
                     break;
@@ -549,6 +552,7 @@ int modificarPedido(){
     int index;
     char cont = 0;
     do{
+        char q1 = 0;
         index = 0;
         cont = 0;
         char id[10] = {0};
@@ -562,6 +566,7 @@ int modificarPedido(){
                     printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Por ahora no sabemos viajar al pasado, no puedes modificar un pedido entregado");
                     winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
                     getchar();
+                    q1 = 1;
                     break;
                 }
 
@@ -570,7 +575,7 @@ int modificarPedido(){
                 break;
             }
         }
-        if(cont == 0){
+        if(cont == 0 && q1 == 0){
             printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes modificar un pedido inexistente");
             winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
             getchar();
