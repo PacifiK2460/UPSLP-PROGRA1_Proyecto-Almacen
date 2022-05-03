@@ -81,6 +81,7 @@ void tablePrepareDataAling(TABLE *src){
         //Obtengo la fila
         FILA _fila = src->data[fila];
         for(int col = 0; col < src->columas; col++){
+            int coltotal = 0;
             //De cada fila, voy columna por columna
             char* temp = _fila.columna[col];
             int tam = stringlen(_fila.columna[col]);
@@ -89,12 +90,19 @@ void tablePrepareDataAling(TABLE *src){
                 src->textoMasLargo[col] = tam;
 
             //Información que nos ayudará a alinear la tabla
+            
+            coltotal += stringlen(BOLD FRGB(185, 251, 192));
+            coltotal += src->textoMasLargo[col];
+            coltotal += stringlen(RESET);
+            coltotal += stringlen(" " VLINE " ");
+
             src->total += stringlen(BOLD FRGB(185, 251, 192));
             src->total += src->textoMasLargo[col];
             src->total += stringlen(RESET);
             src->total += stringlen(" " VLINE " ");
 
-            src->toalTeorico += src->textoMasLargo[col];
+            if(coltotal > src->toalTeorico) src->toalTeorico = coltotal;
+            //src->toalTeorico += src->textoMasLargo[col];
         }
     }
 }

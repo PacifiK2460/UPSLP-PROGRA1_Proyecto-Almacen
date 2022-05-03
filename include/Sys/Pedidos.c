@@ -73,7 +73,7 @@ int savePedidoFile(Pedido Source[], int filas){
         Source[fila].productos);
         
         for(int producto = 0; producto < Source[fila].productos; producto++){
-            fprintf(fila,"%s %i",Source[fila].Detalles[producto].nombre,
+            fprintf(file,"%s %i ",Source[fila].Detalles[producto].nombre,
             Source[fila].Detalles[producto].cantidad);
         }
         fprintf(file, "\n");
@@ -96,7 +96,7 @@ void imprimirPedido(Pedido Src, int x, int y){
         switch (Src.estado)
         {
             case 'A':
-                cat(RowBuffer1,"\e[1;91m");
+                cat(RowBuffer1,"\e[1;93m");
                 cat(RowBuffer1,"Activo");
                 break;
             

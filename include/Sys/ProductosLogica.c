@@ -83,11 +83,18 @@ int modificar(char accion){
     } else {
         cat(titulo2,"PONER");
     }
-    printf(CLEAR);
-    winprint(STDOUTPUT,4,2, titulo);
-    input(titulo,titulo2,sum, &evaluarExistencia);
     int s;
-    sscanf(sum,"%i",&s);
+    while(1){
+        printf(CLEAR);
+        winprint(STDOUTPUT,4,2, titulo);
+        input(titulo,titulo2,sum, &evaluarExistencia);
+        sscanf(sum,"%i",&s);
+        if(s > 0) break;
+
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM  "Agrega productos mayores a 0" RESET);
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
+        getchar();
+    }
     if(accion == 's') Almacen[idx].existentes += s;
     else Almacen[idx].existentes = s;
     //Almacen[idx].existentes += s;
@@ -145,16 +152,36 @@ int nuevoProducto(){
         break;
     }while(1);
     
-    input(titulo,BOLD FRGB(185, 251, 192) "EXISTENCIA",existencia,&evaluarExistencia);
-    input(titulo,BOLD FRGB(185, 251, 192) "PRECIO",precio,&evaluarPrecio);
-    input(titulo,BOLD FRGB(185, 251, 192) "UBICACIÓN",ubicacion,&evaluarUbicacion);
-
     int existentes;
     double precios;
     char ubi;
+    while(1){
+        printf(CLEAR);
+        winprint(STDOUTPUT,4,2, titulo);
+        input(titulo,BOLD FRGB(185, 251, 192) "EXISTENCIA",existencia,&evaluarExistencia);
+        sscanf(existencia, "%i",&existentes);
 
-    sscanf(existencia, "%i",&existentes);
-    sscanf(precio,"%lf", &precios);
+        if(existentes > 0) break;
+
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes agregar productos repetidos." RESET);
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
+        getchar();
+    }
+
+    while(1){
+        printf(CLEAR);
+        winprint(STDOUTPUT,4,2, titulo);
+        input(titulo,BOLD FRGB(185, 251, 192) "PRECIO",precio,&evaluarPrecio);
+        sscanf(precio,"%lf", &precios);
+        if(precios > 0) break;
+
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes poner precios negativos." RESET);
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
+        getchar();
+    }
+
+    input(titulo,BOLD FRGB(185, 251, 192) "UBICACIÓN",ubicacion,&evaluarUbicacion);
+
     ubi = ubicacion[0];
 
     winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar ");
