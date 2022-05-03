@@ -16,7 +16,19 @@
 			"cstdio": "c",
 			"sys.h": "c",
 			"chrono": "c",
-			"variant": "c"
+			"variant": "c",
+			"array": "c",
+			"string": "c",
+			"string_view": "c",
+			"177932_P12P1C.C": "cpp",
+			"177932_P12P1C (1).C": "cpp",
+			"math.h": "c",
+			"hash_map": "c",
+			"bitset": "c",
+			"initializer_list": "c",
+			"utility": "c",
+			"valarray": "c",
+			"thread": "c"
 		}
 	}
 }

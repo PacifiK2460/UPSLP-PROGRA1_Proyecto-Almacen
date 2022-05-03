@@ -1,6 +1,5 @@
 #include "../win.h"
 
-
 // Estructura que nos permite habilitar y deshabilitar el eco
 #ifdef _WIN32
     DWORD mode;
@@ -9,22 +8,6 @@
 #ifdef __linux__
     struct termios mode;
 #endif
-
-struct MENU{
-    WINDOW* Parent;
-    int X;
-    int Y;
-    int COLS;
-    int ROWS;
-    char** opciones;
-
-    int numeroDeOpciones;
-    int opcionMasLarga;
-
-    int selected;
-
-    Funciones* funciones;
-};
 
 void noEcho(){
     #ifdef _WIN32
@@ -55,27 +38,39 @@ void echo(){
 }
 
 
-MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,char** opciones, int cantOps,Funciones* funciones){
-    MENU* menu = (MENU*)malloc(sizeof(MENU));
-    menu->opciones = opciones;
-    menu->numeroDeOpciones = cantOps;
-    menu->opcionMasLarga = 0;
-    for(int i = 0; i < menu->numeroDeOpciones; i++){
-        if( strlen(opciones[i]) > menu->opcionMasLarga)
-            menu->opcionMasLarga = strlen(opciones[i]);
-    }
-    menu->opcionMasLarga+=1;
-    menu->X = getx(Parent);
-    menu->X += x;
-    menu->Y = gety(Parent);
-    menu->Y += y;
-    menu->COLS = COLS;
-    menu->ROWS = ROWS;
-    menu->selected = 0;
+void setMenuData(MENU* Destination, WINDOW* Parent, int x, int y, int rows,char* opciones[], char* descripciones[]){
+    Destination->opciones = opciones;
+    Destination->descripcion = descripciones;
 
-    menu->funciones = funciones;
-    return menu;
+    Destination->X = getx(Parent) + x;
+    Destination->Y = gety(Parent) + y;
+    Destination->ROWS = rows;
+    Destination->selected = 0;
 }
+
+//BELOW PROBABLY DEPRECATED
+
+// MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,char** opciones,char** descripciones, int cantOps){
+//     MENU* menu = malloc(sizeof(MENU));
+//     menu->opciones = opciones;
+//     menu->numeroDeOpciones = cantOps;
+//     menu->opcionMasLarga = 0;
+//     for(int i = 0; i < menu->numeroDeOpciones; i++){
+//         if( len(opciones[i]) > menu->opcionMasLarga)
+//             menu->opcionMasLarga = len(opciones[i]);
+//     }
+//     menu->opcionMasLarga+=1;
+//     menu->X = getx(Parent);
+//     menu->X += x;
+//     menu->Y = gety(Parent);
+//     menu->Y += y;
+//     menu->COLS = COLS;
+//     menu->ROWS = ROWS;
+//     menu->selected = 0;
+//     menu->descripcion = descripciones;
+
+//     return menu;
+// }
 
 void focusMenu(MENU* menu){
     updateMenu(menu);
@@ -94,33 +89,33 @@ void focusMenu(MENU* menu){
                     break;
                 
                 case 'B':
-                    if(menu->selected != menu->numeroDeOpciones - 1) menu->selected += 1;
+                    if(menu->selected != menu->ROWS - 1) menu->selected += 1;
                     break;
             }
-            fflush(stdout);
+            //En caso de update, actualizamos visualmente el manu
             updateMenu(menu);
-            fflush(stdout);
         }
+        //Enter
         if(c == 10){
             break;
         }
     }
-    menu->funciones[menu->selected]();
+    //Regresamos index seleccionado
 }
 
 void updateMenu(MENU* menu){
-    for(int i = 0; i < menu->numeroDeOpciones; i++){
-        printf("\x1B[%i;%iH%s%s%-*s%s\n",menu->X + i,menu->Y,( (menu->selected == i) ? ">" : " " ), ( (menu->selected == i) ? INVERSE : NONE ), menu->opcionMasLarga, menu->opciones[i], RESET);
+    for(int i = 0, x = 0; i < menu->ROWS; i++){
+        printf( "\e[%i;%iH"
+                "%s" "%s " "%s" RESET,
+                menu->X + i + x++,menu->Y, //Posicion
+                menu->selected == i ? BOLD FRGB(185, 251, 192) : NONE, //Color
+                menu->selected == i ? MENUVLINE : " ", //Caracter de seleccion
+                menu->opciones[i]);
+        printf( "\e[%i;%iH"
+                "%s" "%s " "%s" RESET,
+                menu->X + i + x++,menu->Y,
+                menu->selected == i ? DIM FRGB(185, 251, 192) : NONE,
+                menu->selected == i ? MENUVLINE : " ",
+                menu->descripcion[i]); //Cantidad de caracteres, texto
     }
 }
-
-void printmenu(){
-    printf(CLEAR);
-    box(STDOUTPUT, DIM);
-    printf(HIDE_CURSOR);
-    printinthemiddle(STDOUTPUT,1,"SELECCIONA LA OPCIOÓN",BOLD);
-
-    printinthemiddle(STDOUTPUT,1,"SELECCIONA LA OPCIOÓN",BOLD);
-    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT) - 2,"Usa ↓↑ para seleccionar la opción y <ENTER> para realizar la opción",DIM);
-}
-

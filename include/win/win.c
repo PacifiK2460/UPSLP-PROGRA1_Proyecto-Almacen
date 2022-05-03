@@ -1,36 +1,28 @@
 #include "../win.h"
 
-struct WINDOW
-{
-  int X;
-  int Y;
-  int COLS;
-  int ROWS;
-
-  WINDOW* Parent;
-};
 
 void innit(){
   #ifdef _WIN32
     setConsoleMode(ENABLE_VIRTUAL_TERMINAL_PROCESSING); 
   #endif
-
+  printf("\e[?1049h");
   setlocale(LC_ALL, "");
+  srand(time(NULL));
 }
 
-WINDOW* newWin(int y, int x, int COLS, int ROWS, WINDOW* Parent){
-  WINDOW* Window = (struct WINDOW*)calloc(1,sizeof(struct WINDOW));
-  Window->X = x;
-  Window->Y = y;
-  Window->COLS = COLS;
-  Window->ROWS = ROWS;
-  return Window;
-}
+// WINDOW* newWin(int y, int x, int COLS, int ROWS, WINDOW* Parent){
+//   WINDOW* Window = (struct WINDOW*)malloc(sizeof(struct WINDOW));
+//   Window->X = x;
+//   Window->Y = y;
+//   Window->COLS = COLS;
+//   Window->ROWS = ROWS;
+//   return Window;
+// }
 
-void winprint(WINDOW* window,int X, int Y, char* text, char* mode){
+void winprint(WINDOW* window,int X, int Y, char* text){
   X+= getx(window);
   Y+= gety(window);
-  printf("\x1B[%i;%iH%s%s%s",Y,X,mode,text,RESET);
+  printf("\e[%i;%iH%s"RESET,Y,X,text);
 }
 
 void getcolsrows(WINDOW* Window, int* COLS, int* ROWS){
@@ -101,8 +93,8 @@ void getxy(WINDOW* Window, int* X, int* Y){
     return;
   }
 
-  *X = Window->X;
-  *Y = Window->Y;
+  *X = getx(Window);
+  *Y = gety(Window);
 }
 
 int getx(WINDOW* Window){
@@ -121,38 +113,39 @@ int gety(WINDOW* Window){
   return Window->Y;
 }
 
-void printinthemiddle(WINDOW* Window, int Y, char* texto,char* mode){
+void printinthemiddle(WINDOW* Window, int Y, char* texto){
   int X = getcols(Window);
-  int tam = strlen(texto);
+  int tam = stringlen(texto);
   X = X - tam;
   X = X / 2;
   Y+=1;
-  winprint(Window,X,Y,texto,mode);
-}
-void printinthemiddlesize(WINDOW* Window, int Y, char* texto,char* mode, int tam){
-  int X = getcols(Window);
-  X = X - tam;
-  X = X / 2;
-  Y+=1;
-  winprint(Window,X,Y,texto,mode);
+  winprint(Window,X,Y,texto);
 }
 
-void box(WINDOW* Window, char* mode){
+void printinthemiddlesize(WINDOW* Window, int Y, char* texto, int tam){
+  int X = getcols(Window);
+  X = X - tam;
+  X = X / 2;
+  Y+=1;
+  winprint(Window,X,Y,texto);
+}
+
+void box(WINDOW* Window){
   // int X = getx(Window);
   // int Y = gety(Window);
   int COLS = getcols(Window);
   int ROWS = getrows(Window);
 
-  for(int i = 0; i < COLS; i++) winprint(Window,0 + i,0,HLINE, mode);
-  for(int i = 0; i < COLS; i++) winprint(Window,0 + i,0 + ROWS,HLINE, mode);
+  for(int i = 0; i < COLS; i++) winprint(Window,0 + i,0,HLINE);
+  for(int i = 0; i < COLS; i++) winprint(Window,0 + i,0 + ROWS,HLINE);
 
-  for(int i = 0; i < ROWS; i++) winprint(Window,0,0 + i,VLINE,mode);
-  for(int i = 0; i < ROWS; i++) winprint(Window,0 + COLS,0 + i,VLINE,mode);
+  for(int i = 0; i < ROWS; i++) winprint(Window,0,0 + i,VLINE);
+  for(int i = 0; i < ROWS; i++) winprint(Window,0 + COLS,0 + i,VLINE);
 
   // Imprimimos las esquinas
-  winprint(Window,0,0, TLLINE,mode);        //IZQ SUP
-  winprint(Window,0 + COLS, 0, TRLINE,mode);    //IZQ INF
-  winprint(Window,0, 0 + ROWS, BLLINE,mode);    //DER SUP
-  winprint(Window,0 + COLS, 0 + ROWS, BRLINE,mode); //DER INF
+  winprint(Window,0,0, TLLINE);        //IZQ SUP
+  winprint(Window,0 + COLS, 0, TRLINE);    //IZQ INF
+  winprint(Window,0, 0 + ROWS, BLLINE);    //DER SUP
+  winprint(Window,0 + COLS, 0 + ROWS, BRLINE); //DER INF
 
 }
