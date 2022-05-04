@@ -1,5 +1,7 @@
 # Almacén de línea blanca
 
+[![CodeFactor](https://www.codefactor.io/repository/github/pacifik2460/upslp-progra1_proyecto-almacen/badge)](https://www.codefactor.io/repository/github/pacifik2460/upslp-progra1_proyecto-almacen)
+
 | Carreras | Ciclo | Clave de Asignatura | Nombre de la Asignatura | Duración Sugerida en Sesiones | Materias en las que puede tener impacto |
 | :-: | :-: | :-: | :-: | :-: | :-: |
 | ITI / ITEM | PRIMAVERA 2022 | | Programación I | Proyecto Final | Programación II
