@@ -1,32 +1,48 @@
 #include "../sys.h"
 
 void input(char* bg_titulo, char* titulo, char* dest, int (*funcion)(char*)){
-    printf(CLEAR);
-    winprint(STDOUTPUT,4,2, bg_titulo);
-    printf(SHOW_CURSOR);
-    echo();
+    // winprint(STDOUTPUT,4,2, bg_titulo);
+    // printf(SHOW_CURSOR);
+    // echo();
     
-    winprint(STDOUTPUT,5, (getrows(STDOUTPUT)/2)-1,titulo);
-    winprint(STDOUTPUT,4, (getrows(STDOUTPUT)/2)-1,MENUVLINE);
-    winprint(STDOUTPUT,5, (getrows(STDOUTPUT)/2)," ");
-    winprint(STDOUTPUT,4, (getrows(STDOUTPUT)/2),MENUVLINE);
+    // winprint(STDOUTPUT,5, (getrows(STDOUTPUT)/2)-1,titulo);
+    // winprint(STDOUTPUT,4, (getrows(STDOUTPUT)/2)-1,MENUVLINE);
+    // winprint(STDOUTPUT,5, (getrows(STDOUTPUT)/2)," ");
+    // winprint(STDOUTPUT,4, (getrows(STDOUTPUT)/2),MENUVLINE);
 
 
+    NEW_SCREEN();
     delimitador result = funcion;
-    //Leemos el nombre y evaluamos
-    while(result(dest) == 0){
-        cleanInput();
-        printf(CLEAR);
-        winprint(STDOUTPUT,4,2, bg_titulo);
-        winprint(STDOUTPUT,5, (getrows(STDOUTPUT)/2)-1,titulo);
-        winprint(STDOUTPUT,4, (getrows(STDOUTPUT)/2)-1,MENUVLINE);
-        winprint(STDOUTPUT,5, (getrows(STDOUTPUT)/2)," ");
-        winprint(STDOUTPUT,4, (getrows(STDOUTPUT)/2),MENUVLINE);
-    }
+    do{
+        {
+            printf(CLEAR);
+            echo();
+            winprint(STDOUTPUT,4,2, bg_titulo);
+            winprint(STDOUTPUT,5, (getrows(STDOUTPUT)/2)-1,titulo);
+            winprint(STDOUTPUT,4, (getrows(STDOUTPUT)/2)-1,MENUVLINE);
+            winprint(STDOUTPUT,5, (getrows(STDOUTPUT)/2)," ");
+            winprint(STDOUTPUT,4, (getrows(STDOUTPUT)/2),MENUVLINE);
+        }
+
+    }while(result(dest) == 0);
     cleanInput();
+    CLOSE_SCREEN();
     noEcho();
-    printf(HIDE_CURSOR);
-    printf(CLEAR);
+    // //Leemos el nombre y evaluamos
+    // while(result(dest) == 0){
+    //     cleanInput();
+    //     printf(CLEAR);
+    //     winprint(STDOUTPUT,4,2, bg_titulo);
+    //     winprint(STDOUTPUT,5, (getrows(STDOUTPUT)/2)-1,titulo);
+    //     winprint(STDOUTPUT,4, (getrows(STDOUTPUT)/2)-1,MENUVLINE);
+    //     winprint(STDOUTPUT,5, (getrows(STDOUTPUT)/2)," ");
+    //     winprint(STDOUTPUT,4, (getrows(STDOUTPUT)/2),MENUVLINE);
+    // }
+    // cleanInput();
+    // noEcho();
+    // printf(HIDE_CURSOR);
+    // printf(CLEAR);
+    // CLOSE_SCREEN();
 }
 
 int registrarPedido(){
@@ -66,8 +82,8 @@ int registrarPedido(){
     input(tituto,BOLD FRGB(185, 251, 192) "Telefono del cliente", telefono_de_cliente,evaluarNumero);
     input(tituto,BOLD FRGB(185, 251, 192) "Correo del Cliente",correo,evaluarCorreo);
 
-    int productosPedidos = 0;
-    Detalle* Carrito = malloc(sizeof(Detalle)); //Almenos 1
+    int productosPedidos = 1;
+    Detalle* Carrito = (Detalle*)malloc(sizeof(Detalle) * productosPedidos); //Almenos 1
 
     while(1){
         char pedidos[2] = {0};
@@ -137,9 +153,10 @@ int registrarPedido(){
         winprint(STDOUTPUT,4,2,tituto);
 
         //addDetalle(Carrito,Almacen[ped].nombre,cant);
-        Carrito[productosPedidos].cantidad = cant;
-        cp(Carrito[productosPedidos].nombre, Almacen[ped].nombre);
-        Carrito = realloc(Carrito, ++productosPedidos);
+        Carrito[productosPedidos-1].cantidad = cant;
+        cp(Carrito[productosPedidos-1].nombre, Almacen[ped].nombre);
+        Carrito = realloc(Carrito, productosPedidos);
+        productosPedidos++;
         //TODO #8 #7 realloc crashes on allocating memory to new Carrito
         //Carrito = (Detalle*)realloc(, ++productosPedidos);
 
@@ -505,12 +522,13 @@ int modificarPedido(){
     printf(CLEAR);
     int productos = getPedidosSize();
     Pedido Almacen[productos];
+    MENU itemSeleccionado;
 
     char titulo[] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
                     RESET "  " RESET
                     BRGB(16,158,94) FRGB(255,255,255) " MODIFICAR PEDIDO ";
 
-    { //UI & File Managin
+    { //UI & File management
         winprint(STDOUTPUT,4,2, titulo);
         winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
 
@@ -526,41 +544,43 @@ int modificarPedido(){
             return 1;
         }
     }
-
-    //Imprimimos tabla de pedido
-    { 
-        winprint(STDOUTPUT,4,2,titulo);
-        TABLE* dataTable = newTable(2,getPedidosSize());
-        tableSetHeaders(dataTable,(char*[]){
-            "ID",
-            "Nombre"
-        });
-        char* temp;
-        for(int fila = 0; fila < productos; fila++){
-            //Producto Tmp = Almacen[fila]; 
-            temp = malloc(30);
-            int2str(Almacen[fila].numero , temp);
-            tableAppendRow(dataTable,
-                temp,
-                Almacen[fila].nombre_de_cliente//getProductoName(Tmp)
-            );
-        };
-        printTable(dataTable, -1, 4);
-        getchar();
-    }
-
+    
     int idx;
     int index;
     char cont = 0;
     do{
+        //Pedimos el producto
+        {
+            Pedido Almacen[productos];
+            char* nombres[productos];
+            char* ids[productos];
+
+            for(int i=0; i < productos; i++){
+                ids[productos] = malloc(30);
+                nombres[i] = Almacen[i].nombre_de_cliente;
+                int2str(Almacen[i].numero, ids[i]);
+            }
+
+            setMenuData(&itemSeleccionado,STDOUTPUT,4,4,7,(char**)ids, nombres);
+
+            printf(HIDE_CURSOR);
+            printf(CLEAR);
+            winprint(STDOUTPUT,4,2,titulo);
+            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "↓↑"     RESET DIM  " Arriba / Abajo ");
+            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " Seleccionar ");
+            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "←"  RESET DIM  " regresar ");
+            focusMenu(&itemSeleccionado);
+            if( itemSeleccionado.selected == -1 ){
+                return 0;
+            }
+            idx = Almacen[itemSeleccionado.selected].numero;
+        }
         char q1 = 0;
         index = 0;
         cont = 0;
         char id[10] = {0};
         printf(CLEAR);
         winprint(STDOUTPUT, 4,2, titulo);
-        input(titulo,BOLD FRGB(185, 251, 192) "ID DEL PEDIDO A MODIFICAR",id,&evaluarExistencia);
-        sscanf(id,"%i",&idx);
         for(int i = 0; i < productos; i++){
             if( Almacen[i].numero == idx ){
                 if(Almacen[i].estado == 'E'){
@@ -589,7 +609,7 @@ int modificarPedido(){
     } else if(Almacen[index].estado == 'C'){
         Almacen[index].estado = 'A';
     } else {
-        exit(1);
+        return 1;
     }
 
     if(savePedidoFile(Almacen, productos) == -1){

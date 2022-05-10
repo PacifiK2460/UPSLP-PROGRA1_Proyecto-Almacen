@@ -6,11 +6,11 @@
         "label": "g++ build active proyect",
         "command": "/usr/bin/gcc",
         "args": [
-          "${workspaceFolder}/main.c",
-          "${workspaceFolder}/include/*/*",
+          "${fileWorkspaceFolder}/main.c",
+          "${fileWorkspaceFolder}/include/*/*",
           "-lm",
           "-o",
-          "${workspaceFolder}/main"
+          "${fileWorkspaceFolder}/main"
         ],
         "options": {
           "cwd": "/usr/bin"
@@ -29,11 +29,11 @@
         "command": "/usr/bin/gcc",
         "args": [
           "-g",
-          "${workspaceFolder}/main.c",
-          "${workspaceFolder}/include/*/*",
+          "${fileWorkspaceFolder}/main.c",
+          "${fileWorkspaceFolder}/include/*/*",
           "-lm",
           "-o",
-          "${workspaceFolder}/main"
+          "${fileWorkspaceFolder}/main"
         ],
         "options": {
           "cwd": "/usr/bin"
@@ -52,11 +52,11 @@
         "command": "/usr/bin/gcc",
         "args": [
           "-g",
-          "${file}",
-          "${workspaceFolder}/include/*/*",
+          "${fileWorkspaceFolder}/main.c",
+          "${fileWorkspaceFolder}/include/*/*",
           "-lm",
           "-o",
-          "${workspaceFolder}/main"
+          "${fileWorkspaceFolder}/main"
         ],
         "options": {
           "cwd": "/usr/bin"

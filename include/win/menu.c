@@ -6,8 +6,20 @@
 #endif
 
 #ifdef __linux__
-    struct termios mode;
+    static int fd = STDIN_FILENO;
+    static struct termios old;
 #endif
+
+void reset_tty(void){
+    #ifdef __linux__
+        tcsetattr(fd, TCSANOW, &old);
+    #endif
+
+    #ifdef _WIN32
+        //TODO
+    #endif
+}
+
 
 void noEcho(){
     #ifdef _WIN32
@@ -17,9 +29,12 @@ void noEcho(){
     #endif
 
     #ifdef __linux__
-        tcgetattr(0, &mode);
-        mode.c_lflag &= ~(ICANON | ECHO);
-        tcsetattr(0, TCSANOW, &mode);
+        struct termios new;
+        tcgetattr(fd, &old);
+        new = old;
+        new.c_lflag &= ~(ICANON | ECHO);
+        tcsetattr(fd, TCSANOW, &new);
+
     #endif
 }
 
@@ -31,9 +46,7 @@ void echo(){
     #endif
 
     #ifdef __linux__
-        tcgetattr(0, &mode);
-        mode.c_lflag |= (ICANON | ECHO);
-        tcsetattr(0, TCSANOW, &mode);
+        tcsetattr(fd, TCSANOW, &old);
     #endif
 }
 
@@ -48,39 +61,58 @@ void setMenuData(MENU* Destination, WINDOW* Parent, int x, int y, int rows,char*
     Destination->selected = 0;
 }
 
-//BELOW PROBABLY DEPRECATED
-
-// MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,char** opciones,char** descripciones, int cantOps){
-//     MENU* menu = malloc(sizeof(MENU));
-//     menu->opciones = opciones;
-//     menu->numeroDeOpciones = cantOps;
-//     menu->opcionMasLarga = 0;
-//     for(int i = 0; i < menu->numeroDeOpciones; i++){
-//         if( len(opciones[i]) > menu->opcionMasLarga)
-//             menu->opcionMasLarga = len(opciones[i]);
-//     }
-//     menu->opcionMasLarga+=1;
-//     menu->X = getx(Parent);
-//     menu->X += x;
-//     menu->Y = gety(Parent);
-//     menu->Y += y;
-//     menu->COLS = COLS;
-//     menu->ROWS = ROWS;
-//     menu->selected = 0;
-//     menu->descripcion = descripciones;
-
-//     return menu;
-// }
-
 void focusMenu(MENU* menu){
     updateMenu(menu);
-    register int c;
     //Leemos el teclado non-canonical mode
-    noEcho();
 
     while(1){
-        c = getchar();
-        if(c == '\033'){ //ESC
+        updateMenu(menu);
+        //echo();
+        char c;
+        noEcho();
+        // read(STDIN_FILENO, &c, 1);
+        // switch (c){
+        //     case 27:
+        //     {
+        //         fd_set set;
+        //         struct timeval timeout;
+        //         FD_ZERO(&set);
+        //         FD_SET(STDIN_FILENO, &set);
+        //         timeout.tv_sec = 0;
+        //         timeout.tv_usec = 0;
+        //         int selret = select(1, &set, NULL, NULL, &timeout);
+
+        //         if (selret == 1){
+        //             read(STDIN_FILENO, &c, 1);
+        //             read(STDIN_FILENO, &c, 1);
+        //             switch (c)
+        //             {
+        //                 case 'A':
+        //                     if(menu->selected > 0) menu->selected -= 1;
+        //                     break;
+        //                 case 'B':
+        //                     if(menu->selected < menu->ROWS - 1) menu->selected += 1;
+        //                     break;
+        //             }
+        //         }
+        //         else {
+        //             updateMenu(menu);
+        //             echo();
+        //             menu->selected = -1;
+        //             return;
+        //         }
+        //     updateMenu(menu);
+        //     echo();
+        //     }
+        //         break;
+        //     case 10:
+        //         echo();
+        //         return updateMenu(menu);
+        // }
+        // updateMenu(menu);
+        // echo();
+
+        if((c = getchar()) == '\033'){ //ESC
             getchar(); //Omitimos el 2do [
             switch ( (c = getchar()) )
             {
@@ -91,15 +123,18 @@ void focusMenu(MENU* menu){
                 case 'B':
                     if(menu->selected != menu->ROWS - 1) menu->selected += 1;
                     break;
+                case 'D':
+                    menu->selected = -1;
+                    return;
             }
             //En caso de update, actualizamos visualmente el manu
             updateMenu(menu);
-        }
-        //Enter
-        if(c == 10){
-            break;
+        } else if (c == 10){
+            return;
         }
     }
+    updateMenu(menu);
+    echo();
     //Regresamos index seleccionado
 }
 

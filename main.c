@@ -56,7 +56,7 @@ void menu(){
         winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "↓↑"     RESET DIM  " Arriba / Abajo ");
         winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " Seleccionar ");
         focusMenu(&menu);
-        if(menu.selected == 6){
+        if(menu.selected == 6 || menu.selected == -1){
             //free(menu.selected); //limpio memoria y salgoe
             salir();
         } else {

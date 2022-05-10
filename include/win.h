@@ -17,7 +17,14 @@
   #include <sys/ioctl.h>
   #include <unistd.h>
   #include <termios.h>
+
+  #include <string.h>
+  #include <sys/select.h>
+  #include <sys/time.h>
 #endif
+
+#define NEW_SCREEN() printf("\e[?1049h")
+#define CLOSE_SCREEN() printf("\e[?1049l")
 
 #define VLINE  "│"
 #define HLINE  "─"
@@ -92,6 +99,7 @@ typedef int (*Funciones)(void);
 void setMenuData(MENU* Destination,WINDOW* Parent, int x, int y, int rows,char* opciones[], char* descripciones[]);
 
 void innit();
+void reset_tty(void);
 
 WINDOW* newWin(int y, int x, int COLS, int ROWS, WINDOW* Parent);
 void winprint(WINDOW* window,int X, int Y, char* text);

@@ -28,7 +28,9 @@
 			"initializer_list": "c",
 			"utility": "c",
 			"valarray": "c",
-			"thread": "c"
+			"thread": "c",
+			"unistd.h": "c",
+			"select.h": "c"
 		}
 	}
 }

@@ -8,9 +8,49 @@ int digitos(int n){
     return floor(log10(n) + 1);
 }
 
+int listarProductos(char* titulo, Producto Almacen[], int productos){
+    //Pedimos el producto
+    NEW_SCREEN();
+    MENU itemSeleccionado;
+    char* nombres[productos];
+    char** ids= (char**)malloc(productos * sizeof(char**));
+
+    printf(CLEAR);
+
+    for(int i=0; i < productos; i++){
+        ids[i] = malloc(20);
+        cp(ids[i], "Existentes: ");
+        
+        nombres[i] = Almacen[i].nombre;
+
+        char temp[5] = {0};
+        int2str(Almacen[i].existentes, temp);
+
+        cat(ids[i], temp);
+    }
+
+    setMenuData(&itemSeleccionado,STDOUTPUT,4,4,7,nombres,ids);
+
+    printf(HIDE_CURSOR);
+    winprint(STDOUTPUT,4,2,titulo);
+    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "↓↑"     RESET DIM  " Arriba / Abajo ");
+    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " Seleccionar ");
+    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "←"  RESET DIM  " regresar ");
+    focusMenu(&itemSeleccionado);
+
+    for(int i=0; i < productos; i++) {
+        //free(*nombres[i]);
+        free(ids[i]);
+    }
+    
+    CLOSE_SCREEN();
+    return itemSeleccionado.selected;
+}
+
 int modificar(char accion){
     //struct Productos* src = newProductos();
     //struct Producto* Producto;
+    NEW_SCREEN();
     int productos = getAlmacenSize();
     Producto Almacen[productos];
 
@@ -21,51 +61,26 @@ int modificar(char accion){
                     BRGB(16,158,94) FRGB(255,255,255) " MODIFICAR PRODUCTO ";
 
     winprint(STDOUTPUT,4,2, titulo);
-
     winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
-    if(productos == -1 ||loadAlmacenFile(Almacen) == -1){
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al leer el archivo" RESET);
-        getchar();
-        return 1;
-    }
 
-    if(productos == 0){
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No hay productos por listar" RESET);
-        getchar();
-        return 1;
-    }
+    {// File Reading
+        if(productos == -1 ||loadAlmacenFile(Almacen) == -1){
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al leer el archivo" RESET);
+            getchar();
+            return 1;
+        }
 
-    //Imprimimos tabla de productos
-    { 
-        printf(CLEAR);
-        winprint(STDOUTPUT,4,2,titulo);
-        TABLE* dataTable = newTable(2,getAlmacenSize());
-        tableSetHeaders(dataTable,(char*[]){
-            "ID",
-            "Nombre"
-        });
-        char* temp;
-        for(int fila = 0; fila < productos; fila++){
-            //Producto Tmp = Almacen[fila]; 
-            temp = malloc(30);
-            int2str(fila, temp);
-            tableAppendRow(dataTable,
-                temp,
-                Almacen[fila].nombre//getProductoName(Tmp)
-            );
-        };
-        printTable(dataTable, -1, 4);
-
-        winprint(STDOUTPUT,4,2,titulo);
-        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
-        getchar();
+        if(productos == 0){
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No hay productos por listar" RESET);
+            getchar();
+            return 1;
+        }
     }
 
     int idx;
     do{
-        char id[10] = {0};
-        input(titulo,BOLD FRGB(185, 251, 192) "INDEX DEL PRODUCTO A MODIFICAR",id,&evaluarExistencia);
-        sscanf(id,"%i",&idx);
+        idx = listarProductos(titulo, Almacen, productos);
+        if(idx == -1) break;
         if(idx < 0 || idx > productos-1){
             printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes modificar un producto inexistente");
             winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
@@ -74,9 +89,10 @@ int modificar(char accion){
         }
         break;
     }while(1);
+    if(idx == -1) return 0;
 
     char sum[10] = {0};
-    char titulo2[100] = BOLD FRGB(185, 251, 192) "CANTIDAD A";
+    char titulo2[100] = BOLD FRGB(185, 251, 192) "CANTIDAD A ";
     //cat(titulo2,BOLD FRGB(185, 251, 192) "CANTIDAD A ");
     if(accion == 's'){
         cat(titulo2,"SUMAR");
@@ -85,8 +101,6 @@ int modificar(char accion){
     }
     int s;
     while(1){
-        printf(CLEAR);
-        winprint(STDOUTPUT,4,2, titulo);
         input(titulo,titulo2,sum, &evaluarExistencia);
         sscanf(sum,"%i",&s);
         if(s > 0) break;
@@ -95,6 +109,7 @@ int modificar(char accion){
         winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
         getchar();
     }
+    
     if(accion == 's') Almacen[idx].existentes += s;
     else Almacen[idx].existentes = s;
     //Almacen[idx].existentes += s;
@@ -113,6 +128,8 @@ int modificar(char accion){
     printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM  "Cambios guardados correctamente" RESET);
     winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " finalizar ");
     getchar();
+
+    return 1;
 }
 
 int modificarExistentes(){
@@ -202,6 +219,7 @@ int nuevoProducto(){
 
 int actualizarAlmacen(){
     //MENU* menu;
+    NEW_SCREEN();
     Funciones Funciones[] = {
         sumarExistentes,
         modificarExistentes,
@@ -234,21 +252,21 @@ int actualizarAlmacen(){
         winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "↓↑"     RESET DIM  " Arriba / Abajo ");
         winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " Seleccionar "); 
         focusMenu(&menu);
-        if(menu.selected == 3) break;
+        if(menu.selected == 3 || menu.selected == -1) break;
         Funciones[menu.selected]();
-        //if((respuesta = focusMenu(menu)) == 3) break;
-        //Funciones[respuesta]();
     }
+    CLOSE_SCREEN();
 }
 
 // Acciones
 int consultarAlmacen(){
+    NEW_SCREEN();
     int productos = getAlmacenSize();
     Producto Almacen[productos];
 
     //Imprimimos / UI
     {
-        printf(CLEAR);
+        //printf(CLEAR);
         winprint(STDOUTPUT,4,2,
             BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
             RESET "  " RESET
@@ -323,11 +341,13 @@ int consultarAlmacen(){
     //free(Almacen);
     //free(Producto);
     getchar();
+    CLOSE_SCREEN();
 }
 
 int salir(){
     printf("\e[?1049l");
     printf(SHOW_CURSOR);
     printf(RESET);
+    atexit(reset_tty);
     exit(0);
 };
