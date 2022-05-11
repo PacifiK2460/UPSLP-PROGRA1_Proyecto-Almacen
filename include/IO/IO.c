@@ -98,7 +98,7 @@ int evaluarCorreo(char* Dest){
 
 int input(char* bg_titulo, char* titulo, char* dest, int (*funcion)(char*)){
     // signal(SIGINT, intHandler);
-    NEW_SCREEN();
+    // NEW_SCREEN();
     delimitador result = funcion;
     int res;
     do{
@@ -117,7 +117,7 @@ int input(char* bg_titulo, char* titulo, char* dest, int (*funcion)(char*)){
     cleanInput();
     noEcho();
     clearerr(stdin);
-    CLOSE_SCREEN();
+    // CLOSE_SCREEN();
     return res;
 
     //return ( CONTINUE_RUNNING == 0 ? !(CONTINUE_RUNNING = 1) : (CONTINUE_RUNNING) );

@@ -78,17 +78,8 @@ int modificar(char accion){
     }
 
     int idx;
-    do{
-        idx = listarProductos(titulo, Almacen, productos);
-        if(idx == -1) return 0;
-        if(idx < 0 || idx > productos-1){
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes modificar un producto inexistente");
-            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
-            getchar();
-            continue;
-        }
-        break;
-    }while(1);
+    idx = listarProductos(titulo, Almacen, productos);
+    if(idx == -1) return 0;
 
     char sum[10] = {0};
     char titulo2[100] = BOLD FRGB(185, 251, 192) "CANTIDAD A ";
@@ -100,10 +91,13 @@ int modificar(char accion){
     }
     int s;
     while(1){
+        printf(CLEAR);
+        winprint(NULL,4,2,titulo);
         if( input(titulo,titulo2,sum, &evaluarExistencia) == -1) return modificar(accion);
         sscanf(sum,"%i",&s);
         if(s > 0) break;
 
+        printf(CLEAR);
         printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM  "Agrega productos mayores a 0" RESET);
         winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
         getchar();
@@ -139,7 +133,7 @@ int sumarExistentes(){
     return modificar('s');
 }
 
-int nuevoProducto(){
+int nuevoProducto(){    
     int productos = getAlmacenSize();
     Producto Almacen[productos];
     loadAlmacenFile(Almacen);
