@@ -113,7 +113,7 @@ int gety(WINDOW* Window){
   return Window->Y;
 }
 
-void printinthemiddle(WINDOW* Window, int Y, char* texto){
+void printinthemiddle(WINDOW* Window, int Y, const char* texto){
   int X = getcols(Window);
   int tam = stringlen(texto);
   X = X - tam;

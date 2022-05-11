@@ -17,7 +17,14 @@
   #include <sys/ioctl.h>
   #include <unistd.h>
   #include <termios.h>
+
+  #include <string.h>
+  #include <sys/select.h>
+  #include <sys/time.h>
 #endif
+
+#define NEW_SCREEN() printf("\e[?1049h")
+#define CLOSE_SCREEN() printf("\e[?1049l")
 
 #define VLINE  "│"
 #define HLINE  "─"
@@ -95,7 +102,7 @@ void innit();
 
 WINDOW* newWin(int y, int x, int COLS, int ROWS, WINDOW* Parent);
 void winprint(WINDOW* window,int X, int Y, char* text);
-void printinthemiddle(WINDOW* Window, int Y, char* texto);
+void printinthemiddle(WINDOW* Window, int Y,const char* texto);
 void printinthemiddlesize(WINDOW* Window, int Y, char* texto, int tam);
 void box(WINDOW* Window);
 void getcolsrows(WINDOW* Window, int* COLS, int* ROWS);

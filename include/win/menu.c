@@ -37,7 +37,6 @@ void echo(){
     #endif
 }
 
-
 void setMenuData(MENU* Destination, WINDOW* Parent, int x, int y, int rows,char* opciones[], char* descripciones[]){
     Destination->opciones = opciones;
     Destination->descripcion = descripciones;
@@ -48,39 +47,16 @@ void setMenuData(MENU* Destination, WINDOW* Parent, int x, int y, int rows,char*
     Destination->selected = 0;
 }
 
-//BELOW PROBABLY DEPRECATED
-
-// MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,char** opciones,char** descripciones, int cantOps){
-//     MENU* menu = malloc(sizeof(MENU));
-//     menu->opciones = opciones;
-//     menu->numeroDeOpciones = cantOps;
-//     menu->opcionMasLarga = 0;
-//     for(int i = 0; i < menu->numeroDeOpciones; i++){
-//         if( len(opciones[i]) > menu->opcionMasLarga)
-//             menu->opcionMasLarga = len(opciones[i]);
-//     }
-//     menu->opcionMasLarga+=1;
-//     menu->X = getx(Parent);
-//     menu->X += x;
-//     menu->Y = gety(Parent);
-//     menu->Y += y;
-//     menu->COLS = COLS;
-//     menu->ROWS = ROWS;
-//     menu->selected = 0;
-//     menu->descripcion = descripciones;
-
-//     return menu;
-// }
-
 void focusMenu(MENU* menu){
     updateMenu(menu);
-    register int c;
     //Leemos el teclado non-canonical mode
-    noEcho();
 
     while(1){
-        c = getchar();
-        if(c == '\033'){ //ESC
+        updateMenu(menu);
+        //echo();
+        char c = 0;
+        noEcho();
+        if((c = getchar()) == '\033'){ //ESC
             getchar(); //Omitimos el 2do [
             switch ( (c = getchar()) )
             {
@@ -91,15 +67,23 @@ void focusMenu(MENU* menu){
                 case 'B':
                     if(menu->selected != menu->ROWS - 1) menu->selected += 1;
                     break;
+                case 'D':
+                    menu->selected = -1;
+                    echo();
+                    updateMenu(menu);
+                    return;
             }
             //En caso de update, actualizamos visualmente el manu
+            echo();
             updateMenu(menu);
-        }
-        //Enter
-        if(c == 10){
-            break;
+        } else if (c == 10){
+            updateMenu(menu);
+            echo();
+            return;
         }
     }
+    updateMenu(menu);
+    echo();
     //Regresamos index seleccionado
 }
 
