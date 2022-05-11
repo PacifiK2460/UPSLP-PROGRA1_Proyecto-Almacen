@@ -29,7 +29,7 @@ int listarProductos(char* titulo, Producto Almacen[], int productos){
         cat(ids[i], temp);
     }
 
-    setMenuData(&itemSeleccionado,STDOUTPUT,4,4,7,nombres,ids);
+    setMenuData(&itemSeleccionado,STDOUTPUT,4,4,productos,nombres,ids);
 
     printf(HIDE_CURSOR);
     winprint(STDOUTPUT,4,2,titulo);
@@ -80,7 +80,7 @@ int modificar(char accion){
     int idx;
     do{
         idx = listarProductos(titulo, Almacen, productos);
-        if(idx == -1) break;
+        if(idx == -1) return 0;
         if(idx < 0 || idx > productos-1){
             printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes modificar un producto inexistente");
             winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
@@ -89,7 +89,6 @@ int modificar(char accion){
         }
         break;
     }while(1);
-    if(idx == -1) return 0;
 
     char sum[10] = {0};
     char titulo2[100] = BOLD FRGB(185, 251, 192) "CANTIDAD A ";
@@ -101,7 +100,7 @@ int modificar(char accion){
     }
     int s;
     while(1){
-        input(titulo,titulo2,sum, &evaluarExistencia);
+        if( input(titulo,titulo2,sum, &evaluarExistencia) == -1) return modificar(accion);
         sscanf(sum,"%i",&s);
         if(s > 0) break;
 
@@ -129,7 +128,7 @@ int modificar(char accion){
     winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " finalizar ");
     getchar();
 
-    return 1;
+    return modificar(accion);
 }
 
 int modificarExistentes(){
@@ -144,7 +143,7 @@ int nuevoProducto(){
     int productos = getAlmacenSize();
     Producto Almacen[productos];
     loadAlmacenFile(Almacen);
-    char titulo[] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
+    char titulo[300] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
                     RESET "  " RESET
                     BRGB(75,75,75) FRGB(255,255,255) " ACTUALIZACIÓN DE ALMACEN "
                     RESET "  " RESET
@@ -154,50 +153,91 @@ int nuevoProducto(){
     char existencia[10] = {0};
     char precio[10] = {0};
     char ubicacion[2] = {0};
-    do{
+    
+    {//Generamos producto a base de menu
+
+        MENU menu;
+        setMenuData(&menu,NULL,4,4,3,
+            (char*[]){
+                "Horno de Microondas",
+                "Estufa",
+                "Regresar"
+            },
+            (char*[]){
+                "Agregar un Horno de Microondas",
+                "Agregar una Estufa",
+                "Regresa al menu anterior"
+            }
+        );
+
         printf(CLEAR);
         winprint(STDOUTPUT,4,2, titulo);
-        input(titulo,BOLD FRGB(185, 251, 192) "MODELO",nombre,&evaluarNombreDeProducto);
-        if ( getProductoByName(nombre).existentes != -1 ){
-            winprint(STDOUTPUT,4,2, titulo);
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes agregar productos repetidos." RESET);
-            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
-            getchar();
-            winprint(STDOUTPUT,4,2, titulo);
-            continue;
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-4,RESET FRGB(185, 251, 192)  "↓↑"     RESET DIM  " Arriba / Abajo ");
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " Seleccionar "); 
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "←"  RESET DIM  " Regresar "); 
+        focusMenu(&menu);
+        if(menu.selected == 2 || menu.selected == -1) return 0;
+
+        while(1){
+            char temp[7] = {0};
+            if(menu.selected == 0){
+                cp(temp, "HOR");
+            } else if (menu.selected == 1){
+                cp(temp, "EST");
+            }
+
+            char num[4] = {0};
+            int n = randrang(999,0);
+            snprintf(num, 4, "%03i", n);
+            // int2str(randrang(999,0), num);
+
+            cat(temp, num);
+            if(getProductoByName(temp).existentes == -1){
+                cp(nombre, temp);
+                break;
+            }
         }
-        break;
-    }while(1);
+    }
     
+    //Imprimimos el nombre en el titulo
+    {
+        cat(titulo, "[ ");
+        cat(titulo, nombre);
+        cat(titulo, " ] ");
+    }
+
     int existentes;
     double precios;
     char ubi;
-    while(1){
-        printf(CLEAR);
-        winprint(STDOUTPUT,4,2, titulo);
-        input(titulo,BOLD FRGB(185, 251, 192) "EXISTENCIA",existencia,&evaluarExistencia);
-        sscanf(existencia, "%i",&existentes);
 
-        if(existentes > 0) break;
+    {//Pedimos existencia y precio
+        while(1){
+            printf(CLEAR);
+            winprint(STDOUTPUT,4,2, titulo);
+            if( input(titulo,BOLD FRGB(185, 251, 192) "EXISTENCIA",existencia,&evaluarExistencia) == -1) return 0;
+            sscanf(existencia, "%i",&existentes);
 
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes agregar productos repetidos." RESET);
-        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
-        getchar();
+            if(existentes > 0) break;
+
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes agregar productos repetidos." RESET);
+            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
+            getchar();
+        }
+
+        while(1){
+            printf(CLEAR);
+            winprint(STDOUTPUT,4,2, titulo);
+            if(input(titulo,BOLD FRGB(185, 251, 192) "PRECIO",precio,&evaluarPrecio) == -1) return 0;
+            sscanf(precio,"%lf", &precios);
+            if(precios > 0) break;
+
+            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes poner precios negativos." RESET);
+            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
+            getchar();
+        }
     }
 
-    while(1){
-        printf(CLEAR);
-        winprint(STDOUTPUT,4,2, titulo);
-        input(titulo,BOLD FRGB(185, 251, 192) "PRECIO",precio,&evaluarPrecio);
-        sscanf(precio,"%lf", &precios);
-        if(precios > 0) break;
-
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes poner precios negativos." RESET);
-        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
-        getchar();
-    }
-
-    input(titulo,BOLD FRGB(185, 251, 192) "UBICACIÓN",ubicacion,&evaluarUbicacion);
+    if( input(titulo,BOLD FRGB(185, 251, 192) "UBICACIÓN",ubicacion,&evaluarUbicacion) == -1) return 0;
 
     ubi = ubicacion[0];
 
@@ -207,14 +247,9 @@ int nuevoProducto(){
         printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al guardar el archivo, el progreso se perdio" RESET);
     }
 
-    // addProduct(src,nombre,existentes,precios,ubi);
-    // remove("Almacen");
-    // saveAlmacen(src);
-    // free(src);
-
     printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "AÑADIDO EXITOSO" RESET);
     getchar();
-    return 1;
+    return nuevoProducto();
 }
 
 int actualizarAlmacen(){
@@ -249,8 +284,9 @@ int actualizarAlmacen(){
         winprint(STDOUTPUT,4,2,BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL "
                                 RESET "  " RESET
                                 BRGB(16,158,94) FRGB(255,255,255) " ACTUALIZACIÓN DE ALMACEN " );
-        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "↓↑"     RESET DIM  " Arriba / Abajo ");
-        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " Seleccionar "); 
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-4,RESET FRGB(185, 251, 192)  "↓↑"     RESET DIM  " Arriba / Abajo ");
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " Seleccionar "); 
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "←"  RESET DIM  " Regresar "); 
         focusMenu(&menu);
         if(menu.selected == 3 || menu.selected == -1) break;
         Funciones[menu.selected]();
@@ -348,6 +384,5 @@ int salir(){
     printf("\e[?1049l");
     printf(SHOW_CURSOR);
     printf(RESET);
-    atexit(reset_tty);
     exit(0);
 };

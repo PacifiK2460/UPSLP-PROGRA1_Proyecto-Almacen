@@ -53,8 +53,9 @@ void menu(){
     while(1){
         printf(CLEAR);
         winprint(STDOUTPUT,4,2,BRGB(16,158,94) FRGB(255,255,255) " MENU PRINCIPAL ");
-        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "↓↑"     RESET DIM  " Arriba / Abajo ");
-        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " Seleccionar ");
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-4,RESET FRGB(185, 251, 192)  "↓↑"     RESET DIM  " Arriba / Abajo ");
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-3,RESET FRGB(185, 251, 192)  "enter"  RESET DIM  " Seleccionar ");
+        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "←"  RESET DIM  " Salir ");
         focusMenu(&menu);
         if(menu.selected == 6 || menu.selected == -1){
             //free(menu.selected); //limpio memoria y salgoe

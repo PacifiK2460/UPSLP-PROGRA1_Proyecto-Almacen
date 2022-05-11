@@ -9,11 +9,9 @@
 #include "IO.h"
 #include "win.h"
 
-#define randrang(max, min) (rand() % (max - min + 1)) + min;
+#define randrang(max, min) (rand() % (max - min + 1)) + min
 
 enum ERRORES { OK, ERROR, FATAL_ERROR };
-
-typedef int (*delimitador)(char*);
 
 //Logica
     int digitos(int n);
@@ -51,6 +49,7 @@ typedef int (*delimitador)(char*);
     int saveAlmacenFile(Producto Source[], int filas);
     int appendAlmacenProduct(char* nombre, int existentes, double precio, char estante);
     Producto getProductoByName(char* name);
+    int listarProductos(char* titulo, Producto Almacen[], int productos);
 
     //Pedidos
     int getPedidosSize();
@@ -71,7 +70,6 @@ typedef int (*delimitador)(char*);
     int modificarPedido();
     int regresar();
 
-    void input(char* bg_titulo, char* titulo, char* dest, int (*funcion)(char*));
     int mostrarPedidosPor(char tipo);
     int pedidosActivos();
     int pedidosEntregados();

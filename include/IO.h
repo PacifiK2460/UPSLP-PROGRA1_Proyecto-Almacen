@@ -4,6 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+// #include <signal.h>
+
+#include "sys.h"
+
+typedef int (*delimitador)(char*);
 
 //IO
 int evaluarNombreDeProducto(char* Src);
@@ -28,4 +33,8 @@ void double2str(double src, char* dest);
 
 //File Manager
 int getFileLines(char* filename);
+
+//TEMP
+int input(char* bg_titulo, char* titulo, char* dest, int (*funcion)(char*));
+void intHandler(int dummy);
 #endif
