@@ -40,9 +40,9 @@ int loadPedidoFile(Pedido Destination[]){
         Destination[fila].numero = Temp.numero;
         Destination[fila].estado = Temp.estado;
 
-        cp(Destination[fila].nombre_de_cliente, Temp.nombre_de_cliente);
-        cp(Destination[fila].telefono_de_cliente, Temp.telefono_de_cliente);
-        cp(Destination[fila].correo, Temp.correo);
+        strcpy(Destination[fila].nombre_de_cliente, Temp.nombre_de_cliente);
+        strcpy(Destination[fila].telefono_de_cliente, Temp.telefono_de_cliente);
+        strcpy(Destination[fila].correo, Temp.correo);
 
         Destination[fila].productos = Temp.productos;
 
@@ -51,7 +51,7 @@ int loadPedidoFile(Pedido Destination[]){
         for(int producto=0; producto < Destination[fila].productos; producto++){
             Detalle ProductoBuffer;
             if(fscanf(file, "%s %i \n", &ProductoBuffer.nombre, &ProductoBuffer.cantidad) != 2) break;
-            cp(Destination[fila].Detalles[producto].nombre, ProductoBuffer.nombre);
+            strcpy(Destination[fila].Detalles[producto].nombre, ProductoBuffer.nombre);
             Destination[fila].Detalles[producto].cantidad = ProductoBuffer.cantidad;
 
         }
@@ -96,38 +96,37 @@ void imprimirPedido(Pedido Src, int x, int y){
         switch (Src.estado)
         {
             case 'A':
-                cat(RowBuffer1,"\e[1;93m");
-                cat(RowBuffer1,"Activo");
+                strcat(RowBuffer1,"\e[1;93m");
+                strcat(RowBuffer1,"Activo");
                 break;
             
             case 'E':
-                cat(RowBuffer1,"\e[1;92m");
-                cat(RowBuffer1,"Entregado");
+                strcat(RowBuffer1,"\e[1;92m");
+                strcat(RowBuffer1,"Entregado");
                 break;
             case 'C':
-                cat(RowBuffer1,"\e[1;91m");
-                cat(RowBuffer1,"Cancelado");
+                strcat(RowBuffer1,"\e[1;91m");
+                strcat(RowBuffer1,"Cancelado");
                 break;
         }
-        cat(RowBuffer1, RESET);
-        
-        cat(RowBuffer2, BOLD);
-        cat(RowBuffer3, BOLD);
-        cat(RowBuffer4, BOLD);
-        cat(RowBuffer5, BOLD);
+        strcat(RowBuffer1, RESET);
+        strcat(RowBuffer2, BOLD);
+        strcat(RowBuffer3, BOLD);
+        strcat(RowBuffer4, BOLD);
+        strcat(RowBuffer5, BOLD);
 
         char temp[100] = {0};
         int2str(Src.numero, temp);
-        cat(RowBuffer2, temp);
+        strcat(RowBuffer2, temp);
 
-        cat(RowBuffer3, Src.nombre_de_cliente);
-        cat(RowBuffer4, Src.telefono_de_cliente);
-        cat(RowBuffer5, Src.correo);
+        strcat(RowBuffer3, Src.nombre_de_cliente);
+        strcat(RowBuffer4, Src.telefono_de_cliente);
+        strcat(RowBuffer5, Src.correo);
 
-        cat(RowBuffer2, RESET);
-        cat(RowBuffer3, RESET);
-        cat(RowBuffer4, RESET);
-        cat(RowBuffer5, RESET);
+        strcat(RowBuffer2, RESET);
+        strcat(RowBuffer3, RESET);
+        strcat(RowBuffer4, RESET);
+        strcat(RowBuffer5, RESET);
 
     }
 

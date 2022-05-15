@@ -12,34 +12,31 @@ int getTotalToerico(TABLE* src){
     return src->toalTeorico;
 }
 
-TABLE* newTable(int columnas, int filas){
-    TABLE* table = malloc(sizeof(*table));
-    table->columas = columnas;
-    table->filas = filas;
-    table->total = 0;
-    table->toalTeorico = 0;
-    table->currentFilledRow = 0;
-    table->textoMasLargo = (int*)malloc(columnas * sizeof(int));
-    for(int i = 0; i < table->columas; i++) table->textoMasLargo[i] = 0;
-    //table->data = allocRows(filas);
-    table->data = (FILA*)malloc(filas * sizeof(FILA));
+// TABLE* newTable(int columnas, int filas){
+//     TABLE* table = malloc(sizeof(TABLE));
+//     table->columas = columnas;
+//     table->filas = filas;
+//     table->total = 0;
+//     table->toalTeorico = 0;
+//     table->currentFilledRow = 0;
+//     table->textoMasLargo = malloc(columnas * sizeof(int));
+//     for(int i = 0; i < table->columas; i++) table->textoMasLargo[i] = 0;
+//     //table->data = allocRows(filas);
+//     table->data = malloc(filas * sizeof(FILA));
     
-    for(int fil = 0; fil < filas; fil++){
-        table->data[fil].columna = (char**)malloc(table->columas * sizeof(char**));
-        for(int col = 0; col < columnas; col++){
-            table->data[fil].columna[col] = (char*)malloc(sizeof(char*));
-        }
-    }
-    return table;
-}
+//     for(int fil = 0; fil < filas; fil++){
+//         table->data[fil].columna = malloc(table->columas * sizeof(char*));
+//         for(int col = 0; col < columnas; col++){
+//             table->data[fil].columna[col] = malloc(51);
+//         }
+//     }
+//     return table;
+// }
 
 void tableSetHeaders(TABLE *src,char** headers){
     //free(src->headers);
-    src->headers = (char**)malloc(src->columas*sizeof(char**));
     for(int col = 0; col < src->columas; col++){
-        //free(src->headers[col]); //borramos por si acaso
-        //src->headers[col] = malloc(sizeof(char*));
-        src->headers[col] = headers[col];
+        strcpy(src->headers[col], headers[col]);
     }
 }
 
@@ -58,9 +55,10 @@ void tableAppendRow(TABLE *src, ...){
         //Obtenemos memoria para guardar la string de la columna y fila actual
         //currentRow->columna[col] = malloc(sizeof(char*));
         //Guardamos cada str en la columna
-        char* watch = va_arg(column,char*);
-        src->data[src->currentFilledRow].columna[col] = watch;
-        watch =  src->data[src->currentFilledRow].columna[col];
+        //char* watch = va_arg(column,char*);
+        strcpy(src->data[src->currentFilledRow].columna[col], va_arg(column, char*));
+        //src->data[src->currentFilledRow].columna[col] = watch;
+        //watch =  src->data[src->currentFilledRow].columna[col];
     }
 
     //Aumentamos el index fila vacia
@@ -69,10 +67,9 @@ void tableAppendRow(TABLE *src, ...){
 }
 
 void tablePrepareDataAling(TABLE *src){
-    
     //Headers
     for(int col = 0; col < src->columas; col++){
-        int tam = stringlen(src->headers[col]);
+        int tam = strlen(src->headers[col]);
         if(tam > src->textoMasLargo[col])
             src->textoMasLargo[col] = tam;
     }
@@ -84,22 +81,22 @@ void tablePrepareDataAling(TABLE *src){
             int coltotal = 0;
             //De cada fila, voy columna por columna
             char* temp = _fila.columna[col];
-            int tam = stringlen(_fila.columna[col]);
+            int tam = strlen(_fila.columna[col]);
             //Saco el largo de cada columna
             if(tam > src->textoMasLargo[col])
                 src->textoMasLargo[col] = tam;
 
             //Información que nos ayudará a alinear la tabla
             
-            coltotal += stringlen(BOLD FRGB(185, 251, 192));
+            coltotal += strlen(BOLD FRGB(185, 251, 192));
             coltotal += src->textoMasLargo[col];
-            coltotal += stringlen(RESET);
-            coltotal += stringlen(" " VLINE " ");
+            coltotal += strlen(RESET);
+            coltotal += strlen(" " VLINE " ");
 
-            src->total += stringlen(BOLD FRGB(185, 251, 192));
+            src->total += strlen(BOLD FRGB(185, 251, 192));
             src->total += src->textoMasLargo[col];
-            src->total += stringlen(RESET);
-            src->total += stringlen(" " VLINE " ");
+            src->total += strlen(RESET);
+            src->total += strlen(" " VLINE " ");
 
             if(coltotal > src->toalTeorico) src->toalTeorico = coltotal;
             //src->toalTeorico += src->textoMasLargo[col];
@@ -107,10 +104,27 @@ void tablePrepareDataAling(TABLE *src){
     }
 }
 
-void prepareTableData(int fila, int columna, char* headers[],char* dest[fila][columna]){
-    for(int i = 0; i < fila; i++){
-        for(int j = 0; j < columna; j++){
-            dest[i][j] = headers[j];
+void prepareTableData(TABLE* table, int columnas, int filas){
+    table->columas = columnas;
+    table->filas = filas;
+    table->total = 0;
+    table->toalTeorico = 0;
+    table->currentFilledRow = 0;
+
+    table->textoMasLargo = malloc(columnas * sizeof(int));
+    for(int i = 0; i < columnas; i++) table->textoMasLargo[i] = 0;
+    
+    table->headers = malloc(columnas * sizeof(char*));
+    for(int col = 0; col < table->columas; col++){
+        table->headers[col] = malloc(30);
+    }
+
+    table->data = malloc(filas * sizeof(FILA));
+    
+    for(int fil = 0; fil < filas; fil++){
+        table->data[fil].columna = malloc(table->columas * sizeof(char*));
+        for(int col = 0; col < columnas; col++){
+            table->data[fil].columna[col] = malloc(51);
         }
     }
 }
@@ -118,7 +132,7 @@ void prepareTableData(int fila, int columna, char* headers[],char* dest[fila][co
 void setTableData(char* dest, char* src){
     //dest[fila][columna] = malloc(len(src) * sizeof(char));
     dest = src;
-    //cp(dest[fila][columna], src);
+    //strcpy(dest[fila][columna], src);
 }
 
 void printTable(TABLE* table, int x, int y){
@@ -144,13 +158,14 @@ void printTable(TABLE* table, int x, int y){
                 table->headers[col]
             );
 
-            cat(rowbuffer,colbuffer);
+            strcat(rowbuffer,colbuffer);
             if(col+1 < table->columas)
-                cat(rowbuffer, " " VLINE " ");
+                strcat(rowbuffer, " " VLINE " ");
             
             free(colbuffer);
         }
         winprint(STDOUTPUT,x,y++,rowbuffer);
+        free(rowbuffer);
     }
 
     //Rows
@@ -173,9 +188,9 @@ void printTable(TABLE* table, int x, int y){
                     table->data[row].columna[col]
                 );
 
-                cat(rowbuffer,colbuffer);
+                strcat(rowbuffer,colbuffer);
                 if(col+1 < table->columas){
-                    cat(rowbuffer, " " VLINE " ");
+                    strcat(rowbuffer, " " VLINE " ");
                 }
 
                 free(colbuffer);
@@ -188,17 +203,21 @@ void printTable(TABLE* table, int x, int y){
 }
 
 void freeTable(TABLE *src){
+    //free(src->headers);
     free(src->textoMasLargo);
-    for(int i = 0; i < src->columas; i++) free(src->headers[i]);
+
+    for(int i=0; i < src->columas; i++){
+        free(src->headers[i]);
+    }
     free(src->headers);
 
-    for(int i=0; i<src->filas;i++){
-        FILA* cR = &(src->data[i]);
-        for(int j = 0; j < src->columas; j++){
-            free(cR->columna[j]);
+    for(int i=0; i < src->filas; i++){
+        for(int j=0; j < src->columas; j++){
+            free(src->data[i].columna[j]);
         }
-        free(cR);
+        free(src->data[i].columna);
+        //free(src->data[i]);
     }
-    //free(src->data);
-    free(src);
+    free(src->data);
+
 }

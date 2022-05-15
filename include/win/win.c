@@ -115,11 +115,11 @@ int gety(WINDOW* Window){
 
 void printinthemiddle(WINDOW* Window, int Y, const char* texto){
   int X = getcols(Window);
-  int tam = stringlen(texto);
+  int tam = strlen(texto);
   X = X - tam;
   X = X / 2;
   Y+=1;
-  winprint(Window,X,Y,texto);
+  winprint(Window,X,Y,(char*) texto);
 }
 
 void printinthemiddlesize(WINDOW* Window, int Y, char* texto, int tam){
@@ -148,4 +148,21 @@ void box(WINDOW* Window){
   winprint(Window,0, 0 + ROWS, BLLINE);    //DER SUP
   winprint(Window,0 + COLS, 0 + ROWS, BRLINE); //DER INF
 
+}
+
+void printMessage(char* msg){
+  NEW_SCREEN();
+  {
+    clearerr(stdin);
+    char text[1024] = DIM;
+    strcat(text, " ");
+    strcat(text, msg);
+    strcat(text, " " RESET);
+
+    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,text);
+    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " aceptar ");
+    cleanInput();
+    getchar();
+  }
+  CLOSE_SCREEN();
 }
