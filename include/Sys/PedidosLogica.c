@@ -52,9 +52,7 @@ int registrarPedido(){
 
     {//File Manager
         if(productos == -1 ||loadAlmacenFile(Almacen) == -1){
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al leer el archivo" RESET);
-            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar ");
-            getchar();
+            printMessage("Hubo un error al leer el archivo");
             return 1;
         }
 

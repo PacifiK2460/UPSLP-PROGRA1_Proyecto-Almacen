@@ -18,7 +18,6 @@ int esLetra(char letra){
 }
 
 int evaluarText(char* Dest, int lenght){
-    //char buff[MAX_TEXT_LENGTH];
     if(!fgets(Dest, lenght, stdin)){
         return -1;
     }
@@ -30,7 +29,6 @@ int evaluarText(char* Dest, int lenght){
 
 int evaluarNombreDelCliente(char* Src){
     if( evaluarText(Src, MAX_TEXT_LENGTH) == -1) return -1;
-    //EL NOMBRE SOLO PUEDE SER TEXTO
     for(int i = 0; Src[i] != '\0' && Src[i] != '\n'; i++) if(esLetra(Src[i]) == 0) return 0;
     return 1;
 }

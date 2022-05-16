@@ -4,35 +4,6 @@ typedef struct FILA{
     char** columna;
 }FILA;
 
-int getTotal(TABLE* src){
-    return src->total;
-}
-
-int getTotalToerico(TABLE* src){
-    return src->toalTeorico;
-}
-
-// TABLE* newTable(int columnas, int filas){
-//     TABLE* table = malloc(sizeof(TABLE));
-//     table->columas = columnas;
-//     table->filas = filas;
-//     table->total = 0;
-//     table->toalTeorico = 0;
-//     table->currentFilledRow = 0;
-//     table->textoMasLargo = malloc(columnas * sizeof(int));
-//     for(int i = 0; i < table->columas; i++) table->textoMasLargo[i] = 0;
-//     //table->data = allocRows(filas);
-//     table->data = malloc(filas * sizeof(FILA));
-    
-//     for(int fil = 0; fil < filas; fil++){
-//         table->data[fil].columna = malloc(table->columas * sizeof(char*));
-//         for(int col = 0; col < columnas; col++){
-//             table->data[fil].columna[col] = malloc(51);
-//         }
-//     }
-//     return table;
-// }
-
 void tableSetHeaders(TABLE *src,char** headers){
     //free(src->headers);
     for(int col = 0; col < src->columas; col++){
@@ -40,25 +11,14 @@ void tableSetHeaders(TABLE *src,char** headers){
     }
 }
 
-void tableAppendRow(TABLE *src, ...){
-    //si nos pasamos, no hacemos nada
+void tableAppendRow(TABLE *src, ...){ 
     if(src->currentFilledRow > src->filas) return;
     
     va_list column;
     va_start(column,src);
 
-    //src->data = malloc(src->filas * sizeof(src->data));
-    //Obtenemos memoria para almacenar la fila
-    //currentRow->columna = malloc(src->columas * sizeof(char**));
-    
     for(int col=0; col < src->columas; col++){
-        //Obtenemos memoria para guardar la string de la columna y fila actual
-        //currentRow->columna[col] = malloc(sizeof(char*));
-        //Guardamos cada str en la columna
-        //char* watch = va_arg(column,char*);
         strcpy(src->data[src->currentFilledRow].columna[col], va_arg(column, char*));
-        //src->data[src->currentFilledRow].columna[col] = watch;
-        //watch =  src->data[src->currentFilledRow].columna[col];
     }
 
     //Aumentamos el index fila vacia
@@ -127,12 +87,6 @@ void prepareTableData(TABLE* table, int columnas, int filas){
             table->data[fil].columna[col] = malloc(51);
         }
     }
-}
-
-void setTableData(char* dest, char* src){
-    //dest[fila][columna] = malloc(len(src) * sizeof(char));
-    dest = src;
-    //strcpy(dest[fila][columna], src);
 }
 
 void printTable(TABLE* table, int x, int y){

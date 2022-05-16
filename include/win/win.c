@@ -10,15 +10,6 @@ void innit(){
   srand(time(NULL));
 }
 
-// WINDOW* newWin(int y, int x, int COLS, int ROWS, WINDOW* Parent){
-//   WINDOW* Window = (struct WINDOW*)malloc(sizeof(struct WINDOW));
-//   Window->X = x;
-//   Window->Y = y;
-//   Window->COLS = COLS;
-//   Window->ROWS = ROWS;
-//   return Window;
-// }
-
 void winprint(WINDOW* window,int X, int Y, char* text){
   X+= getx(window);
   Y+= gety(window);
@@ -128,26 +119,6 @@ void printinthemiddlesize(WINDOW* Window, int Y, char* texto, int tam){
   X = X / 2;
   Y+=1;
   winprint(Window,X,Y,texto);
-}
-
-void box(WINDOW* Window){
-  // int X = getx(Window);
-  // int Y = gety(Window);
-  int COLS = getcols(Window);
-  int ROWS = getrows(Window);
-
-  for(int i = 0; i < COLS; i++) winprint(Window,0 + i,0,HLINE);
-  for(int i = 0; i < COLS; i++) winprint(Window,0 + i,0 + ROWS,HLINE);
-
-  for(int i = 0; i < ROWS; i++) winprint(Window,0,0 + i,VLINE);
-  for(int i = 0; i < ROWS; i++) winprint(Window,0 + COLS,0 + i,VLINE);
-
-  // Imprimimos las esquinas
-  winprint(Window,0,0, TLLINE);        //IZQ SUP
-  winprint(Window,0 + COLS, 0, TRLINE);    //IZQ INF
-  winprint(Window,0, 0 + ROWS, BLLINE);    //DER SUP
-  winprint(Window,0 + COLS, 0 + ROWS, BRLINE); //DER INF
-
 }
 
 void printMessage(char* msg){
