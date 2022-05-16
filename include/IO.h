@@ -4,28 +4,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-// #include <signal.h>
-
+#include <errno.h>
+#include <string.h>
 #include "sys.h"
 
-typedef int (*delimitador)(char*);
+typedef int (*delimitador)(void*);
 
 //IO
-int evaluarNombreDeProducto(char* Src);
+// int evaluarNombreDeProducto(char* Src);
 int evaluarNombreDelCliente(char* Src);
-int evaluarExistencia(char* Src);
-int evaluarPrecio(char* Src);
+// int evaluarExistencia(int* Src);
+// int evaluarPrecio(char* Src);
+int evaluarInt(int* Dest);
+int evaluarDouble(double* Dest);
 int evaluarUbicacion(char* Src);
-int evaluarNumero(char* Dest);
+int evaluarNumeroTelefonico(char* Src);
+// int evaluarNumero(char* Dest);
 int evaluarCorreo(char* Des);
 
 void cleanInput();
 
 //STR
-int stringlen(char* text);
-char* cp(char* dest, char* src);
-int cmp(char* dest, char* src);
-char* cat(char* dest, char* src);
+// int stringlen(const char* text);
+// char* cp(char* dest, char* src);
+// int cmp(char* dest, char* src);
+// char* cat(char* dest, char* src);
 
 //Conversiones
 void int2str(int src, char* dest);
@@ -35,6 +38,5 @@ void double2str(double src, char* dest);
 int getFileLines(char* filename);
 
 //TEMP
-int input(char* bg_titulo, char* titulo, char* dest, int (*funcion)(char*));
-void intHandler(int dummy);
+int input(char* bg_titulo, char* titulo, void* dest, int (*funcion)(void*));
 #endif

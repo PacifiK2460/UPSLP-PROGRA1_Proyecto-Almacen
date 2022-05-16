@@ -13,20 +13,20 @@ int listarProductos(char* titulo, Producto Almacen[], int productos){
     NEW_SCREEN();
     MENU itemSeleccionado;
     char* nombres[productos];
-    char** ids= (char**)malloc(productos * sizeof(char**));
+    char** ids= malloc(productos * sizeof(char*));
 
     printf(CLEAR);
 
     for(int i=0; i < productos; i++){
         ids[i] = malloc(20);
-        cp(ids[i], "Existentes: ");
+        strcpy(ids[i], "Existentes: ");
         
         nombres[i] = Almacen[i].nombre;
 
         char temp[5] = {0};
         int2str(Almacen[i].existentes, temp);
 
-        cat(ids[i], temp);
+        strcat(ids[i], temp);
     }
 
     setMenuData(&itemSeleccionado,STDOUTPUT,4,4,productos,nombres,ids);
@@ -39,9 +39,9 @@ int listarProductos(char* titulo, Producto Almacen[], int productos){
     focusMenu(&itemSeleccionado);
 
     for(int i=0; i < productos; i++) {
-        //free(*nombres[i]);
         free(ids[i]);
     }
+    free(ids);
     
     CLOSE_SCREEN();
     return itemSeleccionado.selected;
@@ -81,24 +81,22 @@ int modificar(char accion){
     idx = listarProductos(titulo, Almacen, productos);
     if(idx == -1) return 0;
 
-    char sum[10] = {0};
     char titulo2[100] = BOLD FRGB(185, 251, 192) "CANTIDAD A ";
     //cat(titulo2,BOLD FRGB(185, 251, 192) "CANTIDAD A ");
     if(accion == 's'){
-        cat(titulo2,"SUMAR");
+        strcat(titulo2,"SUMAR");
     } else {
-        cat(titulo2,"PONER");
+        strcat(titulo2,"PONER");
     }
     int s;
     while(1){
         printf(CLEAR);
         winprint(NULL,4,2,titulo);
-        if( input(titulo,titulo2,sum, &evaluarExistencia) == -1) return modificar(accion);
-        sscanf(sum,"%i",&s);
+        if( input(titulo,titulo2,&s,(void*) &evaluarInt) == -1) return modificar(accion);
         if(s > 0) break;
 
         printf(CLEAR);
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM  "Agrega productos mayores a 0" RESET);
+        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM  "Agrega productos mayores a 0 o dentro de un rango razonable" RESET);
         winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
         getchar();
     }
@@ -144,8 +142,6 @@ int nuevoProducto(){
                     BRGB(16,158,94) FRGB(255,255,255) " AGREGAR PRODUCTO ";
 
     char nombre[7] = {0};
-    char existencia[10] = {0};
-    char precio[10] = {0};
     char ubicacion[2] = {0};
     
     {//Generamos producto a base de menu
@@ -175,9 +171,9 @@ int nuevoProducto(){
         while(1){
             char temp[7] = {0};
             if(menu.selected == 0){
-                cp(temp, "HOR");
+                strcpy(temp, "HOR");
             } else if (menu.selected == 1){
-                cp(temp, "EST");
+                strcpy(temp, "EST");
             }
 
             char num[4] = {0};
@@ -185,9 +181,9 @@ int nuevoProducto(){
             snprintf(num, 4, "%03i", n);
             // int2str(randrang(999,0), num);
 
-            cat(temp, num);
+            strcat(temp, num);
             if(getProductoByName(temp).existentes == -1){
-                cp(nombre, temp);
+                strcpy(nombre, temp);
                 break;
             }
         }
@@ -195,9 +191,9 @@ int nuevoProducto(){
     
     //Imprimimos el nombre en el titulo
     {
-        cat(titulo, "[ ");
-        cat(titulo, nombre);
-        cat(titulo, " ] ");
+        strcat(titulo, "[ ");
+        strcat(titulo, nombre);
+        strcat(titulo, " ] ");
     }
 
     int existentes;
@@ -208,41 +204,32 @@ int nuevoProducto(){
         while(1){
             printf(CLEAR);
             winprint(STDOUTPUT,4,2, titulo);
-            if( input(titulo,BOLD FRGB(185, 251, 192) "EXISTENCIA",existencia,&evaluarExistencia) == -1) return 0;
-            sscanf(existencia, "%i",&existentes);
-
+            if( input(titulo,BOLD FRGB(185, 251, 192) "EXISTENCIA",&existentes,(void*)&evaluarInt) == -1) return 0;
             if(existentes > 0) break;
 
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes agregar productos repetidos." RESET);
-            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
-            getchar();
+            printMessage("Fisicamente no podemos agregar esa cantidad.");
         }
 
         while(1){
             printf(CLEAR);
             winprint(STDOUTPUT,4,2, titulo);
-            if(input(titulo,BOLD FRGB(185, 251, 192) "PRECIO",precio,&evaluarPrecio) == -1) return 0;
-            sscanf(precio,"%lf", &precios);
+            if(input(titulo,BOLD FRGB(185, 251, 192) "PRECIO",&precios,(void*) &evaluarDouble) == -1) return 0;
             if(precios > 0) break;
 
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No puedes poner precios negativos." RESET);
-            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
-            getchar();
+            printMessage( "Fisicamente no podemos agregar esa cantidad.");
         }
     }
 
-    if( input(titulo,BOLD FRGB(185, 251, 192) "UBICACIÓN",ubicacion,&evaluarUbicacion) == -1) return 0;
+    if( input(titulo,BOLD FRGB(185, 251, 192) "UBICACIÓN",&ubicacion,(void*)&evaluarUbicacion) == -1) return 0;
 
     ubi = ubicacion[0];
-
-    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar ");
     
     if(appendAlmacenProduct(nombre,existentes,precios,ubi) == -1){
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al guardar el archivo, el progreso se perdio" RESET);
+        printMessage( "Hubo un error al guardar el archivo, el progreso se perdio" );
+        return 0;
     }
 
-    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "AÑADIDO EXITOSO" RESET);
-    getchar();
+    printMessage( "AÑADIDO EXITOSO" );
     return nuevoProducto();
 }
 
@@ -293,6 +280,7 @@ int consultarAlmacen(){
     NEW_SCREEN();
     int productos = getAlmacenSize();
     Producto Almacen[productos];
+    noEcho();
 
     //Imprimimos / UI
     {
@@ -316,9 +304,11 @@ int consultarAlmacen(){
         }
     }
     
-    TABLE* dataTable = newTable(4,productos);
+    TABLE dataTable;
+    prepareTableData(&dataTable, 4, productos);
+    //TABLE* dataTable = newTable(4,productos);
     //Agregamos las cabeceras a la tabla
-    tableSetHeaders(dataTable,(char*[]){
+    tableSetHeaders(&dataTable,(char*[]){
         "Nombre",
         "Existentes",
         "Precio",
@@ -344,12 +334,16 @@ int consultarAlmacen(){
         //char est = getProductoEstante(Producto);
 
 
-        tableAppendRow(dataTable,
+        tableAppendRow(&dataTable,
             Almacen[fila].nombre,
             existentes,
             precio,
             estante
         );
+
+        free(existentes);
+        free(precio);
+        free(estante);
     }
     //prepareTableData(filas,4,headers,data);
     //char*** data = prepareTableData(filas,4,headers);
@@ -362,8 +356,9 @@ int consultarAlmacen(){
     //     setTableData(data[fila][j++],&est);
     // }
 
-    printTable(dataTable, -1,4);
-    
+
+    printTable(&dataTable, -1,4);
+    freeTable(&dataTable);
     // for(int i=0; i<filas;i++){
     //     free(data[i]);
     // }

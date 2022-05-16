@@ -67,6 +67,7 @@ void menu(){
         
     }
     printf(SHOW_CURSOR);
+    CLOSE_SCREEN();
 }
 
 

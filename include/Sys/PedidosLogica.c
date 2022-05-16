@@ -4,21 +4,22 @@ int listarPedidos(char* titulo, Pedido Almacen[], int productos){
     //Pedimos el producto
     NEW_SCREEN();
     MENU itemSeleccionado;
-    char* nombres[productos];
-    char** ids= (char**)malloc(productos * sizeof(char**));
+    char** nombres = malloc(productos * sizeof(char*));
+    char** ids= malloc(productos * sizeof(char*));
 
     printf(CLEAR);
 
     for(int i=0; i < productos; i++){
         ids[i] = malloc(20);
-        cp(ids[i], "ID: ");
-        
-        nombres[i] = Almacen[i].nombre_de_cliente;
+        nombres[i] = malloc(20);
+        strcpy(ids[i], "ID: ");
+        strcpy(nombres[i], Almacen[i].nombre_de_cliente);
+        //nombres[i] = Almacen[i].nombre_de_cliente;
 
         char temp[5] = {0};
         int2str(Almacen[i].numero, temp);
 
-        cat(ids[i], temp);
+        strcat(ids[i], temp);
     }
 
     setMenuData(&itemSeleccionado,STDOUTPUT,4,4,productos,nombres,ids);
@@ -31,9 +32,12 @@ int listarPedidos(char* titulo, Pedido Almacen[], int productos){
     focusMenu(&itemSeleccionado);
 
     for(int i=0; i < productos; i++) {
-        //free(*nombres[i]);
         free(ids[i]);
+        free(nombres[i]);
     }
+    free(ids);
+    free(nombres);
+
     
     CLOSE_SCREEN();
     return itemSeleccionado.selected;
@@ -48,9 +52,7 @@ int registrarPedido(){
 
     {//File Manager
         if(productos == -1 ||loadAlmacenFile(Almacen) == -1){
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al leer el archivo" RESET);
-            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar ");
-            getchar();
+            printMessage("Hubo un error al leer el archivo");
             return 1;
         }
 
@@ -67,24 +69,24 @@ int registrarPedido(){
     sprintf(numid,"%i",numero);
     char estado = 'A';
     char nombre_de_cliente[51] = {0};
-    char telefono_de_cliente[12] = {0};
+    char telefono_de_cliente[15] = {0};
     char correo[51] = {0};
 
     char tituto[] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL " RESET "  " RESET BRGB(16,158,94) FRGB(255,255,255) " REGISTRAR PEDIDO ";
     printf(CLEAR);
     winprint(STDOUTPUT,4,2,tituto);
     
-    if ( input(tituto,BOLD FRGB(185, 251, 192) "Nombre del Cliente", nombre_de_cliente,evaluarNombreDelCliente) == -1) return 0;
-    if ( input(tituto,BOLD FRGB(185, 251, 192) "Telefono del cliente", telefono_de_cliente,evaluarNumero) == -1) return 0;
-    if ( input(tituto,BOLD FRGB(185, 251, 192) "Correo del Cliente",correo,evaluarCorreo) == -1) return 0;
+    if ( input(tituto,BOLD FRGB(185, 251, 192) "Nombre del Cliente", nombre_de_cliente,(void*) &evaluarNombreDelCliente) == -1) return 0;
+    if ( input(tituto,BOLD FRGB(185, 251, 192) "Telefono del cliente", telefono_de_cliente,(void*)&evaluarNumeroTelefonico) == -1) return 0;
+    if ( input(tituto,BOLD FRGB(185, 251, 192) "Correo del Cliente",correo,(void*)&evaluarCorreo) == -1) return 0;
 
     int productosPedidos = 1;
-    Detalle* Carrito = (Detalle*)malloc(sizeof(Detalle) * productosPedidos); //Almenos 1
+    //Detalle* Carrito = (Detalle*)malloc(sizeof(Detalle) * productosPedidos); //Almenos 1
+    Detalle Carrito[1000];
 
     while(1){
         char pedidos[2] = {0};
         int ped = -1;
-        char cantidad[11] = {0};
         int cant = -1;
 
         //Imprimimos tabla de productos
@@ -93,15 +95,9 @@ int registrarPedido(){
         if(ped == -1) return 0;
 
         while(cant <= 0 || cant >= Almacen[ped].existentes){
-            if( input(tituto,BOLD FRGB(185, 251, 192) "Cantidad",cantidad,evaluarNumero) == -1) return 0;;
-            sscanf(cantidad,"%i",&cant);
+            if( input(tituto,BOLD FRGB(185, 251, 192) "Cantidad",&cant,(void*) &evaluarInt) == -1) return 0;;
             if(cant <= 0 || cant >= Almacen[ped].existentes){
-                printf(CLEAR);
-                printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2, "INGRESA UNA CANTIDAD POSIBLE A COMPRAR");
-                winprint(STDOUTPUT,4,2,tituto);
-                winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
-                cleanInput();
-                getchar();
+                printMessage("Ingresa una cantidad posible a comprar");
                 continue;
             }
             break;
@@ -112,11 +108,16 @@ int registrarPedido(){
 
         //addDetalle(Carrito,Almacen[ped].nombre,cant);
         Carrito[productosPedidos-1].cantidad = cant;
-        cp(Carrito[productosPedidos-1].nombre, Almacen[ped].nombre);
-        Carrito = realloc(Carrito, productosPedidos);
+        strcpy(Carrito[productosPedidos-1].nombre, Almacen[ped].nombre);
+        //Carrito = realloc(Carrito, productosPedidos);
         productosPedidos++;
         //TODO #8 #7 realloc crashes on allocating memory to new Carrito
         //Carrito = (Detalle*)realloc(, ++productosPedidos);
+
+        if(productosPedidos-1 >= 1000){
+            printMessage("Has superado el limite de productos pedidos.");
+            break;
+        }
 
 
         printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,"ITEM AGREGADO CORRECTAMENTE");
@@ -128,17 +129,15 @@ int registrarPedido(){
 
     nuevoPedido.numero = numero;
     nuevoPedido.estado = estado;
-    cp(nuevoPedido.nombre_de_cliente, nombre_de_cliente);
-    cp(nuevoPedido.telefono_de_cliente, telefono_de_cliente);
-    cp(nuevoPedido.correo, correo);
+    strcpy(nuevoPedido.nombre_de_cliente, nombre_de_cliente);
+    strcpy(nuevoPedido.telefono_de_cliente, telefono_de_cliente);
+    strcpy(nuevoPedido.correo, correo);
 
     nuevoPedido.productos = productosPedidos-1;
     nuevoPedido.Detalles = Carrito;
 
     if( appendPedido(nuevoPedido) == -1){
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al leer el archivo, cambios perdidos" RESET);
-        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " regresar ");
-        getchar();
+        printMessage("Hubo un error al leer el archivo, cambios perdidos");
         return 1;
     }
 
@@ -256,11 +255,9 @@ int pedidosCancelados(){
 }
 
 int numeroDePedido(){
-    char ID[6] = {0};
-    char tituto[] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL " RESET "  " RESET BRGB(16,158,94) FRGB(255,255,255) " BUSCAR PEDIDO ";
-    if( input(tituto,BOLD FRGB(185, 251, 192) "INTRODUCE EL ID",ID,&evaluarNumero) == -1) return 0;
     int id;
-    sscanf(ID,"%5i", &id);
+    char tituto[] = BRGB(75,75,75) FRGB(255,255,255) " MENU PRINCIPAL " RESET "  " RESET BRGB(16,158,94) FRGB(255,255,255) " BUSCAR PEDIDO ";
+    if( input(tituto,BOLD FRGB(185, 251, 192) "INTRODUCE EL ID",&id,(void*) &evaluarInt) == -1) return 0;
 
     printf(CLEAR);
     winprint(STDOUTPUT,4,2,tituto);
@@ -271,6 +268,7 @@ int numeroDePedido(){
         getchar();
         return 1;   
     }
+
 
     Pedido Pedidos[pedidos];
     if( loadPedidoFile(Pedidos) == -1){
@@ -348,14 +346,12 @@ int registrarEntrega(){
         winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " continuar ");
 
         if(pedidos == -1 ||loadPedidoFile(Pedidos) == -1){
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al leer el archivo" RESET);
-            getchar();
+            printMessage("Hubo un error al leer el archivo");
             return 1;
         }
 
         if(pedidos == 0){
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No hay productos por listar" RESET);
-            getchar();
+            printMessage("No hay productos por listar");
             return 1;
         }
     }
@@ -369,44 +365,35 @@ int registrarEntrega(){
         if(index == -1) return 0;
 
         if(Pedidos[index].estado == 'E'){
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Por ahora no sabemos viajar al pasado, no puedes modificar un pedido entregado");
-            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
-            getchar();
+            printMessage("Por ahora no sabemos viajar al pasado, no puedes modificar un pedido entregado");
             continue;
         } else if(Pedidos[index].estado == 'C'){
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "¿Estas haciendo fraude?, no puedes entregar un pedido cancelado");
-            winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " reintentar ");
-            getchar();
+            printMessage("¿Estas haciendo fraude?, no puedes entregar un pedido cancelado");
             continue;
         }
         break;
     } while (1);
 
-    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " finalizar ");
-
-
+    printf(CLEAR);
+    winprint(STDOUTPUT,4,2,titulo);
     int productos = getAlmacenSize();
     Producto Almacen[productos];
     {// Actualizar almacen
         if(productos == -1 ||loadAlmacenFile(Almacen) == -1){
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "Hubo un error al actulizar el almacen" RESET);
-            getchar();
+            printMessage("Hubo un error al actulizar el almacen");
             return 1;
         }
 
         if(productos == 0){
-            printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "El almacen ah desaparecido, nada que actualizar" RESET);
-            getchar();
+            printMessage("El almacen ah desaparecido, nada que actualizar");
             return 1;
         }
 
         for(int CarritoPedido = 0; CarritoPedido < pedidos; CarritoPedido++){
             for(int producto = 0; producto < productos; producto++){
-                if( cmp(Pedidos[index].Detalles[CarritoPedido].nombre, Almacen[producto].nombre) == 0 ){
+                if( strcmp(Pedidos[index].Detalles[CarritoPedido].nombre, Almacen[producto].nombre) == 0 ){
                     if( (Almacen[producto].existentes - Pedidos[index].Detalles[CarritoPedido].cantidad) < 0 ){
-                        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM "No hay suficientes productos para completar la entrega. No se ah actualizado el Almacen" RESET);
-                        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " finalizar ");
-                        getchar();
+                        printMessage("No hay suficientes productos para completar la entrega. No se ah actualizado el Almacen");
                         return 0;
                     }
                 }
@@ -415,7 +402,7 @@ int registrarEntrega(){
 
         for(int CarritoPedido = 0; CarritoPedido < Pedidos[index].productos; CarritoPedido++){
             for(int producto = 0; producto < productos; producto++){
-                if( cmp(Pedidos[index].Detalles[CarritoPedido].nombre, Almacen[producto].nombre) == 0 ){
+                if( strcmp(Pedidos[index].Detalles[CarritoPedido].nombre, Almacen[producto].nombre) == 0 ){
                     Almacen[producto].existentes -= Pedidos[index].Detalles[CarritoPedido].cantidad;
                     break;
                 }
@@ -425,16 +412,12 @@ int registrarEntrega(){
 
     Pedidos[index].estado = 'E';
     if(savePedidoFile(Pedidos, pedidos) == -1 || saveAlmacenFile(Almacen,productos) == -1){
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM  "Hubo un error al guardar el archivo, el progreso se perdio" RESET);
-        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " finalizar ");
-        getchar();
+        printMessage("Hubo un error al guardar el archivo, el progreso se perdio");
         return 0;
     }
 
-    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM  "Cambios guardados correctamente" RESET);
-    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " finalizar ");
-    getchar();
 
+    printMessage("Cambios guardados correctamente");
     return registrarEntrega();
 }
 
@@ -495,16 +478,15 @@ int modificarPedido(){
         return 1;
     }
 
+    printf(CLEAR);
+    winprint(STDOUTPUT, 4,2, titulo);
+
     if(savePedidoFile(Almacen, productos) == -1){
-        printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM  "Hubo un error al guardar el archivo, el progreso se perdio" RESET);
-        winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " finalizar ");
-        getchar();
+        printMessage("Hubo un error al guardar el archivo, el progreso se perdio");
         return 0;
     }
 
-    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,DIM  "Cambios guardados correctamente" RESET);
-    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " finalizar ");
-    getchar();
+    printMessage("Cambios guardados correctamente");
 }
 
 int regresar(){

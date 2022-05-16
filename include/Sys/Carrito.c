@@ -1,9 +1,11 @@
 #include "../sys.h"
 
 void imprimirCarrito(Pedido Pedido, int x, int y){
-    TABLE* carritoTable = newTable(4, Pedido.productos+1);
+    TABLE carritoTable;
+    prepareTableData(&carritoTable, 4, Pedido.productos+1);
+    //TABLE* carritoTable = newTable(4, Pedido.productos+1);
     double total = 0;
-    tableSetHeaders(carritoTable, (char*[]){
+    tableSetHeaders(&carritoTable, (char*[]){
         "MODELO",
         "CANTIDAD",
         "PRECIO UNITARIO",
@@ -26,7 +28,7 @@ void imprimirCarrito(Pedido Pedido, int x, int y){
         double2str(temp.precioUnitario * (double)Pedido.Detalles[fila].cantidad, sub); 
         int2str(Pedido.Detalles[fila].cantidad, cant);
 
-        tableAppendRow(carritoTable,
+        tableAppendRow(&carritoTable,
             Pedido.Detalles[fila].nombre,
             cant,
             precio,
@@ -36,13 +38,13 @@ void imprimirCarrito(Pedido Pedido, int x, int y){
 
     precio = malloc(30);
     double2str(total, precio);
-    tableAppendRow(carritoTable,
+    tableAppendRow(&carritoTable,
         empty,
         empty,
         "TOTAL",
         precio
     );
 
-    printTable(carritoTable,x,y);
+    printTable(&carritoTable,x,y);
 
 }

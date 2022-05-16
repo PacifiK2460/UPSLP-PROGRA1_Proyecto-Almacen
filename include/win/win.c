@@ -10,15 +10,6 @@ void innit(){
   srand(time(NULL));
 }
 
-// WINDOW* newWin(int y, int x, int COLS, int ROWS, WINDOW* Parent){
-//   WINDOW* Window = (struct WINDOW*)malloc(sizeof(struct WINDOW));
-//   Window->X = x;
-//   Window->Y = y;
-//   Window->COLS = COLS;
-//   Window->ROWS = ROWS;
-//   return Window;
-// }
-
 void winprint(WINDOW* window,int X, int Y, char* text){
   X+= getx(window);
   Y+= gety(window);
@@ -115,11 +106,11 @@ int gety(WINDOW* Window){
 
 void printinthemiddle(WINDOW* Window, int Y, const char* texto){
   int X = getcols(Window);
-  int tam = stringlen(texto);
+  int tam = strlen(texto);
   X = X - tam;
   X = X / 2;
   Y+=1;
-  winprint(Window,X,Y,texto);
+  winprint(Window,X,Y,(char*) texto);
 }
 
 void printinthemiddlesize(WINDOW* Window, int Y, char* texto, int tam){
@@ -130,22 +121,19 @@ void printinthemiddlesize(WINDOW* Window, int Y, char* texto, int tam){
   winprint(Window,X,Y,texto);
 }
 
-void box(WINDOW* Window){
-  // int X = getx(Window);
-  // int Y = gety(Window);
-  int COLS = getcols(Window);
-  int ROWS = getrows(Window);
+void printMessage(char* msg){
+  NEW_SCREEN();
+  {
+    clearerr(stdin);
+    char text[1024] = DIM;
+    strcat(text, " ");
+    strcat(text, msg);
+    strcat(text, " " RESET);
 
-  for(int i = 0; i < COLS; i++) winprint(Window,0 + i,0,HLINE);
-  for(int i = 0; i < COLS; i++) winprint(Window,0 + i,0 + ROWS,HLINE);
-
-  for(int i = 0; i < ROWS; i++) winprint(Window,0,0 + i,VLINE);
-  for(int i = 0; i < ROWS; i++) winprint(Window,0 + COLS,0 + i,VLINE);
-
-  // Imprimimos las esquinas
-  winprint(Window,0,0, TLLINE);        //IZQ SUP
-  winprint(Window,0 + COLS, 0, TRLINE);    //IZQ INF
-  winprint(Window,0, 0 + ROWS, BLLINE);    //DER SUP
-  winprint(Window,0 + COLS, 0 + ROWS, BRLINE); //DER INF
-
+    printinthemiddle(STDOUTPUT,getrows(STDOUTPUT)/2,text);
+    winprint(STDOUTPUT,4,getrows(STDOUTPUT)-2,RESET FRGB(185, 251, 192)  "cualquier tecla"  RESET DIM  " aceptar ");
+    cleanInput();
+    getchar();
+  }
+  CLOSE_SCREEN();
 }

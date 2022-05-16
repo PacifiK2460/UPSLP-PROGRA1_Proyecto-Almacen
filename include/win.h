@@ -112,19 +112,21 @@ int getrows(WINDOW* Window);
 int getx(WINDOW* Window);
 int gety(WINDOW* Window);
 
+void printMessage(char* text);
+
 // Menu.h
 //MENU* newMenu(WINDOW* Parent, int x, int y, int COLS, int ROWS,char** opciones,char** descripciones, int cant);
 void focusMenu(MENU* menu); 
 void updateMenu(MENU* menu); 
 
 // Table.h
-TABLE* newTable(int columnas, int filas);
+// TABLE* newTable(int columnas, int filas);
 void tableSetHeaders(TABLE *src,char** headers);
 void tableAppendRow(TABLE *src, ...);
 void tablePrepareDataAling(TABLE *src);
 void printTable(TABLE* table, int x, int y);
 
-void prepareTableData(int fila, int columna, char* headers[],char* dest[fila][columna]);
+void prepareTableData(TABLE* src, int columnas, int filas);
 void setTableData(char* dest, char* src);
 int getTotal(TABLE* src);
 int getTotalToerico(TABLE* src);

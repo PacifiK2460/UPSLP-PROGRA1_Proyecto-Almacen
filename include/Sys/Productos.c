@@ -14,7 +14,7 @@ int loadAlmacenFile(Producto Destination[]){
         Destination[fila].existentes = Temp.existentes;
         Destination[fila].precioUnitario = Temp.precioUnitario;
         Destination[fila].estante = Temp.estante;
-        cp(Destination[fila].nombre, Temp.nombre);
+        strcpy(Destination[fila].nombre, Temp.nombre);
         fila++;
     }
 
@@ -54,7 +54,7 @@ Producto getProductoByName(char* name){
     loadAlmacenFile(ProductoBuffer);
 
     for(int i = 0; i < getAlmacenSize(); i++){
-        if(cmp(ProductoBuffer[i].nombre, name) == 0){
+        if(strcmp(ProductoBuffer[i].nombre, name) == 0){
             return ProductoBuffer[i];
         }
     }
